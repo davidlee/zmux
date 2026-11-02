@@ -1,95 +1,57 @@
 ;;; dl-zmx-test.el --- ert tests for zmx sessions -*- lexical-binding: t; -*-
 
-;; Run: `just check' (dl-test scans lisp/test), or M-x ert RET dl-zmx RET.
+;; Run: M-x ert RET dl-zmx RET, or in batch:
+;;   emacs -Q --batch -L emacs -l ert -l dl-zmx-test.el -f ert-run-tests-batch-and-exit
+;;
+;; What is worth testing here is what the plugin still owns: the name it
+;; composes, the buffer it reuses, and the name list it completes over. Labels,
+;; scopes and state are the wrapper's, and are asserted against its argv in
+;; tests/ instead.
 
 (require 'ert)
 (require 'dl-zmx)
 
 (ert-deftest dl-zmx/session-name-joins-project-and-identifier ()
-  (should (equal (dl-zmx-session-name "hris" "claude") "hris-claude")))
-
-(ert-deftest dl-zmx/session-name-drops-leading-dots ()
-  "Hidden project dirs (`.hidden.d') give readable session names."
-  (should (equal (dl-zmx-session-name ".hidden.d" "pi") "hidden.d-pi")))
-
-(ert-deftest dl-zmx/session-name-replaces-label-unsafe-chars ()
-  "zmx labels allow only [a-zA-Z0-9._-]; names and labels must agree."
-  (should (equal (dl-zmx-session-name "my proj" "a/b") "my-proj-a-b")))
-
-(defmacro dl-zmx-test--with-commands (&rest body)
-  "Run BODY with a fixed launcher, zmx command and shell."
-  `(let ((dl-zmx-launcher '("systemd-run" "--user" "--scope"))
-         (dl-zmx-command "zmx")
-         (dl-zmx-shell "nu"))
-     ,@body))
-
-(ert-deftest dl-zmx/attach-argv-labels-new-sessions ()
-  "New sessions get their own systemd scope, outside Emacs's cgroup."
-  (dl-zmx-test--with-commands
-   (should (equal (dl-zmx-attach-argv "hidden.d-re-view"
-                                      (dl-zmx-labels ".hidden.d" "re view"))
-                  '("systemd-run" "--user" "--scope"
-                    "zmx" "attach" "--labels" "project=hidden.d id=re-view"
-                    "hidden.d-re-view" "nu")))))
-
-(ert-deftest dl-zmx/attach-argv-reattach-without-labels ()
-  (dl-zmx-test--with-commands
-   (should (equal (dl-zmx-attach-argv "dev")
-                  '("systemd-run" "--user" "--scope" "zmx" "attach" "dev" "nu")))))
+  "The one convention left in this file: the wrapper splits at the first dot."
+  (should (equal (dl-zmx-session-name "hris" "claude") "hris.claude")))
 
 (ert-deftest dl-zmx/buffer-name-is-term-prefixed ()
-  (should (equal (dl-zmx-buffer-name "hris-claude") "term-hris-claude")))
+  (should (equal (dl-zmx-buffer-name "hris.claude") "term-hris.claude")))
 
-(ert-deftest dl-zmx/parse-sessions-skips-ended ()
-  "`zmx list' keeps exited sessions around, marked with `ended='."
-  (should
-   (equal
-    (mapcar (lambda (session) (alist-get 'name session))
-            (dl-zmx--parse-sessions
-             (concat
-              "  name=ls\tpid=1\tclients=0\tcreated=1\tcwd=file://h/x\n"
-              "  name=sh\tpid=2\tclients=0\tcwd=file://h/x\tended=1\texit_code=0\n"
-              "  name=hris-claude\tpid=3\tclients=1\tcwd=file://h/y\n")))
-    '("ls" "hris-claude"))))
+(ert-deftest dl-zmx/attach-argv-asks-for-nothing-but-the-name ()
+  "Labels, scope and state belong to the wrapper, so the argv is bare attach."
+  (let ((dl-zmx-command "zmx")
+        (dl-zmx-shell "nu"))
+    (should (equal (dl-zmx-attach-argv "hris.claude")
+                   '("zmx" "attach" "hris.claude" "nu")))))
 
-(ert-deftest dl-zmx/parse-sessions-keeps-labels ()
-  "Labels are listed as ordinary fields after the built-in ones."
-  (should (equal (dl-zmx--parse-sessions
-                  "  name=a\tclients=1\tcwd=file://h/srv/x\tid=b\tproject=foo\n")
-                 '(((name . "a") (clients . "1") (cwd . "file://h/srv/x")
-                    (id . "b") (project . "foo"))))))
+(defmacro dl-zmx-test--with-zmx (body &rest script)
+  "Run BODY with `dl-zmx-command' bound to a stub running SCRIPT."
+  (declare (indent 1))
+  `(let ((dl-zmx-command (make-temp-file "zmx-stub")))
+     (unwind-protect
+         (progn
+           (with-temp-file dl-zmx-command
+             (insert "#!/bin/sh\n" ,@script))
+           (set-file-modes dl-zmx-command #o700)
+           ,body)
+       (delete-file dl-zmx-command))))
 
-(ert-deftest dl-zmx/parse-sessions-empty-output ()
-  (should (null (dl-zmx--parse-sessions ""))))
+(ert-deftest dl-zmx/sessions-are-the-names-from-ls-short ()
+  (dl-zmx-test--with-zmx
+   (should (equal (dl-zmx-sessions) '("hris.claude" "other.pi")))
+   "[ \"$1 $2\" = 'ls --short' ] || exit 9\nprintf 'hris.claude\\nother.pi\\n'"))
 
-(ert-deftest dl-zmx/sessions-ignore-stderr ()
-  "With no sessions, `zmx list' explains itself on stderr."
-  (let ((dl-zmx-command (make-temp-file "zmx-stub")))
-    (unwind-protect
-        (progn
-          (with-temp-file dl-zmx-command
-            (insert "#!/bin/sh\necho 'no sessions found in /run/zmx' >&2\n"))
-          (set-file-modes dl-zmx-command #o700)
-          (should (null (dl-zmx-sessions))))
-      (delete-file dl-zmx-command))))
+(ert-deftest dl-zmx/sessions-are-nil-when-zmx-cannot-be-asked ()
+  "With no store and no sessions, zmx explains itself on stderr and fails."
+  (dl-zmx-test--with-zmx
+   (should (null (dl-zmx-sessions)))
+   "echo 'no sessions found' >&2\nexit 1\n"))
 
-(ert-deftest dl-zmx/session-dir-from-cwd-url ()
-  (should (equal (dl-zmx--session-dir '((cwd . "file://h/srv/my%20dir")))
-                 "/srv/my dir/"))
-  (should (null (dl-zmx--session-dir '((name . "a"))))))
-
-(ert-deftest dl-zmx/annotation-shows-project-clients-dir ()
-  (should (equal (dl-zmx--annotation
-                  '((name . "a") (clients . "1") (cwd . "file://h/srv/x")
-                    (project . "foo")))
-                 "  foo  1 attached  /srv/x/"))
-  (should (equal (dl-zmx--annotation '((name . "a") (clients . "0")))
-                 "  0 attached")))
-
-(ert-deftest dl-zmx/project-identifiers-from-sessions ()
+(ert-deftest dl-zmx/project-identifiers-from-session-names ()
   "Only this project's sessions, by identifier."
   (should (equal (dl-zmx-project-identifiers
-                  ".hidden.d" '("hidden.d-claude" "hris-pi" "hidden.d-build" "ls"))
+                  "hris" '("hris.claude" "other.pi" "hris.build" "ls"))
                  '("claude" "build"))))
 
 (ert-deftest dl-zmx/ghostel-exec-callable-before-ghostel-loads ()
