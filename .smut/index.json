@@ -2,6 +2,7 @@
   "format_version": 2,
   "objects": {
     "brief-v0": "VFVW2DKt2mnr50eTjLbbT.json",
+    "brief-v1": "WyKHaDXHiY157TxMwUhPn.json",
     "c-cgroup": "yvduQNjgBMODGsnwKnL8v.json",
     "c-devjail": "ELnZ_bhQKQwaPdfKyrkA1.json",
     "c-host-only": "s_jAQj1ZEOCVpd13IJbVs.json",
@@ -15,6 +16,7 @@
     "d-name-form": "6xPPGtAyYAaKVz1Z3GXRT.json",
     "d-naming": "xrRsfjBPhkbghX5C0GDDD.json",
     "d-output": "T725UQzvu30yY5f_HLs6I.json",
+    "d-shadow-names": "mMLwxh2H3BT1vh1qLpT2c.json",
     "d-shape": "mElxBFi4p9Xa7LgcTORIE.json",
     "d-state-writer": "jkBbnNB0MdLgYh2UBLe29.json",
     "d-surfaces": "xjyJ6hf8wR75QVny_ha_l.json",
@@ -27,6 +29,7 @@
     "e-prior-art": "yMheI66x2NtMqQh07quwG.json",
     "e-status-channel": "bqe7J31LA9C4GYKquSNjM.json",
     "e-umbriel": "NfUwybMWibnvvdcYAMxp1.json",
+    "e-wrapper-probes": "jt0FUZlsvC3FgNTBJFuEo.json",
     "e-za": "PWc5P3OGDaz6jdLWKtmia.json",
     "e-zmx-affordances": "RJobQFev6PrTqHGClVLga.json",
     "e-zmx-ipc": "diYC0Q5N37EYRyebZB7zb.json",
