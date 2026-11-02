@@ -1,0 +1,23 @@
+#!/bin/sh
+# Stub systemd-run: records its argv, then execs the command it was given.
+# Enough to prove the wrapper's launcher prefix, and that the command it puts
+# inside the scope is the command it claims.
+set -u
+
+seq_file=${SD_STUB_SEQ:?}
+read -r seq < "$seq_file" || seq=0
+seq=$((seq + 1))
+printf '%s\n' "$seq" > "$seq_file"
+
+log=$(printf '%s/%03d' "${SD_STUB_LOG:?}" "$seq")
+: > "$log"
+for arg in "$@"; do printf '%s\0' "$arg" >> "$log"; done
+
+# Options first, command second: systemd-run [OPTION...] COMMAND [ARG...]
+while [ $# -gt 0 ]; do
+  case $1 in
+    -*) shift ;;
+    *) break ;;
+  esac
+done
+exec "$@"

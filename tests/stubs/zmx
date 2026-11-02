@@ -1,0 +1,79 @@
+#!/bin/sh
+# Stub zmx: records its argv, and models only the parts of zmx the wrapper
+# depends on. Pure shell, so it runs with an empty PATH — which is how the
+# dev jail's missing systemd is simulated — and cannot reach a real zmx.
+set -u
+
+sessions=${ZMX_STUB_SESSIONS:?}
+seq_file=${ZMX_STUB_SEQ:?}
+log_dir=${ZMX_STUB_LOG:?}
+
+read -r seq < "$seq_file" || seq=0
+seq=$((seq + 1))
+printf '%s\n' "$seq" > "$seq_file"
+
+log=$(printf '%s/%03d' "$log_dir" "$seq")
+: > "$log"
+for arg in "$@"; do printf '%s\0' "$arg" >> "$log"; done
+
+exists() {
+  while IFS= read -r name; do
+    [ "$name" = "$1" ] && return 0
+  done < "$sessions"
+  return 1
+}
+
+add() { exists "$1" || printf '%s\n' "$1" >> "$sessions"; }
+
+case ${1-} in
+  ls | l | list)
+    while IFS= read -r name; do printf '%s\n' "$name"; done < "$sessions"
+    ;;
+  get)
+    shift
+    if exists "${1-}"; then
+      printf 'project=p\n'
+    else
+      printf 'error: session "%s" not found\n' "${1-}" >&2
+      exit 1
+    fi
+    ;;
+  set)
+    shift
+    target=${1-}
+    exists "$target" || {
+      printf 'error: session "%s" not found\n' "$target" >&2
+      exit 1
+    }
+    ;;
+  run)
+    shift
+    target=${1-}
+    shift
+    detached=
+    if [ "${1-}" = -d ]; then
+      detached=1
+      shift
+    fi
+    if ! exists "$target"; then
+      add "$target"
+      printf 'session "%s" created\n' "$target"
+    fi
+    if [ -n "$detached" ]; then
+      printf 'command sent!\n'
+      exit 0
+    fi
+    printf 'task-output\n'
+    exit "${ZMX_STUB_RUN_EXIT:-0}"
+    ;;
+  attach | a)
+    shift
+    if [ "${1-}" = --labels ]; then shift 2; fi
+    target=${1-}
+    if ! exists "$target"; then
+      add "$target"
+      printf 'session "%s" created\n' "$target"
+    fi
+    ;;
+esac
+exit 0
