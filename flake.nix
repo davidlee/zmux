@@ -1,5 +1,5 @@
 {
-  description = "Dev shell with jailed LLM agents";
+  description = "zmux: a zmx with opinions — the wrapper, its argv tests and the Emacs plugin";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -19,11 +19,22 @@
     flake-parts,
     nixpkgs,
     ...
-  }:
+  }: let
+    # The delivery mechanism (d-install): the wrapper *is* the package, so an
+    # overlay makes every caller conform without knowing it. The binary it
+    # shadows keeps its own name, unforked and upgradeable — that is the escape
+    # hatch that makes shadowing a convention rather than a trap.
+    overlay = final: prev: {
+      zmx-unwrapped = prev.zmx;
+      zmx = final.callPackage ./pkgs/zmx {zmx = final.zmx-unwrapped;};
+    };
+  in
     flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
         inputs.devshell.flakeModule
       ];
+
+      flake.overlays.default = overlay;
 
       systems = [
         "x86_64-linux"
@@ -31,7 +42,10 @@
       ];
 
       perSystem = {system, ...}: let
-        pkgs = import inputs.nixpkgs {inherit system;};
+        pkgs = import inputs.nixpkgs {
+          inherit system;
+          overlays = [overlay];
+        };
 
         inherit (pkgs) lib;
         inherit (pkgs.stdenv.hostPlatform) isLinux;
@@ -59,6 +73,8 @@
         projectPkgs =
           devToolPkgs
           ++ (with pkgs; [
+            # Through the overlay, so this is the wrapper: anything that calls
+            # `zmx` here — a test, zp, pi-zmx — gets labels and a scope.
             zmx
             (agents.codex or codex) # mcp server slave — llm-agents build on linux
           ]);
@@ -66,8 +82,40 @@
         # -- The package --
         #
         # The wrapper, not a build: this repo ships a shell script installed as
-        # `zmx` (d-wrapper).
-        zmux = pkgs.callPackage ./pkgs/zmx {};
+        # `zmx` (d-wrapper). It arrives through the overlay above, so
+        # `pkgs.zmx` is the wrapper and `pkgs.zmx-unwrapped` the binary.
+
+        # The argv tests and the lint, as `nix flake check` sees them. The
+        # wrapper under test is substituted by the harness itself, so these run
+        # with no real zmx and no systemd (c-devjail).
+        wrapperSrc = lib.fileset.toSource {
+          root = ./.;
+          fileset = lib.fileset.unions [
+            ./pkgs/zmx
+            ./tests
+          ];
+        };
+
+        wrapperTests = pkgs.runCommand "zmx-wrapper-tests" {
+          nativeBuildInputs = with pkgs; [
+            bash
+            coreutils
+            findutils
+            diffutils
+            gnused
+          ];
+        } ''
+          cp -r ${wrapperSrc} source
+          bash source/tests/run-tests.sh > "$out"
+        '';
+
+        wrapperLint = pkgs.runCommand "zmx-wrapper-lint" {
+          nativeBuildInputs = [pkgs.shellcheck];
+        } ''
+          shellcheck ${./pkgs/zmx/wrapper.sh} ${./tests/run-tests.sh} \
+            ${./tests/stubs/zmx} ${./tests/stubs/systemd-run}
+          touch "$out"
+        '';
 
         # Sibling repos to bind-mount (for editable deps / source inspection).
         # Each path appears at /workspace/<basename> inside the jail; a host
@@ -205,8 +253,8 @@
           jailPkgs
           // quotientForms
           // {
-            default = zmux;
-            inherit zmux;
+            default = pkgs.zmx;
+            zmx = pkgs.zmx;
 
             dev-tools = pkgs.buildEnv {
               name = "zmux-dev-tools";
@@ -214,13 +262,28 @@
             };
           };
 
-        # `nix flake check` builds the package on every declared system.
-        checks = {inherit zmux;};
+        # `nix flake check` builds the package and runs the wrapper's tests on
+        # every declared system.
+        checks = {
+          zmx = pkgs.zmx;
+          wrapper-tests = wrapperTests;
+          wrapper-lint = wrapperLint;
+        };
 
         devshells.default = {
           packages =
             projectPkgs
             ++ lib.optionals isLinux (lib.attrValues jailPkgs);
+
+          # The plugin, for an Emacs on the host: (add-to-list 'load-path
+          # (getenv "DL_ZMX_ELISP")). It is not vendored into any package here —
+          # integrations live in the config repo (d-surfaces).
+          env = [
+            {
+              name = "DL_ZMX_ELISP";
+              value = "${./emacs}";
+            }
+          ];
 
           commands = [
             {
