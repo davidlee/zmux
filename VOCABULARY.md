@@ -14,14 +14,15 @@ reading `zmx ls`.
 
 Deriving the labels from the name a caller gives:
 
-1. Drop leading dots.
-2. Split at the first dot. A name with no dot is **undotted**: it gets no
+1. Split at the first dot. A name with no dot is **undotted**: it gets no
    labels and returns no project. Ungrouped and honest beats grouped and wrong.
-3. In each part, replace every character outside `[a-zA-Z0-9_-]` with `-`.
-   A dot at this point is inside a part — the separator was consumed by step 2 —
+2. In each part, replace every character outside `[a-zA-Z0-9_-]` with `-`.
+   A dot at this point is inside a part — the separator was consumed by step 1 —
    so it becomes `-` as well.
-4. A part that sanitises to nothing is refused (exit 2). An empty `project=` or
-   `id=` would delete a label rather than write one.
+3. A part that sanitises to nothing is refused (exit 2). An empty `project=` or
+   `id=` would delete a label rather than write one, and a name that has to be
+   rewritten is refused rather than retargeted. A leading dot is therefore an
+   empty project, not a hidden one.
 
 The caller's name is passed to zmx unchanged. Labels are derived from it; where
 the two disagree, the labels are the truth.

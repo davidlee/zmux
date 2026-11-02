@@ -28,7 +28,7 @@
     }
   ],
   "seq": 2,
-  "status": "todo",
+  "status": "done",
   "title": "Write the argv tests against stub binaries",
   "type": "task"
 }

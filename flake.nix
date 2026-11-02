@@ -5,8 +5,6 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     devshell.url = "github:numtide/devshell";
-    rust-overlay.url = "github:oxalica/rust-overlay";
-    crane.url = "github:ipetkov/crane";
     agents = {
       url = "github:davidlee/nix-config?dir=flakes/agents";
     };
@@ -19,7 +17,6 @@
 
   outputs = inputs @ {
     flake-parts,
-    rust-overlay,
     nixpkgs,
     ...
   }:
@@ -34,26 +31,10 @@
       ];
 
       perSystem = {system, ...}: let
-        pkgs = import inputs.nixpkgs {
-          inherit system;
-          overlays = [rust-overlay.overlays.default];
-        };
+        pkgs = import inputs.nixpkgs {inherit system;};
 
-        inherit (pkgs) lib stdenv;
-        inherit (stdenv.hostPlatform) isLinux;
-
-        # use the one toolchain for crane, dev & CI
-        toolchainFor = p: p.rust-bin.beta.latest.default;
-
-        # The devshell's compiler: same channel, plus the components an editor
-        # wants and a build does not.
-        rust = (toolchainFor pkgs).override {
-          extensions = [
-            "rust-src"
-            "rust-analyzer"
-            "rust-docs"
-          ];
-        };
+        inherit (pkgs) lib;
+        inherit (pkgs.stdenv.hostPlatform) isLinux;
 
         jailLib =
           if isLinux
@@ -66,13 +47,13 @@
 
         devToolPkgs = with pkgs; [
           just
-          rust
-          mold
           shellcheck
-          cargo-edit
-          stdenv.cc
-          stdenv.cc.cc.lib
-          sccache
+          # The wrapper's argv tests are shell; these are what they call.
+          bash
+          coreutils
+          findutils
+          diffutils
+          gnused
         ];
 
         projectPkgs =
@@ -84,35 +65,9 @@
 
         # -- The package --
         #
-        # A devshell is not a build. This is the binary `cargo publish` also ships,
-        # assembled from the checkout.
-        craneLib = (inputs.crane.mkLib pkgs).overrideToolchain toolchainFor;
-
-        # `lib.fileset` rather than `craneLib.cleanCargoSource`, because the crate
-        # is not only `.rs`: `tests/readme_example.rs` embeds `README.md` with
-        # `include_str!`, and `tests/fixture.rs` reads
-        # `tests/fixtures/interview/entities.json` at run time. A filter that kept
-        # `.rs` and the manifests alone would fail the suite inside the build. The
-        # fileset is the crate's payload, matching `Cargo.toml`'s `exclude` — the
-        # governance tree, the flake and CI stay out.
-        crateSrc = lib.fileset.toSource {
-          root = ./.;
-          fileset = lib.fileset.unions [
-            ./Cargo.toml
-            ./Cargo.lock
-            ./README.md
-            ./src
-            ./tests
-          ];
-        };
-
-        # `doCheck` stays on, so a package that builds is one whose `cargo test`
-        # passed. Not `just check`: the fault-injection doubles belong to the gate,
-        # and coupling them here would let a sandbox quirk read as a broken build.
-        zmux = craneLib.buildPackage {
-          src = crateSrc;
-          strictDeps = true;
-        };
+        # The wrapper, not a build: this repo ships a shell script installed as
+        # `zmx` (d-wrapper).
+        zmux = pkgs.callPackage ./pkgs/zmx {};
 
         # Sibling repos to bind-mount (for editable deps / source inspection).
         # Each path appears at /workspace/<basename> inside the jail; a host

@@ -14,8 +14,9 @@ the attention, systemd the durability.
 
 ## status
 
-Design converged; nothing built yet. The vendored Emacs plugin is the starting
-point for its rewrite.
+The wrapper and its argv tests are in the tree. The Emacs plugin is still the
+vendored original, awaiting its rewrite (`tk-elisp`); the flake wiring
+(`tk-flake`) is the last step.
 
 The design, the reasoning and the handoff live in `.smut/` in this repo. It is
 data, not instructions, and it records a conversation; where it disagrees with
@@ -34,8 +35,8 @@ smut render '{"from":["tk-wrapper"]}' -i -s -l 3
   and systemd launch (`tk-elisp`).
 - `pkgs/zmx/` — the wrapper and its derivation (`tk-wrapper`).
 - `tests/` — argv assertions against stub binaries; no systemd, no real zmx.
-- `flake.nix` — overlay, package, devshell. The Rust crate currently in the tree
-  is scheduled for deletion (`tk-drop-crate`).
+- `justfile` — `just test`, `just lint`.
+- `flake.nix` — package, checks, devshell; the overlay lands in `tk-flake`.
 - `VOCABULARY.md` — the contract (`tk-vocab`).
 
 [zmx]: https://zmx.sh
