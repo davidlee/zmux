@@ -1,0 +1,11 @@
+{
+  "smut_id": "c-wrapper-limits",
+  "body": "Honest edges, all cheap to state and expensive to discover later.\n\n- Labels are create-time only, so the wrapper must decide the name before calling attach. Anything that creates a session without going through the wrapper stays unlabelled and ungrouped — which is correct; ungrouped means ungrouped.\n- An existing session is never relabelled. Upsert semantics make 'attach an existing name with different labels' silent otherwise, and silently rewriting somebody's labels is worse than an ungrouped session.\n- ZMX_SESSION_PREFIX is applied by zmx after the wrapper has computed labels, so a prefixed name's label and display name disagree. Either derive labels from the prefix-free input and accept the mismatch, or drop ZMX_SESSION_PREFIX from the convention. It is already a scripting hazard; recommend dropping it.\n- The launcher needs a usable user systemd session. In the dev jail (c-devjail) there is none, so the wrapper must fall back to bare zmx rather than fail: detect at call time, or read a setting. Never let durability become a precondition for attaching.\n- Writing state around `run` adds two zmx calls per dispatch — a few milliseconds, two extra client connect/disconnect pairs in the per-session log (e-zmx-logs), and a label write that is visible to everyone. Acceptable, but it is not free.\n- `blocked` cannot be inferred: no wrapper can know an agent wants a human. It comes from the harness that asks (pi-zmx's attach tool) or from the human clearing it on attach.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "What a wrapped zmx cannot decide",
+  "type": "constraint"
+}

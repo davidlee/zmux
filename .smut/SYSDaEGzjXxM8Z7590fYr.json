@@ -1,0 +1,11 @@
+{
+  "smut_id": "h-shared-world",
+  "body": "If sessions are already multi-client and labels are already a global mutable board, then the missing thing is not capability but legibility: who is running, for which project, for which task, in what state, and which one wants me. Every 'wild' idea — agents sharing a session, agents tagging each other, remote attach — reduces to a namespace that a human and a program can both read.\n\nUnder that reading, zmux is small on purpose: naming plus labels plus a reader. Anything bigger is a second zmx. This hypothesis is the thing to test against the first real agent workflow; if legibility turns out to be enough, the scope is settled.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "The product is legibility of a world zmx already shares",
+  "type": "hypothesis"
+}

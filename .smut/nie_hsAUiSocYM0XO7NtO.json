@@ -1,0 +1,11 @@
+{
+  "smut_id": "e-zmx-logs",
+  "body": "Verified: {log_dir}/{session}.log persists after the session is gone, with epoch timestamps and the events that matter — daemon started, client connected (total=N), leader set, resize rows/cols, run command, client disconnected (remaining=N), kill received, SIGHUP, deleting socket, daemon loop shutdown.\n\nCaveat that shapes any monitor: every CLI call briefly connects as a client, so a poller writes connect/disconnect pairs into the log it is reading. Polling ls is not free, it is visible and it is noisy — an argument for reading on demand and for keeping the reader stateless (d-shape).\n\nAlso: these are debug logs, enabled by default and not disableable in this release, so the trail is an accident of the release rather than a supported interface. Do not build on it; do read it when something went wrong.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "per-session logs are a durable event trail, with one caveat",
+  "type": "evidence"
+}

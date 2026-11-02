@@ -1,0 +1,11 @@
+{
+  "smut_id": "d-adopt",
+  "body": "Proposed after e-prior-art. Two of the three surfaces exist and are better than anything we would write first: zp for choosing (fzf, repos, previews, labels, --print for composition) and pi-zmx for agents. Both read labels and neither writes them, and neither makes a session survive its creator.\n\nSo zmux ships exactly the missing pieces:\n- `zmux` = `za` + naming + labels at creation (d-birth), with the launcher as data.\n- the vocabulary document (d-vocab), which is what makes zp's label search and any reader useful.\n- the Emacs plugin, because that surface is personal and the existing one is generic.\nAnd it composes with the rest through the interface they already speak: names, labels, `zmx ls` fields, and `zp --print`-style machine output where a caller needs it.\n\nRejected: our own picker (zp exists), our own agent tools (pi-zmx exists), our own `ls` as a primary surface — a reader is still wanted, but `zmx ls` plus a filter may be enough, which q-v0 now has to settle honestly.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "Do not rebuild what exists; ship the missing birth path and convention",
+  "type": "decision"
+}

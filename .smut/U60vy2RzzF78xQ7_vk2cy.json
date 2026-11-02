@@ -1,0 +1,13 @@
+{
+  "smut_id": "q-lazy",
+  "answer": "Refused: a core/server, our own status protocol (a label instead), a TUI, splits/tabs/layout, a config tree, an MCP server for now, a screen renderer of our own. Deferred, not refused: remote sessions, agent coordination beyond labels, manifest. Two tests for anything proposed — does it plug into an affordance zmx already has, and is it the least code that makes agent work faster.",
+  "body": "Candidate refusals: a core/server of our own; a status protocol (use a label); a declarative session manifest; layout, theme and keymap files; remote machines over SSH; a screen renderer of our own; plugin/mod surface.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "status": "closed",
+  "title": "What do we refuse?",
+  "type": "question"
+}

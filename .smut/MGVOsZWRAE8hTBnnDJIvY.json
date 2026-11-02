@@ -1,0 +1,13 @@
+{
+  "smut_id": "q-labels",
+  "answer": "Resolved in d-vocab: `project` and `id` required, `state` interpreted but with only `blocked` carrying an opinion, everything else freeform and uninterpreted. The label channel is a tag set, not a metadata record: values are single tokens [a-zA-Z0-9-_.], with no authors, timestamps or prose. Residual question moved to q-state.",
+  "body": "The vocabulary is now the only schema in the system, so it is the most consequential remaining decision.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "status": "closed",
+  "title": "Which label keys exist, and which are required?",
+  "type": "question"
+}

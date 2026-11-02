@@ -1,0 +1,11 @@
+{
+  "smut_id": "e-zmx-lifecycle",
+  "body": "Corrected by probe in round 5; the earlier reading was wrong.\n\nA session is gone when its shell exits: `zmx run x -d exit` and the name vanishes from `zmx ls` and the socket disappears, at once. So 'ended sessions are just gone' is true of attach-style use.\n\n`ended=<epoch>` and `exit_code=<n>` are task-scoped, not session-scoped: they appear when a command dispatched with `zmx run` finishes, and the session stays alive and reusable (a later `zmx run` on the same name reuses it and clears the field). Verified by dispatching `true` into a session, waiting 16s, then running another command in the same session.\n\nConsequence: `ended` must never be read as 'dead'. A reader that skips ended records — as dl-zmx.el does — silently drops live, attachable sessions whose last task finished. The elisp comment 'Exited sessions stay listed with an ended field' is wrong on both halves.\n\nStill true and useful: `zmx ls` prints name, pid, clients, created, cwd, then every label; one parse yields identity, activity and model.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "zmx lifecycle: session death and task end are different things",
+  "type": "evidence"
+}

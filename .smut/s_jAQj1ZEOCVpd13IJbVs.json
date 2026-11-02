@@ -1,0 +1,11 @@
+{
+  "smut_id": "c-host-only",
+  "body": "In this jail there is no systemd, no dbus, no umbriel, no ghostty and no notify-send. Sessions started here die with the jail (c-devjail).\n\nConsequence: every integration must be an out-of-process command invoked by the host, and the core must behave correctly when a launcher, an IPC command or a notifier is absent — degrade to plain zmx behaviour, never fail the primary verb. Host-side integrations are checked by hand, and the README says which ones only exist on which machine.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "Every integration point is on the host, not in the jail",
+  "type": "constraint"
+}

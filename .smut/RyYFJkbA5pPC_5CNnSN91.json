@@ -1,0 +1,7 @@
+{
+  "smut_id": "s-zmux",
+  "body": "Rounds 1-9. Converged. zmux is a zmx with opinions: a shell wrapper installed by overlay that makes `project.id` names into labels, births sessions in a transient systemd scope, and brackets `run` with state. Plus an elisp rewrite and a vocabulary document.\n\nNo Rust binary, no forks, no store, daemon, TUI, manifest, MCP, picker, reader or new dependencies. The repo shrinks: the crate and its crane packaging go away, leaving a wrapper, its argv tests, the elisp, the doc and flake wiring.\n\nNext: build. Write the wrapper against stub zmx/systemd-run binaries first (argv assertions, as dl-zmx-test does), delete the crate, then rewrite the elisp on top, then document the vocabulary.",
+  "status": "open",
+  "title": "zmux: what are we building",
+  "type": "session"
+}

@@ -235,6 +235,8 @@
                 ripgrep
                 fd
                 git
+                socat
+                # netscan
               ]);
           };
         in {

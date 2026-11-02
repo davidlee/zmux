@@ -1,0 +1,11 @@
+{
+  "smut_id": "c-cgroup",
+  "body": "Verified: zmx has no daemon to hold. Each session is one `zmx` process, reparented when its client exits (pid= in `zmx ls` is that process). There is no `zmx daemon` subcommand, so no unit can hold the whole set.\n\nConsequence: a session's cgroup is inherited from the client that created it, so the escape hatch must wrap the creating client — `systemd-run --user --scope --collect zmx attach …`, one transient scope per session, which is what dl-zmx.el does. The session process outlives its client and keeps the scope alive; the scope is not PartOf the launching unit, so the unit's death no longer reaches it.\n\nTherefore zmux can only guarantee survival for sessions it creates. Sessions created elsewhere can be reported (their cgroup read from /proc), not repaired. Adopting an existing PID into a scope is D-Bus StartTransientUnit territory and is not assumed.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "Survival is per-session and decided at creation",
+  "type": "constraint"
+}

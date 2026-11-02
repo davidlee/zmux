@@ -1,0 +1,11 @@
+{
+  "smut_id": "d-shape",
+  "body": "Revised in round 4. zmux keeps no state and knows nothing of Emacs, ghostty, umbriel or systemd. The model is `zmx ls` plus labels; the only writes are labels and new sessions.\n\nThree jobs: (1) name and label a session at birth — mechanism in d-birth, and the only reason creation is zmux's business at all is d-naming; (2) read that model back in a form humans and programs both parse — d-output; (3) leave every other surface to composition — d-surfaces.\n\nWhat is not yet agreed: the label vocabulary (q-labels), whether a picker ships and in what language (q-language), how much of the shared world is exposed (q-coordination), and the exact first cut (q-v0).",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "Shape: a stateless reader plus one creation path",
+  "type": "decision"
+}

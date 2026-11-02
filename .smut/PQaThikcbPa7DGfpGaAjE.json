@@ -1,0 +1,11 @@
+{
+  "smut_id": "e-elisp",
+  "body": "~/.cargo/bin aside, ~/dl-zmx.el is the working human front-end that zmux generalises away from Emacs:\n- naming: <project>-<id>, label-safe; labels project=P id=ID, both derived from the same pair so name and labels cannot disagree.\n- launcher as data: `dl-zmx-launcher` defaults to systemd-run --user --scope --collect, nil disables it; the docstring states the cgroup reason precisely.\n- parse: `zmx list` whitespace/tab fields into an alist, skipping `ended`, labels kept as ordinary fields, stderr discarded when there are no sessions, cwd unhexed from a file:// URL.\n- switching: completing-read over running sessions, annotated with project, attached count and directory; buffer per session (term-<name>); display before spawn so the PTY gets the window size.\n- tests assert argv and parsing, never systemd — the precedent c-devjail asks zmux to follow.\nWhat it does not have: project-scoped creation from outside Emacs, a program surface, preview, or any view that is not Emacs buffers.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "dl-zmx.el: the prior art, and what it proves",
+  "type": "evidence"
+}

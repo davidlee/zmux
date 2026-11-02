@@ -1,0 +1,11 @@
+{
+  "smut_id": "h-status-label",
+  "body": "Now mechanism-complete: `ZMX_SESSION` gives a program its own name, so one command sets its state with no arguments, and every reader sees it in the same `zmx ls` parse.\n\nWhat remains unverified is uptake rather than mechanism: whether the agents actually run here (pi in a jail, codex) can be made to emit blocked/working cheaply enough, and whether a stale value decays acceptably given no timestamps (q-state). Cheapest experiment: wrap one real workflow, see whether the label is fresh when it matters.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "state= is the whole status channel",
+  "type": "hypothesis"
+}

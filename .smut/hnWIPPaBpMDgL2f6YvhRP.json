@@ -1,0 +1,34 @@
+{
+  "smut_id": "tk-wrapper",
+  "acceptance": "Shell, shellcheck-clean, no runtime PATH assumptions beyond `command -v systemd-run`. Real zmx referenced by absolute path at build time; the wrapper never resolves `zmx` through PATH (recursion guard). attach/a: derive project and id from the first dot, sanitise, insert --labels before the session name, exec through the launcher. run/r: same derivation plus creation labelling, then state=working, dispatch, then state=done or failed, exit with the task's code; resolve `.` to $ZMX_SESSION first. Everything else execs the real binary unchanged. ZMX_RAW=1 short-circuits at the top. ZMX_LAUNCHER sets the prefix, empty means bare.",
+  "after": [
+    {
+      "smut_id": "tk-tests"
+    }
+  ],
+  "body": "Use writeShellScriptBin, not writeShellApplication: the latter pins PATH and would hide the user's systemd-run. Two awkward details to get right — labels are create-time only, so --labels must ride the same invocation; and zmx shell-escapes its own run arguments, so the wrapper must pass them through without re-quoting or splitting.",
+  "files": [
+    "pkgs/zmx/wrapper.sh",
+    "pkgs/zmx/default.nix"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "d-wrapper"
+    },
+    {
+      "smut_id": "c-wrapper-limits"
+    },
+    {
+      "smut_id": "c-cgroup"
+    }
+  ],
+  "seq": 3,
+  "status": "todo",
+  "title": "Write the wrapper and its derivation",
+  "type": "task"
+}

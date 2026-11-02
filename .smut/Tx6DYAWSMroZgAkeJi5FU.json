@@ -1,0 +1,11 @@
+{
+  "smut_id": "d-install",
+  "body": "Settled in round 9. The wrapper is installed as `zmx` through a nixpkgs overlay, so everything that calls zmx conforms without knowing: zp, pi-zmx, the shell function, the elisp, and anything future.\n\nEscape hatches, both mandatory: the raw binary at ${pkgs.zmx}/bin/zmx (always addressable, unforked, upgradeable), and a wrapper setting that disables every rewrite for one invocation. Without both, shadowing is a trap rather than a convention.\n\nKnown wrinkle this exposes: pi-zmx's ensureSession creates a session with `zmx run <name> true`, which the wrapper will bracket as working→done. The claim is true (a trivial task did complete) and harmless, because only `blocked` carries reader opinion, but it means an idle session can read as `done`. Accepted rather than special-cased: sniffing commands to decide what counts as real work is the kind of cleverness that turns a wrapper into a heuristic.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "Shadow zmx by overlay, for the sake of the integrations",
+  "type": "decision"
+}

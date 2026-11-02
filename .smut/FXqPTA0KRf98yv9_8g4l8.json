@@ -1,0 +1,25 @@
+{
+  "smut_id": "tk-drop-crate",
+  "acceptance": "No Cargo.toml, Cargo.lock or src/. flake.nix no longer imports crane or rust-overlay, no longer defines crateSrc or a crane build, and `nix flake check` (or the repo's build command) still passes. The devshell keeps just, shellcheck, zmx, the jail packages and the agents/quotient inputs; rust toolchain removal is fine if nothing else needs it.",
+  "after": [
+    {
+      "smut_id": "tk-wrapper"
+    }
+  ],
+  "body": "Nothing in the design needs Rust. Keep the flake's jail and devshell scaffolding, which the rest of this repo's workflow depends on; remove only the crate and the builders that existed to build it.",
+  "files": [
+    "Cargo.toml",
+    "Cargo.lock",
+    "src/",
+    "flake.nix"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0"
+    }
+  ],
+  "seq": 4,
+  "status": "todo",
+  "title": "Delete the Rust crate and its packaging",
+  "type": "task"
+}

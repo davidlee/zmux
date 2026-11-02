@@ -1,0 +1,11 @@
+{
+  "smut_id": "d-kit",
+  "body": "Settled in round 7. zmux is not a program with a feature list; it is the glue that makes five existing tools agree on one convention, packaged in this repo's flake.\n\nThe pieces, with the work each actually needs:\n- `zmux` (Rust, one verb): name+labels at creation, launcher as data (d-birth, d-name-form). This is the only new code.\n- `zp` (patched, 452-line 0BSD shell script): one call site, `zmx attach \"$1\"`, becomes `zmux`. It already displays labels and fuzzy-searches them, so patching creation is enough for it to show the vocabulary.\n- `pi-zmx` (patched, 445-line MIT TS extension): `ensureSession` currently does `zmx run <name> true`; it becomes `zmux`, and the same code path gains `zmx set state=working|done|failed` around its runs, because it is the party that knows when a task starts and ends (d-state-writer).\n- `dl-zmx.el` rewritten: naming, parsing and label derivation deleted in favour of `zmux` and `zmx ls`; it keeps only what Emacs knows — buffer per session, display before spawn, completion, project association.\n- Flake outputs: the four above, plus gum/fzf if the picker path is wanted, and a vocabulary document.\n\nLicences permit it (MIT, 0BSD, MIT) and each fork point is one or two lines, so vendoring is a legitimate choice rather than a compromise. Everything remains independently upgradable: a zmx release, a zp release, a pi release.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "zmux is a kit: one verb plus three small integrations",
+  "type": "decision"
+}

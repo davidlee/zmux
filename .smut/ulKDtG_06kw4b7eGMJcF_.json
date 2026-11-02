@@ -1,0 +1,31 @@
+{
+  "smut_id": "tk-elisp",
+  "acceptance": "The plugin keeps: one buffer per session (term-<name>), display before spawn so the PTY gets the window size, project association, completion over running sessions, and attach-or-create. It loses: session naming, label derivation, its own `zmx list` parser, and the systemd-run launcher - all of which are now the wrapper's job. Callers pass `<project>.<id>`; the wrapper supplies labels and durability. Tests cover what remains; the deleted parser tests go with the code they tested.",
+  "after": [
+    {
+      "smut_id": "tk-wrapper"
+    }
+  ],
+  "body": "Vendored from ~/dl-zmx.el as the starting point (dl-zmx-test.el with it). Read e-elisp for what the original established and what it got wrong: `ended` means the last task finished, not that the session died, so the old skip-ended filter dropped live sessions. Also drop its duplication of the naming convention - that duplication is the bug this project exists to remove.",
+  "files": [
+    "emacs/dl-zmx.el",
+    "emacs/dl-zmx-test.el"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "e-elisp"
+    },
+    {
+      "smut_id": "d-surfaces"
+    }
+  ],
+  "seq": 5,
+  "status": "todo",
+  "title": "Rewrite the Emacs plugin onto the wrapper",
+  "type": "task"
+}

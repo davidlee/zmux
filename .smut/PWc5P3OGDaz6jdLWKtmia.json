@@ -1,0 +1,11 @@
+{
+  "smut_id": "e-za",
+  "body": "On the host, in the zsh config:\n\n  za() { systemd-run --user --scope --collect --quiet zmx attach \"$@\" }\n  _za() { (( CURRENT == 2 )) && compadd -- ${(f)\"$(zmx list --short 2>/dev/null)\"} }\n  compdef _za za\n\nSo the launcher prefix, the idempotent create-or-attach, and completion over running sessions already exist and are in daily use. What `za` does not do is name or label: only bare names and flags pass through.\n\nConsequence for scope: c-cgroup's 'birth' job is not zmux's contribution. Either zmux absorbs `za` (one code path that also writes labels) or zmux never creates and stays a reader. There is no third position worth the code.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "za: durable birth is already four lines of zsh",
+  "type": "evidence"
+}

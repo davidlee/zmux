@@ -1,0 +1,34 @@
+{
+  "smut_id": "tk-tests",
+  "acceptance": "A stub `zmx` records its argv, streams canned output and exits with a chosen code; a stub `systemd-run` records its argv and execs. Tests, red before the wrapper exists: dotted attach gets --labels with project and id before the name; undotted attach is untouched; run gets state=working then done; failed run exits with the task code and writes state=failed; ZMX_RAW=1 leaves argv byte-identical; a missing systemd-run falls back to bare zmx; an existing session is not relabelled; aliases a/r/l behave; `run` from inside a session resolves `.` to ZMX_SESSION. No real zmx and no real systemd are executed.",
+  "after": [
+    {
+      "smut_id": "tk-vocab"
+    }
+  ],
+  "body": "Modelled on dl-zmx-test: assert the argv a caller would build, never the environment it runs in. That is what makes these runnable in the jail (c-devjail). Keep the stubs in the test directory, named `zmx` and `systemd-run`, first on PATH.",
+  "files": [
+    "tests/",
+    "justfile"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "c-devjail"
+    },
+    {
+      "smut_id": "c-wrapper-limits"
+    },
+    {
+      "smut_id": "e-elisp"
+    }
+  ],
+  "seq": 2,
+  "status": "todo",
+  "title": "Write the argv tests against stub binaries",
+  "type": "task"
+}

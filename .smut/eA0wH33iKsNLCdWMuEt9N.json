@@ -1,0 +1,13 @@
+{
+  "smut_id": "q-v0",
+  "answer": "Closed in d-kit: one verb (`zmux <project>.<id> [cmd]`) plus three small integrations and a vocabulary document, packaged in the flake. No picker (zp), no agent tools (pi-zmx), no TUI, no manifest, and no `zmux ls` in v0 — a non-interactive reader is deferred until a script actually needs one, since `zmx ls` plus awk already answers most questions and zp answers the interactive ones.",
+  "body": "Whether zmux is one command or one command plus a reader.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "status": "closed",
+  "title": "What is the irreducible zmux?",
+  "type": "question"
+}

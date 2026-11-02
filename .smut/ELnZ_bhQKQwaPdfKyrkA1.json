@@ -1,0 +1,11 @@
+{
+  "smut_id": "c-devjail",
+  "body": "Inside the agent jail there is no systemd-run, systemctl or busctl, /proc/1 is bwrap, and the jail unshares pid and cgroup and runs with --die-with-parent. A session started here dies with the jail, and the scope path cannot be exercised at all.\n\nConsequence for design: the launcher is data (an argv prefix), exactly as `dl-zmx-launcher` is in the elisp, and tests assert the argv it produces. End-to-end survival is a host-side manual check documented in the README, never a CI assertion. The parser and the view, which are most of the code, test fine here.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "This jail cannot prove survival",
+  "type": "constraint"
+}

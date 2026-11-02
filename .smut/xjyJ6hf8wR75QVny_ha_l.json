@@ -1,0 +1,11 @@
+{
+  "smut_id": "d-surfaces",
+  "body": "zmux never knows about Emacs, ghostty, umbriel, systemd or notify-send by name. It exposes verbs and a launcher setting; each integration lives where integrations live — the Emacs plugin in the flakes config, window raising in umbriel's IPC, attention via notify-send, birth durability via whatever launcher the caller configures.\n\nConsequences: the core must be usable from elisp, bash and Go without a binding, so its contract is argv plus lines; the launcher is data, not a dependency; and the naming convention lives in one place, the core, so the plugin and the chooser cannot drift from it (the elisp currently duplicates naming, parsing and labels — that duplication is what zmux removes).",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "Integration-blind core, integrations elsewhere",
+  "type": "decision"
+}

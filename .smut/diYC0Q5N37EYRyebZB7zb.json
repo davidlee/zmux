@@ -1,0 +1,11 @@
+{
+  "smut_id": "e-zmx-ipc",
+  "body": "src/ipc.zig: header is {tag: u8, protocol_version: u8, reserved: u16, len: u32} followed by the payload, over one unix socket per session. Tags: Input, Output, Resize, Detach, DetachAll, Kill, Info, Init, History, Run, Ack, Switch, Write, TaskComplete, LabelGet, LabelSet, LabelClear, LabelData, Send, EnvGet, EnvSet, EnvData, Capture, Unsupported(255).\n\nTwo consequences:\n- Switch (tag 11) is how `zmx attach` moves an attached client to another session from inside one. Session switching is already in zmx; no UI work needed.\n- Capture (tag 22) is scoped history: the active screen plus N scrollback rows, in plain/VT/HTML. It is the preview primitive, and `history --screen/--scrollback` exposes it on main but not in 0.8.1.\n\nProtocol version is in the header and mismatches are fatal (documented: upgrading zmx can kill all sessions). Speaking this protocol from Rust would be a second implementation of somebody else's unstable ABI — the reason q-boundary chose the CLI.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "title": "The IPC surface, and the one message worth wanting",
+  "type": "evidence"
+}

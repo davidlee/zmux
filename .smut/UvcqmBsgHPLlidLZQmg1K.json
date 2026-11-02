@@ -1,0 +1,13 @@
+{
+  "smut_id": "q-tui",
+  "answer": "No TUI until a compelling case appears. Surfaces: (1) a CLI chooser — transient, fuzzy, one keystroke, Enter attaches; (2) a small Emacs plugin calling the core; (3) composition rather than features — umbriel IPC for windows, notify-send for attention. Splits, tabs and layout are ghostty's and umbriel's job, and building either would work against the grain.",
+  "body": "Three shapes: (1) an attached TUI — persistent sidebar, spaces/tabs, preview pane, keys to attach/kill/label, needing layout and focus decisions; (2) a summon-picker — one keystroke from the WM or shell, fuzzy list annotated like the elisp's completing-read, Enter attaches and exits; (3) a read-only status line or notification feed on top of (2). Most of zmux's cost sits here.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "status": "closed",
+  "title": "What is the human surface?",
+  "type": "question"
+}

@@ -1,0 +1,13 @@
+{
+  "smut_id": "q-fidelity",
+  "answer": "All three, in this order of value: a model of the work (projects, roles, state), the capability surface (labels, wait, tail, history, ended/exit_code), and honest rendering (VT preview). Rendering alone is the brutalist CLI we already have.",
+  "body": "'Pissweak fidelity' needs a referent. (a) To zmx's capability surface: a thin wrapper ignores labels, wait, tail, history, print-env. (b) To a model of the work: projects, groups, roles, session state, readiness. (c) To the terminal itself: truthful VT scrollback rendering. The three lead to different products; naming the referent is the first real decision.",
+  "part-of": [
+    {
+      "smut_id": "s-zmux"
+    }
+  ],
+  "status": "closed",
+  "title": "Fidelity to what?",
+  "type": "question"
+}
