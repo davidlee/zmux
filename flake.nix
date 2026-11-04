@@ -134,20 +134,6 @@
         # Interactive jails (`jailed-claude`, ...): the cwd at
         # /workspace/deck_of_dwarf, a persisted home, network on, SSH push
         # blocked.
-        #
-        # Doctrine records `current_exe()` in what it writes (.codex/hooks.json
-        # here), so the jail presents the host's install at the host's path, not
-        # the lib's /run/doctrine-bin; otherwise a `doctrine install` in a jail
-        # rewrites the recorded binary. A directory bind, not the file: `cargo
-        # install` renames a new binary over the old inode. `$HOME` is quoted so
-        # the launching shell expands it. As malebolge and panopticon; belongs
-        # upstream in the agents lib's hostDoctrineOptions.
-        doctrineDir = "\"$HOME/.local/share/doctrine/bin\"";
-        doctrineOptions = with jailLib.combinators; [
-          (try-ro-bind (noescape "~/.local/share/doctrine/bin") (noescape doctrineDir))
-          (add-path doctrineDir)
-        ];
-
         # smutPath = "\"$HOME/.cargo/bin/smut\"";
         # smutOptions = with jailLib.combinators; [
         #   (try-ro-bind (noescape "~/.cargo/bin/smut") (noescape smutPath))
@@ -164,8 +150,7 @@
             # (try-fwd-env "DOCKER_HOST")
             # (try-readwrite "/path/to/docker.sock")
             # (set-env "CGO_ENABLED" "0")
-          ])
-          ++ doctrineOptions;
+          ]);
 
         # Every jail reaches models through the local LLM gateway with the shared
         # `pi` key (~/.config/llm-gateway/keys/pi); no provider key enters a jail.
