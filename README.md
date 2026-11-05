@@ -1,19 +1,62 @@
 # zmux
 
-A [zmx] with opinions.
+A [zmx] with opinions:
+- sessions survive a window manager restart
+- conventions & automation for naming, creation
+- coding harness integration (pi, so far)
+- picker, shell & emacs integration
+- Nix-first
+- systemd scopes for persistence without a daemon
+- don't need a multiplexer, have emacs and a tiling wm.
 
-A shell wrapper installed by overlay **as `zmx`**, so every caller inherits one
-convention without knowing it: a `<project>.<id>` name becomes `project` and
+kind of an ultra-minimalist, unix-centric diy herdr.
+
+---
+
+## the parts
+
+### zmx
+
+[neurosnap/zmx](https://zmx.sh/) - the platonic ideal of a terminal multiplexer,
+perfected by removing everything except session persistence.
+
+### the wrapper
+
+A shell wrapper installed by Nix overlay **as `zmx`**. Every caller inherits
+its conventions: a `<project>.<id>` name becomes `project` and
 `id` labels when the wrapper creates the session, the session is born in its
 own systemd scope, and `zmx run` brackets its dispatch with
-`state=working` then `state=done|failed`. Every other verb, and every alias,
+`state=working` then `state=done|failed`. Every other verb and alias
 is the real zmx byte for byte.
 
-No daemon, no store, no TUI, no picker. zp is the picker, [`zx`](#integrations) the
-launcher, pi-zmx the agent surface, gum/fzf the composition, umbriel and ghostty the windows, notify-send
-the attention, systemd the durability.
+### the picker
+
+[zp](https://github.com/EarthmanMuons/zmx-picker), an [fzf](https://github.com/junegunn/fzf) picker for zmx.
+
+### the launcher
+
+[`zx`](#integrations) is a thin wrapper, which resembles zp.
+
+### the notifications
+
+left to the harnesses themselves; todo, maybe, extra notifications for `blocked` sessions.
+
+### the tiling
+
+[umbriel](https://github.com/noctalia-dev/umbriel) is a much nicer window manager than tmux.
+
+### emacs
+
+[emacs-config](https://github.com/davidlee/emacs-config/blob/main/apps/dl-zmx.el)
+wraps [ghostel](https://github.com/dakra/ghostel) and offers some conveniences
+for the other tiling window manager.
 
 ## opinions
+
+- **Do less**. Remove everything inessential. Do what it does do well.
+- **Works for me**. In aid of the above, embeds some assumptions about my own setup.
+
+## design principles
 
 - **A session is named `<project>.<id>`.** The dot is what zmx's own examples
   use, and what its prefix matching suits: `zmx kill 'zmux.*'`.
@@ -34,6 +77,8 @@ the attention, systemd the durability.
   know. A stale label costs nothing.
 - **Attaching beats durability.** With no usable scope the session still starts,
   as bare zmx.
+
+---
 
 ## naming
 
