@@ -27,6 +27,7 @@
     overlay = final: prev: {
       zmx-unwrapped = prev.zmx;
       zmx = final.callPackage ./pkgs/zmx {zmx = final.zmx-unwrapped;};
+      zp = final.callPackage ./pkgs/zp {};
     };
   in
     flake-parts.lib.mkFlake {inherit inputs;} {
@@ -131,6 +132,14 @@
           done
           grep -q '^REAL_ZMX=.${pkgs.zmx-unwrapped}/bin/zmx.$' ${pkgs.zmx}/bin/zmx
           test "${pkgs.zmx.version}" = "${pkgs.zmx-unwrapped.version}"
+          touch "$out"
+        '';
+
+        # zp creates sessions by calling `zmx`, so it only inherits the convention
+        # if the `zmx` it finds is the wrapper.
+        zpUsesWrapper = pkgs.runCommand "zp-uses-wrapper" {} ''
+          ${pkgs.zp}/bin/zp --help > /dev/null
+          grep -qF '${pkgs.zmx}/bin' ${pkgs.zp}/bin/zp
           touch "$out"
         '';
 
@@ -256,6 +265,7 @@
           // {
             default = pkgs.zmx;
             zmx = pkgs.zmx;
+            zp = pkgs.zp;
 
             dev-tools = pkgs.buildEnv {
               name = "zmux-dev-tools";
@@ -270,6 +280,7 @@
           wrapper-tests = wrapperTests;
           wrapper-lint = wrapperLint;
           wrapper-parity = wrapperParity;
+          zp-uses-wrapper = zpUsesWrapper;
         };
 
         devshells.default = {
