@@ -10,6 +10,7 @@
     "~/.pi/agent/settings.json",
     "~/agent_home/.pi/agent/settings.json"
   ],
+  "notes": "2026-11-06: tracked as doctrine IMP-001, which holds the evidence. Host home installed and pinned at 0.1.1; load and dotted-session checks pass. Measured harm from TERM, so the wrapper needs a change. Not done: the jail home, pending how zmx reaches jails.",
   "part-of": [
     {
       "smut_id": "plan-v0-1"
@@ -27,7 +28,7 @@
     }
   ],
   "seq": 9,
-  "status": "open",
+  "status": "started",
   "title": "Install pi-zmx in both homes",
   "type": "task"
 }
