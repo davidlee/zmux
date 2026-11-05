@@ -1,0 +1,19 @@
+{
+  "smut_id": "d-picker-jobs",
+  "body": "Operator, 2026-11-06. A picker does two jobs, and they have different sources.\n\nNAVIGATE EXISTING SESSIONS: zp, from zmx session metadata. zp already builds its rows from `zmx list`: name, clients, live cwd, labels. With no ZP_ROOT it shows only sessions, and ctrl-n still creates one from a typed name.\n\nSTART A NEW SESSION IN A PROJECT: a small launcher of our own, fed by a generic active-projects function. Dynamic in preference to a list; if a list is ever maintained, it must be one list for the system.\n\nWHAT A PROJECT IS: a directory holding .git or .project. .project is shared with project.el: ~/.config/emacs/editing/dl-project.el sets it in project-vc-extra-root-markers, and ~/flakes/.project exists. That is how ~/flakes qualifies, since its .git is at $HOME. $HOME itself is never a project.\n\nWHY NOT ZP_ROOT\nzp scans each root to any depth, with hidden and ignored paths included, and has no depth or exclude option. ~/dev alone gave 346 hits. Glob-derived roots listing only top-level repos still gave 216 rows for 37 projects, since a root that is a repo is scanned too. A missing root is a hard exit 1. Fixing either means forking zp, which d-v01-scope rules out.\n\nWHY ZOXIDE\nMeasured 2026-11-06. Four partial lists exist: the ~/dev glob (37 repos), Emacs' project list (36, with /tmp entries), zoxide (48 after filtering), quotient's policy roots (17, a permissions list). zoxide is the only one that is dynamic, shell-readable and reaches outside ~/dev. It is frecency-ordered. A new clone appears after the first cd into it.\n\nThis supersedes tk-flakes-wire's original ZP_ROOT acceptance, and refines d-v01-scope's `zp as the picker`. Emacs keeps its own project list for now.",
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "d-v01-scope"
+    },
+    {
+      "smut_id": "e-zp-upstream"
+    }
+  ],
+  "title": "A picker's two jobs have two sources",
+  "type": "decision"
+}

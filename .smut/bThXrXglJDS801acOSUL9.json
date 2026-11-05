@@ -1,0 +1,30 @@
+{
+  "smut_id": "tk-project-launcher",
+  "acceptance": "A small launcher here, beside the wrapper: pick from active-projects with fzf, then `zmx attach <project>.<n>` from that directory, with the next free n. Dots in the project name fold to `_`, as zp does. Labels and the scope stay the wrapper's. README's integrations section describes it. Its name is the operator's to choose.",
+  "after": [
+    {
+      "smut_id": "tk-active-projects"
+    }
+  ],
+  "files": [
+    "pkgs/",
+    "README.md"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "d-picker-jobs"
+    },
+    {
+      "smut_id": "e-zp-upstream"
+    }
+  ],
+  "seq": 8.6,
+  "status": "open",
+  "title": "Start a session in an active project",
+  "type": "task"
+}

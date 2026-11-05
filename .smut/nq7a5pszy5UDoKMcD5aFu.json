@@ -1,17 +1,19 @@
 {
   "smut_id": "tk-flakes-wire",
-  "acceptance": "zmux is an input following nixpkgs-home, as panopticon does. The overlay reaches system and home evaluations. zp joins the terminal feature, with ZP_ROOT set so it can start sessions from repos. Tracked under that repo's doctrine conventions. The private repo must be fetchable by those evaluations.",
+  "acceptance": "zmux is an input following nixpkgs-home, as panopticon does, over git+ssh while the repo is private. The overlay reaches system and home evaluations, proved by a factory check. zp joins the terminal feature, without ZP_ROOT. Tracked under that repo's doctrine conventions. The private repo must be fetchable by those evaluations, root's included.",
   "after": [
     {
       "smut_id": "tk-release"
     }
   ],
+  "body": "HANDOFF to a ~/flakes agent. Operator-directed, 2026-11-06. ~/flakes' own conventions govern how this lands: read its CLAUDE.md and doctrine boot first. The operator expects a backlog item with an agreed sketch rather than a slice, but that call is theirs and that repo's. zmux needs nothing changed for this task: v0.1.0 is tagged and pushed.\n\nCHANGES\n- flake.nix: add input zmux, url git+ssh://git@github.com/davidlee/zmux?ref=refs/tags/v0.1.0, inputs.nixpkgs.follows = \"nixpkgs-home\". Its only inputs are nixpkgs, flake-parts and devshell; it no longer carries agents or quotient, so panopticon's agents.follows does not apply.\n- hosts.nix: add inputs.zmux.overlays.default to homeModule's nixpkgs.overlays (every home, darwin included) and to the system evaluations through platformModule (NixOS and darwin). hosts/Sleipnir/config.nix also sets nixpkgs.overlays, so check the two merge.\n- hosts.nix factoryChecks: test first. Add a check that fails unless pkgs.zmx is the wrapper in a home and in a system evaluation; pkgs ? zmx-unwrapped is a sufficient probe.\n- features/terminal.nix, `utils` feature: add zp beside zmx. Do NOT set ZP_ROOT: see d-picker-jobs.\n\nNO CHANGE NEEDED\nThe zmx lines in features/terminal.nix and features/editor/emacs.nix already name pkgs.zmx, so the overlay reaches them.\n\nFACTS\n- Why git+ssh: while the repo is private, github:davidlee/zmux answers 404 with the host's nix token. git+ssh and git+https built the tag, with store paths identical to the local tree. `fleet` is the precedent.\n- pkgs.zmx is the wrapper, pkgs.zmx-unwrapped the real binary, pkgs.zp the picker. On aarch64-darwin zp evaluates as available; it has not been built there.\n\nRISKS\n- UNTESTED: `just switch` evaluates as root under sudo, and whether that can fetch the git+ssh input. Expected to work, as fleet does. Acceptance depends on it. The operator can settle it with `just build`.\n- Switching changes what every new `zmx` call runs. Running sessions are unaffected. Activation is the operator's act.\n- Other sessions may be working in the tree, and the worktree is $HOME. Stage by explicit path.\n- flake.lock: the operator permits committing it whole, including the pending emacs-overlay bump.\n\nCOME BACK WITH\nThe commit, the evaluation evidence, and the result of the root fetch. Record status here.",
   "files": [
     "~/flakes/flake.nix",
+    "~/flakes/flake.lock",
     "~/flakes/hosts.nix",
-    "~/flakes/features/terminal.nix",
-    "~/flakes/features/editor/emacs.nix"
+    "~/flakes/features/terminal.nix"
   ],
+  "notes": "2026-11-05: while the repo is private the input must be git+ssh://git@github.com/davidlee/zmux?ref=refs/tags/v0.1.0. github: answers 404 with the host's nix token; git+ssh, git+https and a gh token all build the same store paths as the local tree. ",
   "part-of": [
     {
       "smut_id": "plan-v0-1"
@@ -20,6 +22,12 @@
   "refs": [
     {
       "smut_id": "d-homes"
+    },
+    {
+      "smut_id": "d-picker-jobs"
+    },
+    {
+      "smut_id": "tk-active-projects"
     }
   ],
   "seq": 8,

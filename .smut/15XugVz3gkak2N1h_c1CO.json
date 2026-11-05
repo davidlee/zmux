@@ -1,0 +1,24 @@
+{
+  "smut_id": "tk-active-projects",
+  "acceptance": "A generic command, not zmux-specific, prints active projects one path per line, in zoxide's frecency order. A project is a directory holding .git or .project, and never $HOME. Linked worktrees, ~/.config/emacs/elpa and /workspace are left out. ~/flakes is included. Absent directories are skipped. Silent and exit 0 with no zoxide database. It lives where the ~/flakes agent judges right, since other tools are expected to use it.",
+  "after": [
+    {
+      "smut_id": "tk-flakes-wire"
+    }
+  ],
+  "notes": "Offered to the ~/flakes agent with tk-flakes-wire, on the operator's say. The exclusions were seen in zoxide on Sleipnir, 2026-11-06. Whether .jj should also count is open: zp treats it as a marker, and the operator named .git and .project.",
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "d-picker-jobs"
+    }
+  ],
+  "seq": 8.3,
+  "status": "open",
+  "title": "List active projects from zoxide",
+  "type": "task"
+}
