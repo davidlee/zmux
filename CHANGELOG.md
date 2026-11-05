@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Changed
+
+- The vocabulary adds `role`, a display label for a purpose that emerges after the name
+  was chosen. It says the name is the address and labels describe the session, and that
+  `project` and `id` are the wrapper's meaning, not zmx's.
+
 ### Removed
 
 - The Emacs plugin and `DL_ZMX_ELISP`. The only copy is now `apps/dl-zmx.el` in the

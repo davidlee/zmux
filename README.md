@@ -48,7 +48,8 @@ zmux.tests            the name, passed to zmx unchanged
 
 A name holds one dot, and it is the separator. `project` is the unit of grouping. `id` is
 either a number (`zmux.1`, the next one up) or a word saying what the session is
-for (`zmux.tests`).
+for (`zmux.tests`). Use `id` for a purpose known at creation. A session can't be renamed,
+so a purpose that emerges later goes in a `role` label: `zmx set zmux.1 role=test-runner`.
 
 What the wrapper does with a name when it creates a session:
 

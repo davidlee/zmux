@@ -28,12 +28,14 @@ Deriving the labels from the name a caller gives:
 Refusal is a rule of creation. An existing session with such a name stays
 reachable, and the wrapper leaves it unlabelled.
 
-The caller's name is passed to zmx unchanged. Labels are derived from it; where
-the two disagree, the labels are the truth.
+The caller's name is passed to zmx unchanged, and labels are derived from it. The
+name is the address: every zmx verb selects a session by name, and none by label.
+Labels describe the session: where the two disagree, the labels are the truth for
+grouping and display.
 
 ## Labels
 
-Two required, one interpreted, everything else freeform.
+Two required, one interpreted, one for display, everything else freeform.
 
 | key       | written by                                        | values                                                  |
 | --------- | ------------------------------------------------- | ------------------------------------------------------- |
@@ -51,6 +53,9 @@ unlabelled session.
 The wrapper never relabels an existing session, so one created outside the
 convention stays ungrouped, and is displayed ungrouped. zmx itself allows `zmx
 set` at any time, so that is a rule of the wrapper, not a limit of zmx.
+
+These meanings are the wrapper's, not zmx's. `zmx set` accepts any value for either
+key, even `id=other.thing` on an undotted session, so a reader treats them as claims.
 
 ### state
 
@@ -76,9 +81,19 @@ label, and nothing watches.
 
 A stale state costs nothing: it is an advertisement, not a lock.
 
+### role
+
+One token saying what a session is for, for a purpose that emerges after the name was
+chosen. A session can't be renamed, so `docs.2` stays `docs.2`:
+
+    zmx set docs.2 role=test-runner
+
+Pickers show `role` if present. Nothing reasons about it, so it stays freeform. Use
+hyphens: `'role=test runner'` silently stores `role=test` (see [Tokens](#tokens)).
+
 ### freeform
 
-Any other key — `role`, `note`, `claim`, a tag board — is stored, displayed and
+Any other key — `note`, `claim`, a tag board — is stored, displayed and
 counted, never reasoned about. A new key costs nothing; a new *interpreted* key
 must earn a reader.
 
@@ -97,6 +112,9 @@ One fact, one home: never repeat `state` in the name, and never re-derive
 `project` from the name once the label exists.
 
 Labels live in memory for the session's lifetime. They vanish with the session.
+
+`zmx list` prints labels as tab-separated fields beside zmx's own. A filter must match
+whole fields: `grep id=3` also matches `pid=3…`.
 
 ## Trust
 
