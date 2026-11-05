@@ -9,8 +9,8 @@ own systemd scope, and `zmx run` brackets its dispatch with
 `state=working` then `state=done|failed`. Every other verb, and every alias,
 is the real zmx byte for byte.
 
-No daemon, no store, no TUI, no picker. zp is the picker, pi-zmx is the agent
-surface, gum/fzf the composition, umbriel and ghostty the windows, notify-send
+No daemon, no store, no TUI, no picker. zp is the picker, [`zx`](#integrations) the
+launcher, pi-zmx the agent surface, gum/fzf the composition, umbriel and ghostty the windows, notify-send
 the attention, systemd the durability.
 
 ## opinions
@@ -69,8 +69,6 @@ with `ZMX_RAW=1`, can still be reached, and stays unlabelled.
 
 ### who names sessions
 
-Task ids such as `tk-project-launcher` are tasks in `.smut/`; see [design](#design).
-
 | caller | name today | labels today | intended |
 | ------ | ---------- | ------------ | -------- |
 | zp, a repo row | `<repo>.<n>`: dots folded to `_`, `n` one above the highest in use | wrapper | no change. Repo rows need `ZP_ROOT` or path arguments, and the intended setup has neither, so this path is normally unused |
@@ -84,9 +82,10 @@ Task ids such as `tk-project-launcher` are tasks in `.smut/`; see [design](#desi
 
 ## status
 
-v0.1.2: the wrapper, its argv tests, the overlay and the zp package. See the [changelog](CHANGELOG.md). On an x86_64-linux host, a session has survived the death
-of its client in its own scope. Not yet checked: a real WM restart, an
-`emacs.service` restart, and aarch64-darwin.
+v0.1.2: the wrapper, its argv tests, the overlay and the zp package. See the
+[changelog](CHANGELOG.md), which lists what is unreleased. On an x86_64-linux host, sessions
+from zp, Emacs and pi have survived an `emacs.service` restart and a WM restart, and
+reattached. Not yet checked: aarch64-darwin.
 
 ## install
 
@@ -146,33 +145,46 @@ and behaviour tests need no host, so `nix flake check` runs them. There is no CI
 
 ## integrations
 
+zmux holds the wrapper, the zp package and the pi state extension. Everything else that
+touches it lives with the tool it belongs to, in the operator's config repos:
+[nix-config] (`~/flakes` is its `flakes/` directory) and [emacs-config].
+
+| integration | where it lives |
+| ----------- | -------------- |
+| the zmux input | [`flakes/flake.nix`][nix-flake] |
+| the overlay, applied | [`flakes/hosts.nix`][nix-hosts] |
+| zp, installed | [`flakes/features/terminal.nix`][nix-terminal] |
+| `zx`, `active-projects` | [`.config/zsh/functions.zsh`][zsh-functions] |
+| Emacs | [`apps/dl-zmx.el`][emacs-zmx] |
+| the wrapper in jails | `commonPkgs` in [`flakes/agents/jailed-agents.nix`][nix-jails] |
+| pi-zmx | [a fork][pi-zmx-fork] of [`@deevus/pi-zmx`][pi-zmx], pinned in pi's [host][pi-host] and [jail][pi-jail] `settings.json` |
+| `blocked` for pi | [`harness/pi/zmx-state.ts`](harness/pi/zmx-state.ts), here, pinned the same way |
+
 - **zp** is packaged here from upstream, unforked, as `pkgs.zp`. Under the overlay
   its `zmx` is the wrapper, so its sessions get a scope, and labels when their
   names are dotted. See [who names sessions](#who-names-sessions).
 - **`zx`** starts a session in an active project: pick one with fzf, and it attaches
-  `<project>.<n>` from that directory. It and `active-projects`, which lists zoxide's
-  project directories in frecency order, are zsh functions in the config repo, at
-  `~/.config/zsh/functions.zsh`, so only zsh can call them.
-- **pi-zmx** is a pi extension, not packaged here. The host and jail homes pin
-  [a fork][pi-zmx-fork] of [`@deevus/pi-zmx`][pi-zmx] by commit, in their pi
-  `settings.json`, because upstream reports a timed-out `zmx_run` as a success. It
-  loads on pi 1.4.0 and calls whichever `zmx` is on PATH. Its default session name
-  never holds a dot, so to get a labelled session an agent passes one in the tool's
-  `session` parameter. After a timeout the task runs on, and the wrapper records its
-  `state` when it ends.
-- **Emacs**: the plugin lives in the config repo, as `apps/dl-zmx.el`. It composes
-  the name and nothing else.
+  `<project>.<n>` from that directory. `active-projects` lists zoxide's project
+  directories in frecency order. Both are zsh functions, so only zsh can call them.
+- **pi-zmx** is a pi extension, not packaged here. The host and jail homes pin the fork
+  by commit because upstream reports a timed-out `zmx_run` as a success. It loads on
+  pi 1.4.0 and calls whichever `zmx` is on PATH. Its default session name never holds
+  a dot, so to get a labelled session an agent passes one in the tool's `session`
+  parameter. After a timeout the task runs on, and the wrapper records its `state`
+  when it ends.
+- **Emacs** composes the name and nothing else. Its terminals are numbered sessions.
 - **Jails** built by `~/flakes` all carry the wrapper, whatever the project's
   `dev-tools` holds. A jail's sessions die with the jail and have no scope. They are
   expected to be invisible to the host's zp, since a jail has its own socket directory.
-- **`blocked`** is written for pi by `harness/pi/zmx-state.ts`, a pi extension that
-  does not need pi-zmx. An interactive pi in a session advertises `blocked` at its
-  prompt and `working` when it resumes. Print, JSON and RPC pis leave the session
-  alone, since they inherit `ZMX_SESSION` with nobody behind them. Pin this repo by
-  commit in pi's `settings.json`. A dialog raised mid-run is not seen, and `blocked`
-  stays after pi quits. Claude's plugin comes later.
+- **`blocked`** for pi does not need pi-zmx. An interactive pi in a session advertises
+  `blocked` at its prompt and `working` when it resumes. Print, JSON and RPC pis leave
+  the session alone, since they inherit `ZMX_SESSION` with nobody behind them. To
+  install it, pin `git:github.com/davidlee/zmux@<commit>` in pi's `settings.json`. A
+  dialog raised mid-run is not seen, and `blocked` stays after pi quits. Claude's
+  plugin comes later.
 
-Window and notification integrations live in the config repo, not here.
+Windows and notifications have no integration yet. When they do, it belongs in
+nix-config, not here.
 
 ## vocabulary
 
@@ -200,6 +212,7 @@ No real zmx runs, and no systemd is used.
   substituted so the wrapper can never exec itself.
 - `pkgs/zp/default.nix` — the zp derivation.
 - `harness/` — state plugins, one per harness.
+- `package.json` — makes this repo a pi package, so a home can pin it.
 - `tests/` — the argv tests, their two stub binaries, and the pi extension's tests.
 - `VOCABULARY.md` — the contract.
 
@@ -223,3 +236,13 @@ smut r tk-flake-slim -i -s -l 3                                     # one task
 [zmx]: https://zmx.sh
 [pi-zmx]: https://github.com/deevus/pi-zmx
 [pi-zmx-fork]: https://github.com/davidlee/pi-zmx
+[nix-config]: https://github.com/davidlee/nix-config
+[nix-flake]: https://github.com/davidlee/nix-config/blob/main/flakes/flake.nix
+[nix-hosts]: https://github.com/davidlee/nix-config/blob/main/flakes/hosts.nix
+[pi-host]: https://github.com/davidlee/nix-config/blob/main/.pi/agent/settings.json
+[pi-jail]: https://github.com/davidlee/nix-config/blob/main/.local/share/jail.nix/home/agent/.pi/agent/settings.json
+[nix-terminal]: https://github.com/davidlee/nix-config/blob/main/flakes/features/terminal.nix
+[nix-jails]: https://github.com/davidlee/nix-config/blob/main/flakes/agents/jailed-agents.nix
+[zsh-functions]: https://github.com/davidlee/nix-config/blob/main/.config/zsh/functions.zsh
+[emacs-config]: https://github.com/davidlee/emacs-config
+[emacs-zmx]: https://github.com/davidlee/emacs-config/blob/main/apps/dl-zmx.el
