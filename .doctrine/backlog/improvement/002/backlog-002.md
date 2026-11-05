@@ -22,6 +22,5 @@ refusal in its buffer rather than a session. The copy on the host composes
 ## Done
 
 `apps/dl-zmx.el` in the Emacs config was edited in place, not replaced by this repo's
-copy, which had dropped the `my/zmx-switch` annotations and the filtering of ended
-sessions. Tests pass there. Not yet exercised from a live Emacs: that, and the
+copy, which had dropped the `my/zmx-switch` annotations. Tests pass there. Not yet exercised from a live Emacs: that, and the
 `emacs.service` restart, belong to `tk-host-checks`.

@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 4
+slug = "emacs-service-path"
+title = "emacs.service PATH reaches the wrapper and systemd-run"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = []
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum = "The running emacs.service PATH holds the wrapper as zmx and holds systemd-run, so the wrapper can supply the scope to terminals Emacs starts."
+provenance = "experiment"
+confidence = "medium"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "shapes"
+target = "IMP-002"

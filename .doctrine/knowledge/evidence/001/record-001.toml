@@ -1,0 +1,25 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 1
+slug = "zmx-ended-is-task-state"
+title = "zmx ended reports the last task, not the session"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = []
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum = "A session listed with ended and exit_code is alive: its pid runs and attaching gets an answering shell. The fields describe the last zmx run task. They vanish while a new task runs and return when it finishes. The session itself leaves the list when its shell or command exits, or on zmx kill."
+provenance = "experiment"
+confidence = "high"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
