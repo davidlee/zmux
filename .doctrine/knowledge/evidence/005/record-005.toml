@@ -1,0 +1,25 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 5
+slug = "refused-attach-closes-the-buffer"
+title = "A refused attach closes its ghostel buffer before the message can be read"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = []
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum = "With ghostel-kill-buffer-on-exit t, the default and the live value, a name the wrapper refuses closes its ghostel buffer within about 0.2s, so the refusal cannot be read. With nil, the buffer keeps the message."
+provenance = "experiment"
+confidence = "high"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

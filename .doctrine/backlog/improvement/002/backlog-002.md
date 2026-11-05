@@ -16,7 +16,8 @@ dots and unsafe characters. Delete `emacs/` and `DL_ZMX_ELISP` here, and `za` in
 
 The wrapper now refuses a name with more than one dot. Until this lands,
 `emacs/dl-zmx.el` does not fold, so a project such as `my.repo` gets the wrapper's
-refusal in its buffer rather than a session. The copy on the host composes
+refusal rather than a session, in a buffer that closes before it can be read (EVD-005).
+The copy on the host composes
 `<project>-<id>`, so it is not affected.
 
 ## Done
