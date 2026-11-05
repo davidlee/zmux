@@ -1,6 +1,6 @@
 {
   "smut_id": "q-licence",
-  "answer": "Operator, 2026-11-05: assume MIT. The repo stays private for now; going public is a later act and .smut/ goes with it.",
+  "answer": "Operator, 2026-11-05: assume MIT. The repo stays private for now; going public is a later act and .smut/ goes with it. Made public by the operator, 2026-11-06.",
   "body": "Operator, 2026-11-05: private for now, probably public later, .smut/ included. Licence undecided. A private GitHub repo is still needed for the ~/flakes input and the README's install URL.",
   "part-of": [
     {
