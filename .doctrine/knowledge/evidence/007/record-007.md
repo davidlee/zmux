@@ -25,3 +25,14 @@ prompt. In an Emacs terminal, with `nu` inside zmx, `default-directory` followed
 shell integration worked. Scrollback in the buffer was barely exercised, since these
 sessions held little output: the operator counts it as passing from general use of zmx.
 
+## Detach and reattach in Emacs
+
+Operator's check on Sleipnir, 2026-11-06. The first attempt failed: `C-c m t` stopped at
+`Ghostel: directory kitty-shell-cwd://Sleipnir/home/david/dev/zmux/ does not exist`, because
+`dl-zmx--session-dir` only understood `file://`. Ghostel's zsh and bash integrations report
+`kitty-shell-cwd://`. Fixed in `apps/dl-zmx.el` in the Emacs config, with a test.
+
+After the fix, the operator reported a pass on a zsh session started with `C-c m T`: after
+`cd /tmp`, killing the buffer detached and `C-c m t` reattached to the same session in
+`/tmp`, and `seq 1 5000` output survived the reattach in scrollback. How far back
+scrollback reaches was not reported.
