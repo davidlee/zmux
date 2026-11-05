@@ -41,10 +41,12 @@ EVD-006 holds the probes against real pi and zmx. `tests/zmx-state.test.ts` cove
 behaviour against a fake pi, in `just test` and in the `harness-tests` flake check.
 `nodejs` joined `dev-tools` for that, so the forms need `just forms`.
 
-## Remaining
+## Outcome, 2026-11-06
 
-1. Commit and push, which the operator asks for.
-2. Pin `git:github.com/davidlee/zmux@<commit>` in `~/.pi/agent/settings.json` and
-   `~/agent_home/.pi/agent/settings.json`. Until then no pi loads this.
-3. `just forms`, then the `quotient allow` lines.
+Both homes pin `git:github.com/davidlee/zmux@188fcfc`. A real TUI pi in a scratch session
+reached `state=blocked` through each pin, with every other extension loaded. The jail home
+was exercised on the host with `PI_CODING_AGENT_DIR`, not from inside a jail.
+
+Left for the operator: `quotient allow` for the relinked forms. Until then, quotient calls
+at this directory are refused with `form-unapproved`.
 
