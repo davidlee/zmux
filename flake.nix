@@ -96,24 +96,41 @@
           ];
         };
 
-        wrapperTests = pkgs.runCommand "zmx-wrapper-tests" {
-          nativeBuildInputs = with pkgs; [
-            bash
-            coreutils
-            findutils
-            diffutils
-            gnused
-          ];
-        } ''
-          cp -r ${wrapperSrc} source
-          bash source/tests/run-tests.sh > "$out"
-        '';
+        wrapperTests =
+          pkgs.runCommand "zmx-wrapper-tests" {
+            nativeBuildInputs = with pkgs; [
+              bash
+              coreutils
+              findutils
+              diffutils
+              gnused
+            ];
+          } ''
+            cp -r ${wrapperSrc} source
+            bash source/tests/run-tests.sh > "$out"
+          '';
 
-        wrapperLint = pkgs.runCommand "zmx-wrapper-lint" {
-          nativeBuildInputs = [pkgs.shellcheck];
-        } ''
-          shellcheck ${./pkgs/zmx/wrapper.sh} ${./tests/run-tests.sh} \
-            ${./tests/stubs/zmx} ${./tests/stubs/systemd-run}
+        wrapperLint =
+          pkgs.runCommand "zmx-wrapper-lint" {
+            nativeBuildInputs = [pkgs.shellcheck];
+          } ''
+            shellcheck ${./pkgs/zmx/wrapper.sh} ${./tests/run-tests.sh} \
+              ${./tests/stubs/zmx} ${./tests/stubs/systemd-run}
+            touch "$out"
+          '';
+
+        # Shadowing must cost a caller nothing but the rewrites: whatever the
+        # unwrapped package ships, the wrapper ships too.
+        wrapperParity = pkgs.runCommand "zmx-wrapper-parity" {} ''
+          cd ${pkgs.zmx-unwrapped}
+          find share -type f,l | while read -r file; do
+            test -e "${pkgs.zmx}/$file" || {
+              echo "missing from the wrapper: $file" >&2
+              exit 1
+            }
+          done
+          grep -q '^REAL_ZMX=.${pkgs.zmx-unwrapped}/bin/zmx.$' ${pkgs.zmx}/bin/zmx
+          test "${pkgs.zmx.version}" = "${pkgs.zmx-unwrapped.version}"
           touch "$out"
         '';
 
@@ -142,15 +159,14 @@
         # bwrap starts with a clean env. Forward / set what agents need.
         # Combinators: set-env, fwd-env (error if unset), try-fwd-env (skip if unset),
         # try-readwrite (bind a host path rw if it exists).
-        jailEnvOptions =
-          lib.optionals isLinux (with jailLib.combinators; [
-            # pulse # opt-in host audio; uses $XDG_RUNTIME_DIR
-            # (try-readonly "/path/on-this-host/notification.wav")
-            # (try-fwd-env "DATABASE_URL")
-            # (try-fwd-env "DOCKER_HOST")
-            # (try-readwrite "/path/to/docker.sock")
-            # (set-env "CGO_ENABLED" "0")
-          ]);
+        jailEnvOptions = lib.optionals isLinux (with jailLib.combinators; [
+          # pulse # opt-in host audio; uses $XDG_RUNTIME_DIR
+          # (try-readonly "/path/on-this-host/notification.wav")
+          # (try-fwd-env "DATABASE_URL")
+          # (try-fwd-env "DOCKER_HOST")
+          # (try-readwrite "/path/to/docker.sock")
+          # (set-env "CGO_ENABLED" "0")
+        ]);
 
         # Every jail reaches models through the local LLM gateway with the shared
         # `pi` key (~/.config/llm-gateway/keys/pi); no provider key enters a jail.
@@ -253,6 +269,7 @@
           zmx = pkgs.zmx;
           wrapper-tests = wrapperTests;
           wrapper-lint = wrapperLint;
+          wrapper-parity = wrapperParity;
         };
 
         devshells.default = {
