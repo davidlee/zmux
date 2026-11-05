@@ -1,0 +1,47 @@
+memory_uid = "mem_01a1adfbf29275a09498c979be8de6df"
+memory_key = "mem.pattern.zmux.zmx-cli-traps"
+schema_version = 1
+lifespan = "procedural"
+memory_type = "pattern"
+status = "active"
+title = "zmx CLI traps"
+summary = "How zmx's own CLI misleads a wrapper author or a prober"
+created = "2026-11-05"
+updated = "2026-11-05"
+
+[scope]
+paths = []
+globs = ["pkgs/zmx/**", "tests/**", "harness/**"]
+commands = ["zmx"]
+tags = []
+workspace = "default"
+repo = "github.com/davidlee/zmux"
+repo_id_kind = "remote"
+repo_id_confidence = "high"
+
+[git]
+anchor_kind = "checkout_state"
+commit = ""
+tree = "36f9a0e5d85acd3c76ecfc3dd946859a08cad1fa"
+ref_name = "refs/heads/main"
+checkout_state_id = "9a53ffdcf3a72df0e2d19187acfd8eba0795edf6e0250f60ebb43708eb6f5d86"
+base_commit = "db5678ddae2c8923868759912c68766a1efa2192"
+verified_sha = ""
+normalizer = "forget.checkout.v1"
+
+[review]
+verification_state = "unverified"
+reviewed = ""
+review_by = ""
+
+[trust]
+trust_level = "high"
+
+[ranking]
+severity = "medium"
+weight = 0
+
+[[source]]
+kind = "record"
+ref = "EVD-010"
+

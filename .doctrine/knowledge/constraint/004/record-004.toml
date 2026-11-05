@@ -1,0 +1,28 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 4
+slug = "jail-cannot-prove-survival"
+title = "An agent jail cannot prove survival"
+record_kind = "constraint"
+status = "active"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:c-devjail"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+statement = "A session started in an agent jail dies with the jail and has no scope, so survival is a manual host check and never a CI assertion. Tests assert argv against stubs."
+source = "technical"
+applies_to = ["tests", "wrapper"]
+waiver_reason = ""
+waived_by     = ""
+waived_on     = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

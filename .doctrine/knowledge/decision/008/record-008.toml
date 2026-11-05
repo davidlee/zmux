@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 8
+slug = "integration-blind-core"
+title = "Integration-blind core, integrations elsewhere"
+record_kind = "decision"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:d-surfaces"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+context = "zmux has to work from elisp and bash and agent harnesses without a binding, and the naming convention must not drift between them."
+choice = "The wrapper knows no integration by name. Its contract is argv and lines, and its launcher is data. Each integration lives with the tool it belongs to."
+alternatives = []
+rationale = "The convention lives in one place, so a plugin or picker can't drift from it."
+consequences = ["Windows and notifications belong in nix-config if they ever exist", "The launcher is an argv prefix set by ZMX_LAUNCHER"]
+decided_by = "design rounds 1-9; not attributed per decision"
+decided_on   = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

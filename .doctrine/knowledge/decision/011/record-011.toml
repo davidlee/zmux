@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 11
+slug = "each-piece-lives-where-used"
+title = "Each piece lives where it is used"
+record_kind = "decision"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:d-homes", "smut:d-v01-scope"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+context = "An early plan shipped the Emacs plugin from this repo while DEC-008 placed it in the config. zp and pi-zmx were claims until they were installed."
+choice = "This repo holds the wrapper and its tests and VOCABULARY.md and the overlay and the zp derivation and harness plugins. ~/flakes applies the overlay. ~/.config/emacs holds the only dl-zmx.el. The zsh config holds zx and active-projects."
+alternatives = []
+rationale = "Each piece sits with the tool it belongs to. zp and pi-zmx are half the point so they ship as part of the kit, and neither is forked to conform."
+consequences = ["Consumers track main and not tags", "~/flakes/agents holds the zmux pin and the root flake follows it", "za is deleted since it would nest a second scope"]
+decided_by = "operator"
+decided_on = "2026-11-05"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

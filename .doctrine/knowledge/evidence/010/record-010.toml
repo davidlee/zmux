@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 10
+slug = "zmx-probes-behind-the-wrapper"
+title = "zmx's label and creation behaviour that shaped the wrapper"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:e-wrapper-probes"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum = "A --labels value is one argv element, a repeat replaces rather than adds, and attach --labels upserts onto an existing session. zmx run creates a session, takes no labels and prints its own chatter. zmx ls --short is the existence test that doesn't touch the session."
+provenance = "experiment"
+confidence = "high"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "supports"
+target = "DEC-005"

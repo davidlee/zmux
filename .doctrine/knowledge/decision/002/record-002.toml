@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 2
+slug = "name-form"
+title = "Name sessions <project>.<id>, with one dot"
+record_kind = "decision"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:d-name-form"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+context = "The dot is the community separator: zmx's own example is d.term, zp creates <repo>.<n>, and zmx's prefix matching is written 'zmux.*'."
+choice = "A name is <project>.<id>. A name with no dot gets no labels. A second dot or an empty part is refused at creation, exit 2. A caller whose project holds a dot folds it to _ first. Case is kept."
+alternatives = ["<project>-<id>", "Fold extra dots to - (the rule shipped until 0.1.2)"]
+rationale = "One dot makes the split unambiguous for a human reading zmx ls, and aligns zmx kill 'zmux.*' with zp's sessions. Refusal beats folding because a second dot leaves the project ambiguous and naming is the caller's job."
+consequences = ["An existing session with a refused name stays reachable and unlabelled", "zp and Emacs and zx each fold dots before composing a name"]
+decided_by = "design rounds 1-9; not attributed per decision"
+decided_on   = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

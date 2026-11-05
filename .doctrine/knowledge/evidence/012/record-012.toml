@@ -1,0 +1,25 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 12
+slug = "zmx-affordances"
+title = "What zmx can already do"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:e-zmx-affordances", "smut:e-zmx-logs"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum = "zmx already provides namespacing through ZMX_DIR, prefix addressing, multi-client sessions with a leader, screen restore, OSC 7 cwd tracking, per-session logs, styled history snapshots and permission-bit sharing."
+provenance = "inspection"
+confidence = "medium"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

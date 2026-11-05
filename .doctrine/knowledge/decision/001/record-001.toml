@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 1
+slug = "labels-are-truth"
+title = "A session's name is its address; its labels are the truth"
+record_kind = "decision"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:d-naming"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+context = "Every zmx verb selects a session by name, but sanitising is lossy, so a name can't be parsed back into project and id in general."
+choice = "project and id are labels, written once at creation. The name stays the address. Where the two disagree, the labels are the truth for grouping and display. A session with no labels is shown ungrouped, never guessed into a project."
+alternatives = ["Parse project and id from the name on every read"]
+rationale = "Ungrouped and honest beats grouped and wrong. A reader guessing from a name invents facts."
+consequences = ["Readers never re-derive project from a name once the label exists", "A session created outside the wrapper stays ungrouped", "Creation is one code path rather than a convention people retype"]
+decided_by = "design rounds 1-9; not attributed per decision"
+decided_on   = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

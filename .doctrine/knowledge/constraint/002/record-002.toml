@@ -1,0 +1,28 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 2
+slug = "what-a-wrapper-cannot-decide"
+title = "What a wrapped zmx cannot decide"
+record_kind = "constraint"
+status = "active"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:c-wrapper-limits"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+statement = "The wrapper sees only calls made through it, before zmx acts. It can't label what it didn't create, see ZMX_SESSION_PREFIX, make durability a precondition for attaching, or infer blocked."
+source = "technical"
+applies_to = ["wrapper"]
+waiver_reason = ""
+waived_by     = ""
+waived_on     = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

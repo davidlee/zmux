@@ -1,0 +1,33 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 10
+slug = "picker-jobs-two-sources"
+title = "A picker's two jobs have two sources"
+record_kind = "decision"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:d-picker-jobs"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+context = "Navigating sessions and starting one in a project need different data. zp's ZP_ROOT scan was tried for the second and failed."
+choice = "zp navigates existing sessions from zmx session metadata. zx starts a session in a project chosen from active-projects which reads zoxide. Emacs keeps its own project list for now."
+alternatives = ["ZP_ROOT", "~/dev glob", "Emacs' project list", "quotient's policy roots"]
+rationale = "zoxide is the only source that is dynamic and shell-readable and reaches outside ~/dev. It is frecency-ordered. A new clone appears after the first cd into it."
+consequences = ["If a list is ever maintained it must be one list for the system", "zx and active-projects live in the zsh config and only zsh can call them"]
+decided_by = "operator"
+decided_on = "2026-11-06"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "shapes"
+target = "IDE-002"

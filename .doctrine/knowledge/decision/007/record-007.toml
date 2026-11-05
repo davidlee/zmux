@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 7
+slug = "keep-binary-as-zmx-unwrapped"
+title = "Shadow zmx and keep the binary as zmx-unwrapped"
+record_kind = "decision"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:d-shadow-names"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+context = "Once the overlay installs the wrapper as zmx, ${pkgs.zmx} is the wrapper, so the raw binary needs another name."
+choice = "pkgs.zmx is the wrapper and pkgs.zmx-unwrapped is the binary: prev.zmx unforked and upgradeable."
+alternatives = []
+rationale = "zmx-unwrapped is the nixpkgs name for a shadowed package."
+consequences = ["Escape hatches are ${pkgs.zmx-unwrapped}/bin/zmx and ZMX_RAW=1 and ZMX_LAUNCHER"]
+decided_by = "design rounds 1-9; not attributed per decision"
+decided_on   = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

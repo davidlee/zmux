@@ -1,0 +1,28 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 5
+slug = "operator-json-intolerant"
+title = "The operator is JSON-intolerant"
+record_kind = "constraint"
+status = "active"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:c-json-intolerant"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+statement = "JSON is acceptable as a machine encoding behind a flag and unacceptable as the human default. Default output is line-oriented, greppable and in a stable field order, with diagnostics on stderr. Anything interactive completes names, never ids."
+source = "operator"
+applies_to = ["human-facing output"]
+waiver_reason = ""
+waived_by     = ""
+waived_on     = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 5
+slug = "ship-a-wrapped-zmx"
+title = "Ship a wrapped zmx, not patches and not a new binary"
+record_kind = "decision"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:d-wrapper"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+context = "zmux first planned a Rust binary, then vendoring and patching zp and pi-zmx. On NixOS a wrapper can be the package itself."
+choice = "A shell script is the zmx package. It rewrites attach and run, and passes every other verb through byte for byte. There is no zmux verb."
+alternatives = ["A new zmux binary (a Rust crate existed and was deleted)", "Vendor and patch zp and pi-zmx"]
+rationale = "Every caller inherits naming and labels and durable birth and state just by calling zmx. The change is declarative and visible in the derivation and reverts in one line."
+consequences = ["The wrapper addresses the real binary by absolute path so it can't re-enter itself", "Only dotted names get labels", "blocked can't be derived here"]
+decided_by = "design rounds 1-9; not attributed per decision"
+decided_on   = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

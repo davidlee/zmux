@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 6
+slug = "shadow-zmx-by-overlay"
+title = "Shadow zmx by overlay, for the sake of the integrations"
+record_kind = "decision"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:d-install"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+context = "The integrations are the point, and zp and pi-zmx and Emacs and zsh all call zmx directly."
+choice = "The wrapper is installed as zmx through a nixpkgs overlay, so everything that calls zmx conforms without knowing. Two escape hatches are mandatory: the raw binary and a per-invocation switch."
+alternatives = ["An explicit second command"]
+rationale = "A second command would need every caller changed. Without its escape hatches shadowing would be a trap rather than a convention."
+consequences = ["Whatever the unwrapped package ships the wrapper ships too (checked by wrapper-parity)", "An idle session can read done: accepted rather than sniffing commands"]
+decided_by = "design rounds 1-9; not attributed per decision"
+decided_on   = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

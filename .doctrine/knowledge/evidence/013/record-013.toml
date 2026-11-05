@@ -1,0 +1,33 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 13
+slug = "wrapper-on-a-real-host"
+title = "The wrapper on a real host"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:e-host-probes"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum = "On a host with user systemd, a client's SIGKILL left its session alive in its own scope, and the launcher probe costs about 5ms. A stale DBUS_SESSION_BUS_ADDRESS did not stop systemd-run --user, and an unusable XDG_RUNTIME_DIR did."
+provenance = "experiment"
+confidence = "medium"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "supports"
+target = "DEC-005"
+
+[[relation]]
+label = "supports"
+target = "CON-001"

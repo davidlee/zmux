@@ -1,0 +1,41 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 9
+slug = "harness-state-plugins"
+title = "Each harness gets a tiny state plugin of its own"
+record_kind = "decision"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:d-harness-state"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+context = "Only the harness knows it is asking a human, so blocked can't come from the wrapper."
+choice = "blocked is written by a small harness-specific plugin or extension or hook. It runs in the harness and when ZMX_SESSION is set writes that session's state as the harness waits on a human and resumes. It does not depend on pi-zmx."
+alternatives = []
+rationale = "This fits DEC-004: the writer is the party that knows. Each plugin stays tiny, so nothing needs forking."
+consequences = ["pi came first: harness/pi/zmx-state.ts", "Claude's plugin is expected to break regularly and carries no weight in the design"]
+decided_by = "operator"
+decided_on = "2026-11-05"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "shapes"
+target = "IMP-005"
+
+[[relation]]
+label = "shapes"
+target = "IMP-006"
+
+[[relation]]
+label = "shapes"
+target = "ISS-001"

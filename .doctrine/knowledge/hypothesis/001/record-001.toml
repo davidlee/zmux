@@ -1,0 +1,24 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 1
+slug = "state-is-the-whole-status-channel"
+title = "state= is the whole status channel"
+record_kind = "hypothesis"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:h-status-label"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+proposition = "One label, written cheaply by each harness, is all the status channel zmux needs."
+predicts = "Each harness can keep state fresh with a tiny plugin, and a stale value stays tolerable with no timestamps."
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

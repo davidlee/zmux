@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 3
+slug = "label-vocabulary"
+title = "Vocabulary: two required keys, one interpreted, the rest freeform"
+record_kind = "decision"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:d-vocab"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+context = "zmx labels are free-form, so any meaning is the caller's. zmux needs the fewest keys that make sessions legible."
+choice = "project and id are required and written together at creation. state is the only interpreted key. role is display-only. Every other key is stored and shown and never reasoned about."
+alternatives = ["A status protocol of our own"]
+rationale = "A freeform key costs nothing. A new interpreted key must earn a reader."
+consequences = ["One fact has one home: state never repeats in the name", "Absent state means unknown and never idle", "Prose goes in session history since labels are single tokens"]
+decided_by = "design rounds 1-9; not attributed per decision"
+decided_on   = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

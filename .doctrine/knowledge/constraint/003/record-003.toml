@@ -1,0 +1,28 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 3
+slug = "integrations-are-on-the-host"
+title = "Every integration point is on the host, not in the jail"
+record_kind = "constraint"
+status = "active"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:c-host-only"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+statement = "Host integrations can't be exercised from an agent jail. Each must be an out-of-process command, and the wrapper must degrade to plain zmx when a launcher or notifier is absent rather than fail the primary verb."
+source = "technical"
+applies_to = ["wrapper", "integrations"]
+waiver_reason = ""
+waived_by     = ""
+waived_on     = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 9
+slug = "labels-are-unowned-tokens"
+title = "Labels are single tokens with no owner or timestamp"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:e-labels-tokens"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum = "zmx labels accept only [a-zA-Z0-9._-]. A space inside a value silently truncates it, k= deletes the key, and nothing records who wrote a label or when."
+provenance = "experiment"
+confidence = "high"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "supports"
+target = "DEC-003"

@@ -1,0 +1,33 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 8
+slug = "osc-7501-does-not-survive-zmx"
+title = "OSC 7501 leaves no trace in zmx history"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:e-status-channel"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum = "A program printing herdr's OSC 7501 status sequence leaves no trace in zmx history or zmx history --vt, while plain text printed after it remains."
+provenance = "experiment"
+confidence = "high"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "supports"
+target = "DEC-003"
+
+[[relation]]
+label = "supports"
+target = "DEC-012"

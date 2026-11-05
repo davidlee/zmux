@@ -1,0 +1,33 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 4
+slug = "dispatcher-writes-state"
+title = "The dispatcher writes state; zmx's own fields are the fact"
+record_kind = "decision"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:d-state-writer"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+context = "An observer writing state is a daemon with an opinion, but a dispatcher knows when it hands work over and when that work returns."
+choice = "state is intent; zmx's ended and exit_code are fact. The wrapper brackets zmx run with working then done or failed. The harness writes blocked. A human arriving may clear blocked. Nothing watches."
+alternatives = ["Only the session's own program writes state", "A watcher infers state"]
+rationale = "Each writer writes only what it knows. A stale claim costs nothing, because it is an advertisement and the reader shows it beside the fact."
+consequences = ["A reader believes neither state nor ended alone", "A detached dispatch stays working", "blocked is never inferred"]
+decided_by = "design rounds 1-9; not attributed per decision"
+decided_on   = ""
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "shapes"
+target = "ISS-001"
