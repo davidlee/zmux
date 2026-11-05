@@ -35,14 +35,18 @@ Two required, one interpreted, everything else freeform.
 | --------- | ------------------------------------------------- | ------------------------------------------------------- |
 | `project` | the dispatcher, once, at creation                 | the first name part, sanitised                          |
 | `id`      | the dispatcher, once, at creation                 | the second name part, sanitised                         |
-| `state`   | the dispatcher, around a dispatch                 | `working`, `done`, `failed`, `blocked`; absent = unknown |
+| `state`   | the dispatcher, or the harness for `blocked`      | `working`, `done`, `failed`, `blocked`; absent = unknown |
 
 ### project, id
 
-Written together on the one `zmx attach` call that creates the session. Labels
-are create-time only, so there is no later repair: a session created outside the
-convention stays ungrouped forever, and is displayed ungrouped. An existing
-session is never relabelled.
+Written together, only when the wrapper creates the session. `zmx attach` writes
+them atomically with `--labels`. `zmx run` takes no labels, so it creates the
+session and then calls `zmx set`; a wrapper that dies between the two leaves an
+unlabelled session.
+
+The wrapper never relabels an existing session, so one created outside the
+convention stays ungrouped, and is displayed ungrouped. zmx itself allows `zmx
+set` at any time, so that is a rule of the wrapper, not a limit of zmx.
 
 ### state
 
@@ -55,7 +59,7 @@ neither alone.
 - `done`, `failed` — written when a synchronous task returns 0, or non-zero.
 - `blocked` — written by the program inside the session, or by the harness that
   is asking a human to attach. Never inferred; nothing can know a human is
-  wanted.
+  wanted. No harness writes it yet.
 - absent — unknown. Displayed as unknown, never as idle.
 
 Ordering, where a reader needs one: `blocked`, `working`, `done`/`failed`,

@@ -3,7 +3,7 @@
 #
 # Installed as `zmx` by the nix overlay, so every caller inherits the
 # convention without knowing it: a `<project>.<id>` name becomes `project` and
-# `id` labels on the one attach that creates the session, a session born here
+# `id` labels when this wrapper creates the session, a session born here
 # is born in its own transient scope, and a dispatch is bracketed with `state`.
 # Every other verb is the real zmx, byte for byte. VOCABULARY.md is the
 # contract this implements.
@@ -67,8 +67,8 @@ derive() {
   esac
 }
 
-# Labels are create-time only, and a repeated --labels is not additive, so the
-# caller's labels and ours are one token. Ours come last and win: they are
+# A repeated --labels is not additive, so the caller's labels and ours are one
+# token. Ours come last and win: they are
 # derived from the name the caller just gave.
 attach_labels() {
   if [ -n "$1" ]; then
@@ -79,8 +79,8 @@ attach_labels() {
 }
 
 # Existence by listing rather than by a per-session request: a session busy in a
-# long task still answers. Labels cannot be written later, so this is what keeps
-# an existing session unrelabelled.
+# long task still answers. Only a session this wrapper creates gets labels, so
+# this is what keeps an existing session unrelabelled.
 session_exists() {
   names=$("$REAL_ZMX" ls --short 2>/dev/null) || return 1
   case "

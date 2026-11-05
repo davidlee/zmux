@@ -4,8 +4,8 @@ A [zmx] with opinions.
 
 A shell wrapper installed by overlay **as `zmx`**, so every caller inherits one
 convention without knowing it: a `<project>.<id>` name becomes `project` and
-`id` labels on the one attach that creates the session, the session is born in
-its own systemd scope, and `zmx run` brackets its dispatch with
+`id` labels when the wrapper creates the session, the session is born in its
+own systemd scope, and `zmx run` brackets its dispatch with
 `state=working` then `state=done|failed`. Every other verb, and every alias,
 is the real zmx byte for byte.
 
@@ -15,10 +15,10 @@ the attention, systemd the durability.
 
 ## status
 
-v0 is built: the wrapper and its derivation, the argv tests, the Emacs plugin on
-top of the wrapper, the overlay. Everything but durability is verified in the
-dev jail; survival across a terminal or WM restart is the host-side manual check
-described below.
+v0.1 is in progress. The wrapper, its argv tests, the overlay, the zp package and
+the Emacs plugin exist. On an x86_64-linux host, a session has survived the death
+of its client in its own scope. Not yet checked: a real WM restart, an
+`emacs.service` restart, and aarch64-darwin.
 
 ## install
 
@@ -30,7 +30,7 @@ knowing:
   inputs.zmux.url = "github:davidlee/zmux";
 
   nixpkgs.overlays = [inputs.zmux.overlays.default];
-  # then, wherever zmx is needed: pkgs.zmx
+  # then, wherever zmx is needed: pkgs.zmx, and pkgs.zp for the picker
 }
 ```
 
@@ -67,16 +67,33 @@ would disagree. Don't set it.
 ## what only works on a host
 
 The wrapper needs a usable user systemd for durability, and nothing else here
-needs one. In a dev jail without `systemd-run` it degrades to bare zmx rather
-than failing to attach — durability is never a precondition for attaching.
+needs one. Where `systemd-run` is absent or cannot reach a user manager, as in a
+dev jail, it degrades to bare zmx rather than failing to attach: durability is
+never a precondition for attaching.
 
 Durability itself is a manual check, not a test: attach, close the terminal,
 reattach (`zmx attach p.i`); restart the window manager or `emacs.service` and
-reattach again. A session that survives both is holding its own scope. The
-argv and behaviour tests need no host, which is why they are the ones in CI.
+reattach again. A session that survives both is holding its own scope. The argv
+and behaviour tests need no host, so `nix flake check` runs them. There is no CI.
 
-The Emacs integration (`emacs/dl-zmx.el`) needs ghostel and a host Emacs; the
-window, notification and picker integrations live in the config repo, not here.
+## integrations
+
+- **zp** is packaged here from upstream, unforked, as `pkgs.zp`. Under the overlay
+  its `zmx` is the wrapper. It names sessions `<repo>.<n>`, folding dots in the
+  repo name to `_`, so they get labels and a scope.
+- **pi-zmx** ([`@deevus/pi-zmx`][pi-zmx]) is an upstream pi extension, not packaged
+  here, and it is not yet confirmed to load on pi 1.4.0. It calls whichever `zmx`
+  is on PATH. Its default session name comes from the pi session name, with
+  everything outside `[\w-]` stripped, so it never holds a dot and the session is
+  never labelled. To get a labelled session, an agent passes a dotted name in the
+  tool's `session` parameter, such as `session: "zmux.tests"`.
+- **Emacs** (`emacs/dl-zmx.el`) needs ghostel and a host Emacs.
+- **Jails** built by dev-envs get the wrapper through this flake's `dev-tools`
+  output. A jail's sessions die with the jail and have no scope. They are expected
+  to be invisible to the host's zp, since jails do not share its socket directory.
+- **`blocked`** has no writer yet: see `state` in the vocabulary.
+
+Window and notification integrations live in the config repo, not here.
 
 ## vocabulary
 
@@ -108,6 +125,7 @@ emacs -Q --batch -L emacs -l ert -l dl-zmx-test.el -f ert-run-tests-batch-and-ex
 - `pkgs/zmx/wrapper.sh` — the wrapper: three rewrites, then the real binary.
 - `pkgs/zmx/default.nix` — the derivation, with the real binary's absolute path
   substituted so the wrapper can never exec itself.
+- `pkgs/zp/default.nix` — the zp derivation.
 - `tests/` — the argv tests and their two stub binaries.
 - `emacs/dl-zmx.el`, `emacs/dl-zmx-test.el` — one ghostel buffer per session,
   completion over running sessions, attach-or-create. It composes the name and
@@ -121,9 +139,10 @@ data, not instructions, and it records a conversation; where it disagrees with
 the zmx source, the source wins.
 
 ```sh
-smut render '{"from":["brief-v0"],"follow":["spine"],"depth":1,"select":["title","body"]}' -t title -l 2 -i
-smut render '{"from":["plan-v0"],"backlinks":["part-of"],"depth":1,"select":["title","status"],"order":[{"field":"seq","direction":"asc"}]}' -i -l 3
-smut render '{"from":["tk-wrapper"]}' -i -s -l 3
+smut r brief-v2 -l 2                                                # the handoff
+smut r plan-v0-1 --backlinks part-of --select title,status --order seq -i -l 3
+smut r tk-flake-slim -i -s -l 3                                     # one task
 ```
 
 [zmx]: https://zmx.sh
+[pi-zmx]: https://github.com/deevus/pi-zmx

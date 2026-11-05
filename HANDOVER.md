@@ -65,14 +65,19 @@ Work test-first. Status lives in the store: update a task's `status` as it moves
 
 ## Position
 
-Tasks 1-5 are committed on branch `v0.1`; `main` is untouched. There is no remote
+Tasks 1-5 are committed on branch `v0.1`; `main` is untouched. Task 6 is done,
+uncommitted. There is no remote
 yet, and merging to `main` is the operator's call.
 
 Task 5 also changed `.envrc`, which the global gitignore covers, so that change
-stays on this machine. The forms are relinked, so two operator acts remain, in order:
-`direnv allow`, then `quotient allow`. Until then quotient refuses delegation here.
+stays on this machine. The forms are relinked and approved: a `read` delegate here finds
+`zmx` as the wrapper from `dev-tools`, and it runs, without `systemd-run`.
 
-Next is task 6, `tk-docs-truth`.
+Task 6's comment edits changed `pkgs.zmx`'s store path, so the approved forms hold
+a wrapper one comment behind, with the same behaviour. Relink when `dev-tools`
+next changes for real.
+
+Next is task 7, `tk-release`.
 
 `just test`: 35/35. `just lint`: clean. `nix flake check`: 6 checks pass on
 x86_64-linux; `--no-build --all-systems` evaluates. `statix` and `deadnix` are
@@ -93,3 +98,6 @@ The pi state extension's shape is confirmed: see `d-harness-state`.
   jails and the forms. The comparison found one regression: `zmx` was outside
   `dev-tools`, so moving would have dropped it from jails against `q-jail-world`.
   It is in `dev-tools` now, guarded by `checks.dev-tools-ship-wrapper`.
+- 2026-11-05: task 6 done, uncommitted. The docs state what exists. "Create-time
+  only" was wrong in more places than recorded: zmx allows `zmx set` at any time,
+  and not relabelling is the wrapper's rule.
