@@ -90,7 +90,7 @@ Task ids such as `tk-elisp-cutover` are tasks in `.smut/`; see [design](#design)
 
 ## status
 
-v0.1.1: the wrapper, its argv tests, the overlay, the zp package and the Emacs
+v0.1.2: the wrapper, its argv tests, the overlay, the zp package and the Emacs
 plugin. See the [changelog](CHANGELOG.md). On an x86_64-linux host, a session has survived the death
 of its client in its own scope. Not yet checked: a real WM restart, an
 `emacs.service` restart, and aarch64-darwin.
