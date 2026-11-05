@@ -75,7 +75,8 @@ Task ids such as `tk-project-launcher` are tasks in `.smut/`; see [design](#desi
 | zp, a repo row | `<repo>.<n>`: dots folded to `_`, `n` one above the highest in use | wrapper | no change. Repo rows need `ZP_ROOT` or path arguments, and the intended setup has neither, so this path is normally unused |
 | zp, a typed name | the query as typed | wrapper, if dotted | no change. Type `zmux.tests`, not `tests` |
 | project launcher | not built | | `<project>.<n>` for a project picked from zoxide, dots folded to `_` (`tk-project-launcher`, `tk-active-projects`). This becomes the normal way to start a session |
-| Emacs, `my/zmx-project` | `<project>.<id>`: leading dots dropped, dots folded to `_`, unsafe characters to `-` | wrapper | no change. Older `<project>-<id>` sessions stay reachable through `my/zmx-switch` |
+| Emacs, a new terminal | `<project>.<n>`, as zp's. Outside a project, the directory's name stands in for `project` | wrapper | no change |
+| Emacs, `my/zmx-project` | `<project>.<id>`, with an id you type | wrapper | no change |
 | pi-zmx, default | the pi session name: lowercased, whitespace to `-`, anything else outside `[\w-]` stripped | none: it can't hold a dot | nothing planned |
 | pi-zmx, `session` parameter | as given, such as `zmux.tests` | wrapper | nothing planned. Agents should pass one |
 | `zmx attach` by hand | as given | wrapper, if dotted | no change |
