@@ -1,6 +1,7 @@
 {
   "smut_id": "d-name-form",
   "body": "Proposed. The dot is the community separator: zmx's own example is `d.term` for `Host d.*`, zp creates `<repo>.<n>`, and zmx's prefix matchers are written `zmx kill 'd.*'`. Aligning means `zmx kill 'zmux.*'`, `zmx wait 'test*'` and zp's repo sessions all agree, and a dot is already inside the label-safe set [a-zA-Z0-9-_.].\n\nRules: the first dot separates project from id; dots inside either component fold to `-` during sanitisation, so the split stays unambiguous in the one place it matters (a human reading it); `<>` and spaces fold to `-`.\n\nCaveat this does not fix: d-naming still holds — the name is convenience and the labels are truth, because wildcard matching is prefix-based and a project name containing a dot can still shadow another prefix.",
+  "notes": "2026-11-06: accepted and implemented, with one change from the operator. A name with more than one dot is refused at creation, rather than having inner dots fold to `-`, because `my.repo.1` was silently grouped under `my`. Callers fold dots in a project to `_`. An existing session with such a name stays reachable and unlabelled.",
   "part-of": [
     {
       "smut_id": "s-zmux"

@@ -1,6 +1,7 @@
 {
   "smut_id": "d-naming",
   "body": "The name <project>-<id> cannot be parsed back in general: label-safe sanitisation is lossy (project '.hidden.d' + id 're view' gives 'hidden.d-re-view', and '-' occurs in both halves), so a reader guessing project and id from a name is inventing facts. Therefore project and id are written as labels at creation, and the name is derived from the same pair so the two cannot disagree.\n\nConsequence: a session created outside the convention (bare `zmx attach`, bare `za`) is displayed as ungrouped with its raw name — never guessed into a project. That asymmetry is deliberate: ungrouped and honest beats grouped and wrong. It is also the reason creation must be one code path rather than a convention people retype.",
+  "notes": "2026-11-06 correction: the direction here is out of date. The wrapper derives the labels from the name the caller gives, and the name is never derived from labels. `Labels are truth` still holds. See VOCABULARY.md.",
   "part-of": [
     {
       "smut_id": "s-zmux"

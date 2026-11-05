@@ -13,6 +13,7 @@
     "emacs/dl-zmx.el",
     "flake.nix"
   ],
+  "notes": "2026-11-06: migrated to doctrine IMP-002, which tracks it from here. This entity keeps the acceptance criteria.",
   "part-of": [
     {
       "smut_id": "plan-v0-1"

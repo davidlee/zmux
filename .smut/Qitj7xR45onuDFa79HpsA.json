@@ -1,6 +1,7 @@
 {
   "smut_id": "d-vocab",
   "body": "Required: `project`, `id` — written together by `zmux attach` from the pair the caller gives, and the reason the name is derivable rather than parsed (d-naming).\n\nInterpreted: `state`, whose only value the reader acts on is `blocked` (needs a human). `working` and `done` are permitted advertisements for agents that want to say so, but the reader builds no ordering on them and a stale one costs nothing. Absent `state` means unknown and is displayed as unknown, never as idle.\n\nFreeform and uninterpreted: every other key — `role`, `note`, `claim`, a tag board — is stored, displayed and counted, never reasoned about. A freeform token costs nothing because it needs no reader change; a new interpreted key must earn one.\n\nRules:\n- Lowercase keys and values; single tokens (e-labels-tokens), so prose lives in history, not labels.\n- One fact, one home: never duplicate `state` in the name, and never re-derive `project` from the name once labels exist.\n- Written by the session, not by an observer: only the program inside can honestly say it is blocked. A watcher writing state is a daemon with an opinion, refused in q-lazy.\n- Absence is data: no `project` means ungrouped, and ungrouped is shown as ungrouped.",
+  "notes": "2026-11-06, operator: `project` and `id` keep the case of the name, as a directory does. Lowercase applies to keys and `state` values. VOCABULARY.md states this.",
   "part-of": [
     {
       "smut_id": "s-zmux"
