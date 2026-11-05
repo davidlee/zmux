@@ -11,6 +11,8 @@ A [zmx] with opinions:
 
 kind of an ultra-minimalist, unix-centric diy herdr.
 
+warning: don't expect it to work for you out of the box. Not to be confused with other "real" projects called `zmux` like [these](https://github.com/smithersai/zmux) [ones](https://docs.rs/zmux/latest/zmux/).
+
 ---
 
 ## the parts
