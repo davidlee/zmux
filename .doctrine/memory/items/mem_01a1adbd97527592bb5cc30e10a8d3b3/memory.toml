@@ -1,0 +1,43 @@
+memory_uid = "mem_01a1adbd97527592bb5cc30e10a8d3b3"
+memory_key = "mem.pattern.zmux.forms-relink"
+schema_version = 1
+lifespan = "procedural"
+memory_type = "pattern"
+status = "active"
+title = "Relink quotient forms after dev-tools changes"
+summary = "A dev-tools change needs just forms and operator-run quotient allow; project-pins check misleads"
+created = "2026-11-05"
+updated = "2026-11-05"
+
+[scope]
+paths = ["flake.nix", "justfile"]
+globs = []
+commands = ["just forms"]
+tags = []
+workspace = "default"
+repo = "github.com/davidlee/zmux"
+repo_id_kind = "remote"
+repo_id_confidence = "high"
+
+[git]
+anchor_kind = "checkout_state"
+commit = ""
+tree = "68400b0a629edbd86ee2061602a4d8599f10019a"
+ref_name = "refs/heads/v0.1"
+checkout_state_id = "1386a431ff4c732a39a99c6f1d1d5daf8435a3950c5a644872addb83942c53a3"
+base_commit = "2d2db8c6f7332538337baa2bb192586e8a314488"
+verified_sha = ""
+normalizer = "forget.checkout.v1"
+
+[review]
+verification_state = "unverified"
+reviewed = ""
+review_by = ""
+
+[trust]
+trust_level = "high"
+
+[ranking]
+severity = "medium"
+weight = 0
+

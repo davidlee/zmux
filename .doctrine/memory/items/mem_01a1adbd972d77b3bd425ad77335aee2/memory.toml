@@ -1,0 +1,43 @@
+memory_uid = "mem_01a1adbd972d77b3bd425ad77335aee2"
+memory_key = "mem.pattern.zmux.probing-real-zmx"
+schema_version = 1
+lifespan = "procedural"
+memory_type = "pattern"
+status = "active"
+title = "Probing real zmx safely"
+summary = "Scratch ZMX_DIR, unset ZMX_SESSION, hard timeouts; never touch the operator's live namespace"
+created = "2026-11-05"
+updated = "2026-11-05"
+
+[scope]
+paths = []
+globs = ["pkgs/zmx/**", "tests/**", "harness/**"]
+commands = ["zmx"]
+tags = []
+workspace = "default"
+repo = "github.com/davidlee/zmux"
+repo_id_kind = "remote"
+repo_id_confidence = "high"
+
+[git]
+anchor_kind = "commit"
+commit = "2d2db8c6f7332538337baa2bb192586e8a314488"
+tree = "68400b0a629edbd86ee2061602a4d8599f10019a"
+ref_name = "refs/heads/v0.1"
+checkout_state_id = ""
+base_commit = "2d2db8c6f7332538337baa2bb192586e8a314488"
+verified_sha = ""
+normalizer = ""
+
+[review]
+verification_state = "unverified"
+reviewed = ""
+review_by = ""
+
+[trust]
+trust_level = "high"
+
+[ranking]
+severity = "high"
+weight = 0
+

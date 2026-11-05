@@ -1,0 +1,43 @@
+memory_uid = "mem_01a1adbd973f7251910be7b67444f11a"
+memory_key = "mem.pattern.zmux.pi-harness-sharp-edges"
+schema_version = 1
+lifespan = "procedural"
+memory_type = "pattern"
+status = "active"
+title = "pi harness sharp edges"
+summary = "pi -p needs closed stdin; pi.exec never throws; batched tool calls; proving jail reach"
+created = "2026-11-05"
+updated = "2026-11-05"
+
+[scope]
+paths = []
+globs = ["harness/pi/**"]
+commands = ["pi"]
+tags = []
+workspace = "default"
+repo = "github.com/davidlee/zmux"
+repo_id_kind = "remote"
+repo_id_confidence = "high"
+
+[git]
+anchor_kind = "checkout_state"
+commit = ""
+tree = "68400b0a629edbd86ee2061602a4d8599f10019a"
+ref_name = "refs/heads/v0.1"
+checkout_state_id = "4de92dd86867aaac0809983f062fde2a236885a003101182623b877572e0308e"
+base_commit = "2d2db8c6f7332538337baa2bb192586e8a314488"
+verified_sha = ""
+normalizer = "forget.checkout.v1"
+
+[review]
+verification_state = "unverified"
+reviewed = ""
+review_by = ""
+
+[trust]
+trust_level = "high"
+
+[ranking]
+severity = "medium"
+weight = 0
+
