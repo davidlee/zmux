@@ -1,0 +1,25 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 7
+slug = "sessions-survive-host-restarts"
+title = "Sessions from zp, Emacs and pi survive emacs.service and WM restarts"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = []
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum = "Sessions created by zp, Emacs and pi each kept their pid, run-*.scope and scrollback across emacs.service and umbriel.service restarts."
+provenance = "experiment"
+confidence = "high"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
