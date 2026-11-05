@@ -47,6 +47,5 @@ Both homes pin `git:github.com/davidlee/zmux@188fcfc`. A real TUI pi in a scratc
 reached `state=blocked` through each pin, with every other extension loaded. The jail home
 was exercised on the host with `PI_CODING_AGENT_DIR`, not from inside a jail.
 
-Left for the operator: `quotient allow` for the relinked forms. Until then, quotient calls
-at this directory are refused with `form-unapproved`.
+The operator approved the relinked forms.
 
