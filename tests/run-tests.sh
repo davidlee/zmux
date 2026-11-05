@@ -37,7 +37,7 @@ setup() {
     ZMX_STUB_LOG=$work/zmx-argv \
     SD_STUB_SEQ=$work/sd-seq \
     SD_STUB_LOG=$work/sd-argv
-  unset ZMX_RAW ZMX_LAUNCHER ZMX_SESSION ZMX_STUB_RUN_EXIT ZMX_STUB_SET_FAIL SD_STUB_FAIL
+  unset ZMX_RAW ZMX_LAUNCHER ZMX_SESSION ZMX_STUB_RUN_EXIT ZMX_STUB_RUN_HOLD ZMX_STUB_WAIT_EXIT ZMX_STUB_SET_FAIL SD_STUB_FAIL
   install -m 0755 "$here/stubs/zmx" "$work/bin/zmx-stub" || return 1
   install -m 0755 "$here/stubs/systemd-run" "$work/bin/systemd-run" || return 1
   sed "s|@zmx@|$work/bin/zmx-stub|" "$wrapper_src" > "$work/bin/zmx" || return 1
@@ -87,6 +87,20 @@ assert_argv() {
     printf '  argv[%s] want: %s\n' "$idx" "$(tr '\0' '|' < "$tmp/want")"
     return 1
   fi
+}
+
+# await_call LOGDIR INDEX — a call made by a process the case does not wait on.
+await_call() {
+  local tries=100
+  while [ ! -f "$(printf '%s/%03d' "$1" "$2")" ]; do
+    tries=$((tries - 1))
+    if [ "$tries" -eq 0 ]; then
+      printf '  no call %s in %s after 5s\n' "$2" "${1##*/}"
+      dump "$1"
+      return 1
+    fi
+    sleep 0.05
+  done
 }
 
 assert_status() {
@@ -255,6 +269,35 @@ run_exits_with_the_task_code_and_records_failure() {
   zmx_bare run p.i false >/dev/null || status=$?
   assert_status "$status" 7
   assert_argv "$ZMX_STUB_LOG" 4 set p.i state=failed
+}
+
+# pi's exec timeout signals the direct child alone, then closes its pipes: the
+# caller is released, the task runs on, and the client's status means nothing.
+terminate_the_caller_mid_run() {
+  have_session p.i
+  mkfifo "$work/hold"
+  export ZMX_STUB_RUN_HOLD=$work/hold ZMX_STUB_RUN_EXIT=141
+  PATH=$work/bare "$work/bin/zmx" run p.i make test >/dev/null &
+  local pid=$! status=0
+  await_call "$ZMX_STUB_LOG" 3
+  kill -TERM "$pid"
+  wait "$pid" || status=$?
+  assert_status "$status" 143
+  assert_calls "$ZMX_STUB_LOG" 3
+  printf 'go\n' > "$work/hold"
+  await_call "$ZMX_STUB_LOG" 5
+  assert_argv "$ZMX_STUB_LOG" 4 wait p.i
+}
+
+run_records_the_task_result_after_the_caller_is_terminated() {
+  terminate_the_caller_mid_run
+  assert_argv "$ZMX_STUB_LOG" 5 set p.i state=done
+}
+
+run_records_a_task_failure_after_the_caller_is_terminated() {
+  export ZMX_STUB_WAIT_EXIT=7
+  terminate_the_caller_mid_run
+  assert_argv "$ZMX_STUB_LOG" 5 set p.i state=failed
 }
 
 run_leaves_working_in_place_when_it_detaches() {
@@ -452,6 +495,8 @@ run_case attach-sanitise-dots attach_folds_inner_dots_into_the_id
 run_case attach-empty-part attach_refuses_a_name_with_an_empty_part
 run_case run-brackets run_brackets_the_dispatch_with_state
 run_case run-failure run_exits_with_the_task_code_and_records_failure
+run_case run-terminated run_records_the_task_result_after_the_caller_is_terminated
+run_case run-terminated-failure run_records_a_task_failure_after_the_caller_is_terminated
 run_case run-detached run_leaves_working_in_place_when_it_detaches
 run_case run-creates run_creates_a_labelled_session_and_keeps_the_output_clean
 run_case run-creates-undotted run_creates_an_undotted_session_without_labels

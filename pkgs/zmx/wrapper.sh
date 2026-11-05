@@ -189,18 +189,31 @@ do_run() {
   fi
 
   "$REAL_ZMX" set "$name" state=working >/dev/null 2>&1
-  "$REAL_ZMX" run "$name" "$@"
-  status=$?
 
-  # A detached dispatch has not returned, so working is still the truth.
-  if [ -z "$detached" ]; then
-    if [ "$status" -eq 0 ]; then
+  # A subshell, so the outcome is still recorded when the caller is terminated:
+  # pi's exec timeout signals this process alone, and the task runs on.
+  (
+    "$REAL_ZMX" run "$name" "$@"
+    status=$?
+
+    # A detached dispatch has not returned, so working is still the truth.
+    [ -z "$detached" ] || exit "$status"
+
+    # Without its caller the client's status means nothing: its pipes closed.
+    task_status=$status
+    if ! kill -0 "$$" 2>/dev/null; then
+      "$REAL_ZMX" wait "$name" >/dev/null 2>&1
+      task_status=$?
+    fi
+
+    if [ "$task_status" -eq 0 ]; then
       "$REAL_ZMX" set "$name" state=done >/dev/null 2>&1
     else
       "$REAL_ZMX" set "$name" state=failed >/dev/null 2>&1
     fi
-  fi
-  exit "$status"
+    exit "$status"
+  )
+  exit
 }
 
 # ZMX_RAW=1: one invocation exactly as zmx shipped it, rewrites and all off.

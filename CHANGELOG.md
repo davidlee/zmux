@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- A caller terminated mid-run no longer leaves `state=working` for good. The state
+  is written when the task ends, from `zmx wait`'s result, because the client's
+  status means nothing once its caller's pipes have closed.
+
 ## 0.1.0 - 2026-11-05
 
 First release: a shell wrapper installed by overlay as `zmx`.

@@ -56,7 +56,8 @@ neither alone.
 
 - `working` — written before work is handed to the session. Left in place when
   the dispatch was detached, because the work has not returned.
-- `done`, `failed` — written when a synchronous task returns 0, or non-zero.
+- `done`, `failed` — written when a synchronous task returns 0, or non-zero. That
+  holds if the caller is terminated mid-run, unless the whole process group is.
 - `blocked` — written by the program inside the session, or by the harness that
   is asking a human to attach. Never inferred; nothing can know a human is
   wanted. No harness writes it yet.

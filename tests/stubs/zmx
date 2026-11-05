@@ -69,8 +69,13 @@ case ${1-} in
       printf 'command sent!\n'
       exit 0
     fi
+    # A task in flight: held until the test writes to this FIFO.
+    if [ -n "${ZMX_STUB_RUN_HOLD:-}" ]; then read -r _ < "$ZMX_STUB_RUN_HOLD"; fi
     printf 'task-output\n'
     exit "${ZMX_STUB_RUN_EXIT:-0}"
+    ;;
+  wait)
+    exit "${ZMX_STUB_WAIT_EXIT:-0}"
     ;;
   attach | a)
     shift
