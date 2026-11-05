@@ -49,7 +49,23 @@ so installing there now gives those jails six dead tools. The `pox` jail uses
 `~/.pi/agent` with the host's tools, so it has `zmx`, and its `/run/user` tmpfs keeps
 its sessions separate.
 
-## Open decisions
+## Decisions, 2026-11-06 (operator)
 
-- How `zmx` reaches every jail, or which jails skip the extension.
-- How the wrapper settles state after TERM.
+- **Jails:** add `zmx` to `commonPkgs` in `~/flakes/agents`.
+- **TERM:** probe the background approach. Probing found something simpler: a
+  foreground subshell, in `aa71845`. TERM kills only the outer shell, so stdin and
+  SIGINT are unchanged and no background job exists. Once the caller is gone the
+  client dies on its closed pipes, so the subshell takes the result from `zmx wait`.
+  Real pi timeouts recorded `done` for exit 0 and `failed` for exit 7. 37 tests pass
+  under bash and dash.
+- **Upstream:** fix on the operator's fork, `~/.local/src/pi-zmx`, branch
+  `fix/exec-failures`, then PR. Verified on host pi: with no `zmx`, stubs register and
+  `/zmx` does not; a timed-out `zmx_run` reports an error.
+
+## Remaining
+
+1. Push and tag zmux `v0.1.1`; bump `~/flakes`; operator switches.
+2. Push the fork branch and open the PR; repoint the pin from npm 0.1.1 to the fork.
+3. `~/flakes/agents`: add a `zmux` input, apply its overlay to `pkgs`, add `zmx` to
+   `commonPkgs`, with a check that it is the wrapper. Relink forms, `quotient allow`.
+4. Install in `~/agent_home/.pi/agent/settings.json`, then close this item.

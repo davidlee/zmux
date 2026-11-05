@@ -10,7 +10,7 @@
     "~/.pi/agent/settings.json",
     "~/agent_home/.pi/agent/settings.json"
   ],
-  "notes": "2026-11-06: tracked as doctrine IMP-001, which holds the evidence. Host home installed and pinned at 0.1.1; load and dotted-session checks pass. Measured harm from TERM, so the wrapper needs a change. Not done: the jail home, pending how zmx reaches jails.",
+  "notes": "2026-11-06: tracked as doctrine IMP-001, which holds the evidence, decisions and remaining steps. Host home pinned at 0.1.1. Wrapper TERM fix in aa71845. pi-zmx fixes on the fork, branch fix/exec-failures. Not done: release, jail zmx, jail home install.",
   "part-of": [
     {
       "smut_id": "plan-v0-1"
