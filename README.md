@@ -82,8 +82,8 @@ with `ZMX_RAW=1`, can still be reached, and stays unlabelled.
 
 ## status
 
-v0.1.2: the wrapper, its argv tests, the overlay and the zp package. See the
-[changelog](CHANGELOG.md), which lists what is unreleased. On an x86_64-linux host, sessions
+v0.1.3: the wrapper, its argv tests, the overlay, the zp package and the pi state
+extension. See the [changelog](CHANGELOG.md). On an x86_64-linux host, sessions
 from zp, Emacs and pi have survived an `emacs.service` restart and a WM restart, and
 reattached. Not yet checked: aarch64-darwin.
 
