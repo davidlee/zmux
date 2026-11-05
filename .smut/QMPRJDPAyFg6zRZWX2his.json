@@ -1,0 +1,32 @@
+{
+  "smut_id": "tk-release",
+  "acceptance": "Private github:davidlee/zmux with an MIT LICENSE, a changelog and a v0.1.0 tag. Remote creation and push are confirmed by the operator first.",
+  "after": [
+    {
+      "smut_id": "tk-wrapper-edges"
+    },
+    {
+      "smut_id": "tk-package-parity"
+    },
+    {
+      "smut_id": "tk-docs-truth"
+    }
+  ],
+  "files": [
+    "CHANGELOG.md"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "q-licence"
+    }
+  ],
+  "seq": 7,
+  "status": "open",
+  "title": "Publish privately and tag v0.1.0",
+  "type": "task"
+}

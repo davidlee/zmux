@@ -1,0 +1,19 @@
+{
+  "smut_id": "d-harness-state",
+  "body": "Operator, 2026-11-05. `blocked` is written by a small harness-specific plugin, extension or hook, pi first. Each should be tiny; Claude's is the one expected to break regularly, so it comes later and carries no weight in the design.\n\nThis fits d-state-writer: the harness is the party that knows it is asking a human, and it needs no fork of pi-zmx.\n\nConfirmed by the operator: the plugin runs in the harness, and when ZMX_SESSION is set it writes that session's state as the harness waits on a human and resumes. It does not depend on pi-zmx.",
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "d-state-writer"
+    },
+    {
+      "smut_id": "q-blocked-writer"
+    }
+  ],
+  "title": "Each harness gets a tiny state plugin of its own",
+  "type": "decision"
+}

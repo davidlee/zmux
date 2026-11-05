@@ -1,0 +1,21 @@
+{
+  "smut_id": "q-jail-world",
+  "answer": "Operator, 2026-11-05: isolated for v0.1, and worth coming back to. Ship zmx in the jail so pi-zmx works inside it; say in the README that jailed sessions are not visible to the host.",
+  "body": "Per c-devjail, a jailed session dies with the jail. Inferred, not tested: its sockets are also a separate world, so host zp cannot see it. Sharing a socket directory would give the jail write access to host sessions and still would not make jailed sessions outlive it. Recommendation for v0.1: keep the jail isolated, ship zmx in the jail so pi-zmx works inside it, and say so in the README. Host pi gets the full path.",
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "c-devjail"
+    },
+    {
+      "smut_id": "e-pi-zmx-upstream"
+    }
+  ],
+  "status": "closed",
+  "title": "Should jailed agents' sessions be visible on the host?",
+  "type": "question"
+}

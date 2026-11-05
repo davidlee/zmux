@@ -1,0 +1,26 @@
+{
+  "smut_id": "tk-host-checks",
+  "acceptance": "Sessions from zp, Emacs and host pi each survive a WM restart and an emacs.service restart, and reattach. Results recorded as evidence. The restarts are the operator's to run.",
+  "after": [
+    {
+      "smut_id": "tk-pi-state"
+    },
+    {
+      "smut_id": "tk-elisp-cutover"
+    }
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "c-cgroup"
+    }
+  ],
+  "seq": 11,
+  "status": "open",
+  "title": "Run the durability checks on the host",
+  "type": "task"
+}

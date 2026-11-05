@@ -1,0 +1,26 @@
+{
+  "smut_id": "tk-launcher-usable",
+  "acceptance": "Red first: a stub systemd-run that fails as a busless host does. attach then creates the session bare, with labels. run then creates it with labels. A failure of the user's explicit ZMX_LAUNCHER stays visible rather than being swallowed. No failure mode leaves a dotted session unlabelled at exit 0. The usability check adds no external command to the hot path if a shell test can answer it.",
+  "files": [
+    "pkgs/zmx/wrapper.sh",
+    "tests/run-tests.sh",
+    "tests/stubs/systemd-run"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "e-host-probes"
+    },
+    {
+      "smut_id": "c-host-only"
+    }
+  ],
+  "seq": 1,
+  "status": "done",
+  "title": "Fall back when the launcher is unusable",
+  "type": "task"
+}

@@ -1,0 +1,37 @@
+{
+  "smut_id": "brief-v2",
+  "body": "v0 was built in a jail and has now been exercised on the host. v0.1 turns it into a release and connects the pieces. HANDOVER.md at the repo root is the working summary; this store holds the reasoning. Read the spine, then the tasks:\n\n  smut r plan-v0-1 --backlinks part-of --select title,status --order seq -i -l 3\n\nNo question is open. d-harness-state, q-jail-world and q-licence record the operator's last answers.\n\nWHAT BRIEF-V1 LISTED AS UNVERIFIED\nDone on the host: nix flake check --no-build on x86_64-linux, the package and both checks built, elisp ert 8/8, and client death (SIGKILL) surviving in an own scope. Still unverified: a real WM restart, an emacs.service restart, aarch64-darwin.\n\nThe repo stays private for now and is expected to go public; .smut/ ships with it.",
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "spine": [
+    {
+      "smut_id": "d-v01-scope"
+    },
+    {
+      "smut_id": "d-homes"
+    },
+    {
+      "smut_id": "d-harness-state"
+    },
+    {
+      "smut_id": "e-host-probes"
+    },
+    {
+      "smut_id": "e-pi-zmx-upstream"
+    },
+    {
+      "smut_id": "e-zp-upstream"
+    }
+  ],
+  "status": "open",
+  "supersedes": [
+    {
+      "smut_id": "brief-v1"
+    }
+  ],
+  "title": "Handoff: v0.1 is planned",
+  "type": "brief"
+}

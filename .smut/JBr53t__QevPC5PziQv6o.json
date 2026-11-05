@@ -1,0 +1,31 @@
+{
+  "smut_id": "tk-docs-truth",
+  "acceptance": "Correct `create-time only`. Point the design section at brief-v2. Drop the CI claim or add CI. Describe integrations as they stand, including the undotted-name limit for pi-zmx's default session names and how an agent passes a dotted one.",
+  "after": [
+    {
+      "smut_id": "tk-zp-package"
+    },
+    {
+      "smut_id": "tk-flake-slim"
+    }
+  ],
+  "files": [
+    "README.md",
+    "VOCABULARY.md",
+    "pkgs/zmx/wrapper.sh"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "e-host-probes"
+    }
+  ],
+  "seq": 6,
+  "status": "open",
+  "title": "Make the docs state only what exists",
+  "type": "task"
+}

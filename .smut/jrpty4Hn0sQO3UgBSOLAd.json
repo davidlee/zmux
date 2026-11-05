@@ -1,0 +1,22 @@
+{
+  "smut_id": "tk-flake-slim",
+  "acceptance": "Per flakes:IMP-064 and IMP-060: .envrc uses use_dev_envs and the local jail and form family goes, so a consumer of the overlay does not inherit agents or quotient. Compare the family against dev-envs before deleting. `quotient allow` is the operator's act.",
+  "files": [
+    "flake.nix",
+    ".envrc"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "d-homes"
+    }
+  ],
+  "seq": 5,
+  "status": "open",
+  "title": "Move to dev-envs and slim the flake",
+  "type": "task"
+}

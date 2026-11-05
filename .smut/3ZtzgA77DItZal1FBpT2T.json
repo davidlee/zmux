@@ -1,0 +1,22 @@
+{
+  "smut_id": "tk-package-parity",
+  "acceptance": "pkgs.zmx has the bash, zsh and fish completions, version and meta of zmx-unwrapped, and a flake check asserts it. The wrapper stays the bin/zmx.",
+  "files": [
+    "pkgs/zmx/default.nix",
+    "flake.nix"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "e-host-probes"
+    }
+  ],
+  "seq": 3,
+  "status": "done",
+  "title": "Give the wrapper package what it shadows",
+  "type": "task"
+}

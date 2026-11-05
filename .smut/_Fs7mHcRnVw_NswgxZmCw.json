@@ -1,0 +1,26 @@
+{
+  "smut_id": "tk-pi-state",
+  "acceptance": "A tiny pi extension writes state=blocked when pi waits on a human and clears or replaces it on resume, and does nothing when no zmx session is around it. A failed zmx call never disturbs the harness. Confirm the event model against pi 1.4.0 before writing it.",
+  "after": [
+    {
+      "smut_id": "tk-pi-install"
+    }
+  ],
+  "files": [
+    "harness/pi/"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "d-harness-state"
+    }
+  ],
+  "seq": 9.5,
+  "status": "open",
+  "title": "Write the pi state extension",
+  "type": "task"
+}

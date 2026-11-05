@@ -1,0 +1,19 @@
+{
+  "smut_id": "d-v01-scope",
+  "body": "Operator, 2026-11-05: they are half the point. v0 left both as claims: neither was installed or packaged on the host. d-wrapper stands, so they arrive unforked: zp as a derivation of the upstream release, pi-zmx as a pi package installed per home. Installing into ~/.pi and ~/agent_home/.pi is manual, because both settings.json files are plain mutable files.",
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "d-wrapper"
+    },
+    {
+      "smut_id": "d-adopt"
+    }
+  ],
+  "title": "zp and pi-zmx are in v0.1",
+  "type": "decision"
+}

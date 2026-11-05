@@ -1,0 +1,29 @@
+{
+  "smut_id": "tk-flakes-wire",
+  "acceptance": "zmux is an input following nixpkgs-home, as panopticon does. The overlay reaches system and home evaluations. zp joins the terminal feature, with ZP_ROOT set so it can start sessions from repos. Tracked under that repo's doctrine conventions. The private repo must be fetchable by those evaluations.",
+  "after": [
+    {
+      "smut_id": "tk-release"
+    }
+  ],
+  "files": [
+    "~/flakes/flake.nix",
+    "~/flakes/hosts.nix",
+    "~/flakes/features/terminal.nix",
+    "~/flakes/features/editor/emacs.nix"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "d-homes"
+    }
+  ],
+  "seq": 8,
+  "status": "open",
+  "title": "Apply the overlay in ~/flakes",
+  "type": "task"
+}

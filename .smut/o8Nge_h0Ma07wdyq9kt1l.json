@@ -1,0 +1,33 @@
+{
+  "smut_id": "tk-pi-install",
+  "acceptance": "npm:@deevus/pi-zmx, version pinned, in both homes. A load smoke test proves compatibility with pi 1.4.0 before the jail copy. zmx reaches every jail that loads the extension, or the extension is not loaded there. A dotted session created by host pi appears labelled in zp. Measure what pi.exec's timeout does to the wrapper and its zmx client (e-host-probes item 7). Forward TERM only if that shows harm: in sh it needs a background child, which changes stdin and SIGINT handling.",
+  "after": [
+    {
+      "smut_id": "tk-flakes-wire"
+    }
+  ],
+  "files": [
+    "~/.pi/agent/settings.json",
+    "~/agent_home/.pi/agent/settings.json"
+  ],
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "refs": [
+    {
+      "smut_id": "e-pi-zmx-upstream"
+    },
+    {
+      "smut_id": "q-jail-world"
+    },
+    {
+      "smut_id": "q-blocked-writer"
+    }
+  ],
+  "seq": 9,
+  "status": "open",
+  "title": "Install pi-zmx in both homes",
+  "type": "task"
+}

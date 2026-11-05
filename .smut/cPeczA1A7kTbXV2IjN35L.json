@@ -1,0 +1,13 @@
+{
+  "smut_id": "q-licence",
+  "answer": "Operator, 2026-11-05: assume MIT. The repo stays private for now; going public is a later act and .smut/ goes with it.",
+  "body": "Operator, 2026-11-05: private for now, probably public later, .smut/ included. Licence undecided. A private GitHub repo is still needed for the ~/flakes input and the README's install URL.",
+  "part-of": [
+    {
+      "smut_id": "plan-v0-1"
+    }
+  ],
+  "status": "closed",
+  "title": "Which licence, and when does the repo go public?",
+  "type": "question"
+}
