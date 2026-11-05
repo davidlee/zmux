@@ -56,21 +56,27 @@ Work test-first. Status lives in the store: update a task's `status` as it moves
 - Tests assert argv against stubs; `tests/stubs/` is where a new failure mode goes.
 - Give every real-zmx probe a hard timeout. `echo data | zmx run NAME cat` hangs
   in upstream zmx 0.8.1, its own help example.
+- Forms relink with `~/flakes/bin/dev-envs-forms`, which is not on PATH. A change
+  to `dev-tools` changes the forms, so it needs a relink and `quotient allow`.
+- dev-envs' `checks.project-pins` fails on any real project: it reads
+  `nixpkgsRev`, which only its stub sets. Compare `dev-tools` store paths instead.
 - Commit only when the operator asks, one commit per task, on `v0.1`. Never
   `git stash` or `git checkout`.
 
 ## Position
 
-Tasks 1-4 are done and committed on branch `v0.1`; `main` is untouched. There is
-no remote yet, and merging to `main` is the operator's call.
+Tasks 1-5 are committed on branch `v0.1`; `main` is untouched. There is no remote
+yet, and merging to `main` is the operator's call.
 
-Next is task 5, `tk-flake-slim`, already approved by the operator. It moves
-`.envrc` to `use_dev_envs` and removes the local jail and form family, so it
-changes the environment an agent here runs in. Afterwards the operator runs
-`quotient allow`. Compare the family against dev-envs before deleting it.
+Task 5 also changed `.envrc`, which the global gitignore covers, so that change
+stays on this machine. The forms are relinked, so two operator acts remain, in order:
+`direnv allow`, then `quotient allow`. Until then quotient refuses delegation here.
 
-`just test`: 35/35. `just lint`: clean. `nix flake check`: 5 checks pass on
-x86_64-linux. Nix files are alejandra-formatted.
+Next is task 6, `tk-docs-truth`.
+
+`just test`: 35/35. `just lint`: clean. `nix flake check`: 6 checks pass on
+x86_64-linux; `--no-build --all-systems` evaluates. `statix` and `deadnix` are
+clean on `flake.nix`, which is alejandra-formatted.
 
 The pi state extension's shape is confirmed: see `d-harness-state`.
 
@@ -83,3 +89,7 @@ The pi state extension's shape is confirmed: see `d-harness-state`.
   was inert and is fixed. TERM forwarding moved to `tk-pi-install`, to be decided
   by measuring pi. `e-host-probes` and `e-zp-upstream` hold the evidence.
 - 2026-11-05: tasks 1-4 committed on `v0.1`. Handed over before task 5.
+- 2026-11-05: task 5 done and committed. The flake lost `agents`, `quotient`, the
+  jails and the forms. The comparison found one regression: `zmx` was outside
+  `dev-tools`, so moving would have dropped it from jails against `q-jail-world`.
+  It is in `dev-tools` now, guarded by `checks.dev-tools-ship-wrapper`.
