@@ -65,9 +65,8 @@ Work test-first. Status lives in the store: update a task's `status` as it moves
 
 ## Position
 
-Tasks 1-5 are committed on branch `v0.1`; `main` is untouched. Task 6 is done,
-uncommitted. There is no remote
-yet, and merging to `main` is the operator's call.
+Tasks 1-7 are committed. `v0.1.0` is tagged on `main` and pushed to the private
+`origin`, `github.com/davidlee/zmux`. Local `v0.1` matches `main`.
 
 Task 5 also changed `.envrc`, which the global gitignore covers, so that change
 stays on this machine. The forms are relinked and approved: a `read` delegate here finds
@@ -77,7 +76,7 @@ Task 6's comment edits changed `pkgs.zmx`'s store path, so the approved forms ho
 a wrapper one comment behind, with the same behaviour. Relink when `dev-tools`
 next changes for real.
 
-Next is task 7, `tk-release`.
+Next is task 8, `tk-flakes-wire`.
 
 `just test`: 35/35. `just lint`: clean. `nix flake check`: 6 checks pass on
 x86_64-linux; `--no-build --all-systems` evaluates. `statix` and `deadnix` are
@@ -101,3 +100,6 @@ The pi state extension's shape is confirmed: see `d-harness-state`.
 - 2026-11-05: task 6 done, uncommitted. The docs state what exists. "Create-time
   only" was wrong in more places than recorded: zmx allows `zmx set` at any time,
   and not relabelling is the wrapper's rule.
+- 2026-11-05: tasks 6-7 committed. The operator approved the push, and `main`
+  fast-forwarded to `v0.1`. The GitHub repo already existed, empty. Tasks 8-11
+  follow the tag, so this file stays until they are done.

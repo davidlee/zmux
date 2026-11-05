@@ -15,8 +15,8 @@ the attention, systemd the durability.
 
 ## status
 
-v0.1 is in progress. The wrapper, its argv tests, the overlay, the zp package and
-the Emacs plugin exist. On an x86_64-linux host, a session has survived the death
+v0.1.0: the wrapper, its argv tests, the overlay, the zp package and the Emacs
+plugin. See the [changelog](CHANGELOG.md). On an x86_64-linux host, a session has survived the death
 of its client in its own scope. Not yet checked: a real WM restart, an
 `emacs.service` restart, and aarch64-darwin.
 
@@ -131,6 +131,10 @@ emacs -Q --batch -L emacs -l ert -l dl-zmx-test.el -f ert-run-tests-batch-and-ex
   completion over running sessions, attach-or-create. It composes the name and
   nothing else; labels, scopes and state are the wrapper's.
 - `VOCABULARY.md` — the contract.
+
+## licence
+
+MIT: see [`LICENSE`](LICENSE).
 
 ## design
 

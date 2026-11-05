@@ -15,6 +15,7 @@
   "files": [
     "CHANGELOG.md"
   ],
+  "notes": "2026-11-05. Operator confirmed the push and the fast-forward of main. github:davidlee/zmux already existed, private and empty, so nothing was created. LICENSE is MIT, CHANGELOG.md added, v0.1.0 annotated tag on main. History scanned for secret patterns before the first push: none.",
   "part-of": [
     {
       "smut_id": "plan-v0-1"
@@ -26,7 +27,7 @@
     }
   ],
   "seq": 7,
-  "status": "open",
+  "status": "done",
   "title": "Publish privately and tag v0.1.0",
   "type": "task"
 }
