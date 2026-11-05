@@ -69,7 +69,7 @@ Leave in git history only: tasks, plans, briefs, the session record, closed ques
 
 ## Progress
 
-2026-11-06. Promoted and committed (`2b9d966`). Repointed. Deletion awaits the operator.
+2026-11-06. Promoted and committed (`2b9d966`). Repointed. `.smut` deleted on the operator's confirmation; last held at `42df5ed`.
 
 - DEC-001 to 012, accepted by the operator 2026-11-06. `d-v01-scope` is
   folded into DEC-011.

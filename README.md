@@ -272,6 +272,7 @@ MIT: see [`LICENSE`](LICENSE).
 The rules that bind new work are ADRs in `.doctrine/adr/`. Other decisions, constraints,
 evidence and hypotheses live in `.doctrine/knowledge/`, and open work in
 `.doctrine/backlog/`. Where a record disagrees with the zmx source, the source wins.
+The `.smut/` store they replaced last existed at commit `42df5ed`.
 
 ```sh
 doctrine adr list           # the rules
