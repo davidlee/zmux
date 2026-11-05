@@ -6,7 +6,7 @@
       "smut_id": "tk-flakes-wire"
     }
   ],
-  "notes": "Offered to the ~/flakes agent with tk-flakes-wire, on the operator's say. The exclusions were seen in zoxide on Sleipnir, 2026-11-06. 2026-11-06: operator decided .jj counts as a project marker, matching zp.",
+  "notes": "Offered to the ~/flakes agent with tk-flakes-wire, on the operator's say. The exclusions were seen in zoxide on Sleipnir, 2026-11-06. 2026-11-06: operator decided .jj counts as a project marker, matching zp. 2026-11-06: operator placed it in ~/.config/zsh, so it is a zsh function in functions.zsh, tested by tests/active-projects.zsh there, uncommitted in the $HOME repo. On the real database: 50 of 192 directories; ~/flakes in, and no /workspace, elpa, worktree or $HOME row. Being a function, only zsh can call it, which narrows the acceptance's other tools.",
   "part-of": [
     {
       "smut_id": "plan-v0-1"
@@ -18,7 +18,7 @@
     }
   ],
   "seq": 8.3,
-  "status": "open",
+  "status": "done",
   "title": "List active projects from zoxide",
   "type": "task"
 }

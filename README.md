@@ -75,7 +75,7 @@ Task ids such as `tk-project-launcher` are tasks in `.smut/`; see [design](#desi
 | ------ | ---------- | ------------ | -------- |
 | zp, a repo row | `<repo>.<n>`: dots folded to `_`, `n` one above the highest in use | wrapper | no change. Repo rows need `ZP_ROOT` or path arguments, and the intended setup has neither, so this path is normally unused |
 | zp, a typed name | the query as typed | wrapper, if dotted | no change. Type `zmux.tests`, not `tests` |
-| project launcher | not built | | `<project>.<n>` for a project picked from zoxide, dots folded to `_` (`tk-project-launcher`, `tk-active-projects`). This becomes the normal way to start a session |
+| `zx` | `<project>.<n>` for a project picked from zoxide, dots folded to `_`, `n` as zp's | wrapper | no change. This is the normal way to start a session |
 | Emacs, a new terminal | `<project>.<n>`, as zp's. Outside a project, the directory's name stands in for `project` | wrapper | no change |
 | Emacs, `my/zmx-project` | `<project>.<id>`, with an id you type | wrapper | no change |
 | pi-zmx, default | the pi session name: lowercased, whitespace to `-`, anything else outside `[\w-]` stripped | none: it can't hold a dot | nothing planned |
@@ -149,6 +149,10 @@ and behaviour tests need no host, so `nix flake check` runs them. There is no CI
 - **zp** is packaged here from upstream, unforked, as `pkgs.zp`. Under the overlay
   its `zmx` is the wrapper, so its sessions get a scope, and labels when their
   names are dotted. See [who names sessions](#who-names-sessions).
+- **`zx`** starts a session in an active project: pick one with fzf, and it attaches
+  `<project>.<n>` from that directory. It and `active-projects`, which lists zoxide's
+  project directories in frecency order, are zsh functions in the config repo, at
+  `~/.config/zsh/functions.zsh`, so only zsh can call them.
 - **pi-zmx** is a pi extension, not packaged here. The host and jail homes pin
   [a fork][pi-zmx-fork] of [`@deevus/pi-zmx`][pi-zmx] by commit, in their pi
   `settings.json`, because upstream reports a timed-out `zmx_run` as a success. It

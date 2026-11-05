@@ -11,7 +11,7 @@
     "README.md"
   ],
   "name": "zx",
-  "notes": "2026-11-06: operator named it zx.",
+  "notes": "2026-11-06: operator named it zx, and chose a zsh function over a packaged script, since active-projects is one: ~/.config/zsh/functions.zsh, tested by tests/zx.zsh there. That replaces this task's `here, beside the wrapper`. Against real zmx, two runs made zmux.1 and zmux.2 with project and id labels and the picked directory as cwd.",
   "part-of": [
     {
       "smut_id": "plan-v0-1"
@@ -26,7 +26,7 @@
     }
   ],
   "seq": 8.6,
-  "status": "open",
+  "status": "done",
   "title": "Start a session in an active project",
   "type": "task"
 }

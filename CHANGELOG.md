@@ -4,6 +4,8 @@
 
 ### Added
 
+- `zx`, a zsh function in the config repo, starts a session in a project picked from
+  zoxide.
 - `harness/pi/zmx-state.ts`: an interactive pi in a session advertises `state=blocked`
   at its prompt and `state=working` when it resumes. `package.json` makes this repo a
   pi package, so a home can pin it by commit.
