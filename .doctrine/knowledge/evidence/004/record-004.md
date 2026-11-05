@@ -15,5 +15,5 @@ the wrapper finds `systemd-run` through the process's `PATH`, not Emacs's `exec-
 ## Not established
 
 That a session started from Emacs is in its own scope, or survives an `emacs.service`
-restart. Those are `tk-host-checks`. Confidence is medium because this is one host at
+restart. EVD-007 covers those. Confidence is medium because this is one host at
 one moment, and the environment changes with the host configuration.

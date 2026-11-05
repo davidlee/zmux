@@ -4,7 +4,7 @@
      live in the sister `backlog-NNN.toml`; this prose is free-form and is never
      structurally parsed (the storage rule). -->
 
-Requested by the operator on 2026-11-06, extending `d-harness-state` (each harness gets a
+Requested by the operator on 2026-11-06, extending DEC-009 (each harness gets a
 tiny state plugin of its own) beyond pi and Claude.
 
 The same contract as IMP-004 and IMP-005: with `ZMX_SESSION` set, an interactive session

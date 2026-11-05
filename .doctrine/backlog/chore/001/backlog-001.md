@@ -12,7 +12,7 @@ Draupnir:
 
 - `pkgs.zmx` and `pkgs.zp` build. `just isolation` evaluates Draupnir's home, but evaluating
   is not building.
-- The wrapper degrades to bare zmx, since there is no user systemd (`c-wrapper-limits`):
+- The wrapper degrades to bare zmx, since there is no user systemd (CON-002):
   attach works, and sessions get labels.
 
 Update the README's status section with the result.

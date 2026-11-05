@@ -1,0 +1,32 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 2
+slug = "product-is-legibility"
+title = "The product is legibility of a world zmx already shares"
+record_kind = "hypothesis"
+status = "proposed"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = ["smut:e-multiclient", "smut:h-shared-world"]
+
+[facet]                         # every field typed; seeded empty (captured later)
+proposition = "zmx sessions are already multi-client and labels are already a shared mutable board, so what is missing is legibility and not capability: who is running, for which project, in what state, and which one wants a human."
+predicts = "Names and labels and the readers that already exist are enough for real agent workflows, and no need arises that a bigger layer would answer."
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "shapes"
+target = "DEC-012"
+
+[[relation]]
+label = "shapes"
+target = "ADR-001"

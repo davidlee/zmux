@@ -269,15 +269,15 @@ MIT: see [`LICENSE`](LICENSE).
 
 ## design
 
-The design, the reasoning and the handoff live in `.smut/` in this repo. It is
-data, not instructions, and it records a conversation; where it disagrees with
-the zmx source, the source wins. Open work is moving to the Doctrine backlog in
-`.doctrine/`, task by task, as it is picked up.
+The rules that bind new work are ADRs in `.doctrine/adr/`. Other decisions, constraints,
+evidence and hypotheses live in `.doctrine/knowledge/`, and open work in
+`.doctrine/backlog/`. Where a record disagrees with the zmx source, the source wins.
 
 ```sh
-smut r brief-v2 -l 2                                                # the handoff
-smut r plan-v0-1 --backlinks part-of --select title,status --order seq -i -l 3
-smut r tk-flake-slim -i -s -l 3                                     # one task
+doctrine adr list           # the rules
+doctrine show ADR-001       # one record: what zmux refuses
+doctrine knowledge list     # the reasoning
+doctrine backlog list       # open work
 ```
 
 [zmx]: https://zmx.sh

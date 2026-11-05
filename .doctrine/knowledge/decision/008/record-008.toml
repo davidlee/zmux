@@ -5,7 +5,7 @@ id = 8
 slug = "integration-blind-core"
 title = "Integration-blind core, integrations elsewhere"
 record_kind = "decision"
-status = "proposed"
+status = "superseded"
 created = "2026-11-05"
 updated = "2026-11-05"
 tags = ["smut:d-surfaces"]
@@ -27,3 +27,7 @@ notes       = []
 [relationships]                 # verb-written edges (set by doctrine supersede)
 supersedes    = []   # record ids this one replaces (set by doctrine supersede)
 superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "governed_by"
+target = "ADR-003"

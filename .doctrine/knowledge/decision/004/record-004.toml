@@ -5,7 +5,7 @@ id = 4
 slug = "dispatcher-writes-state"
 title = "The dispatcher writes state; zmx's own fields are the fact"
 record_kind = "decision"
-status = "proposed"
+status = "superseded"
 created = "2026-11-05"
 updated = "2026-11-05"
 tags = ["smut:d-state-writer"]
@@ -27,6 +27,10 @@ notes       = []
 [relationships]                 # verb-written edges (set by doctrine supersede)
 supersedes    = []   # record ids this one replaces (set by doctrine supersede)
 superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "governed_by"
+target = "ADR-002"
 
 [[relation]]
 label = "shapes"

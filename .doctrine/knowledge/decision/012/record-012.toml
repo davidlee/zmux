@@ -5,16 +5,16 @@ id = 12
 slug = "what-zmux-refuses"
 title = "What zmux refuses"
 record_kind = "decision"
-status = "proposed"
+status = "superseded"
 created = "2026-11-05"
 updated = "2026-11-05"
-tags = ["smut:brief-v0", "smut:h-shared-world", "smut:q-lazy", "smut:q-manifest"]
+tags = ["smut:brief-v0", "smut:q-lazy", "smut:q-manifest"]
 
 [facet]                         # every field typed; seeded empty (captured later)
-context = "The inspiration, herdr, is the same product with a custom server and protocol and config language. zmx already provides the substrate."
+context = "The inspiration is zmx and tmux. zmx already provides the substrate, so zmux adds a convention rather than a second system."
 choice = "No daemon or server. No reader or TUI of our own. No status protocol or screen renderer. No splits or tabs or layout. No config tree. No manifest. No fork of zp or fork of pi-zmx to carry the convention. No ZMX_SESSION_PREFIX support."
-alternatives = ["Own a server as herdr does", "Declare sessions in a manifest"]
-rationale = "The missing thing is legibility and not capability: who is running for which project and in what state. Anything bigger is a second zmx."
+alternatives = ["A server of our own", "Declare sessions in a manifest"]
+rationale = "zmx already has the capability. HYP-002 holds that what is missing is legibility: who is running for which project and in what state. Anything bigger is a second zmx."
 consequences = ["A proposal must plug into an affordance zmx already has", "A proposal must be the least code that makes agent work faster"]
 decided_by = "design rounds 1-9; not attributed per decision"
 decided_on   = ""
@@ -27,6 +27,10 @@ notes       = []
 [relationships]                 # verb-written edges (set by doctrine supersede)
 supersedes    = []   # record ids this one replaces (set by doctrine supersede)
 superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "governed_by"
+target = "ADR-001"
 
 [[relation]]
 label = "shapes"

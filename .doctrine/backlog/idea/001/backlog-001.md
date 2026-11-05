@@ -16,4 +16,4 @@ Unverified:
 - Whether forwarded socket paths collide with local ones. Both live in the same per-UID
   directory, so names would need a machine prefix.
 
-Against: smut `q-lazy` listed remote machines over SSH among the candidate refusals.
+Against: remote machines over SSH were a candidate refusal. ADR-001 leaves them open here.

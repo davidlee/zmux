@@ -3,7 +3,7 @@
 Measured 2026-11-06. zp scans each root to any depth, hidden and ignored paths included, with
 no depth or exclude option. `~/dev` alone gave 346 hits. Roots listing only top-level repos
 still gave 216 rows for 37 projects. A missing root is a hard exit 1. Fixing either means
-forking zp (DEC-012).
+forking zp (ADR-001).
 
 Sources compared the same day: the `~/dev` glob (37 repos), Emacs' project list (36, with
 `/tmp` entries), zoxide (48 after filtering), quotient's policy roots (17, a permissions list).

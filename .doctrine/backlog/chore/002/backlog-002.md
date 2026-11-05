@@ -69,13 +69,20 @@ Leave in git history only: tasks, plans, briefs, the session record, closed ques
 
 ## Progress
 
-2026-11-06. Promoted, not yet repointed; nothing committed.
+2026-11-06. Promoted and committed (`2b9d966`). Repointed. Deletion awaits the operator.
 
-- DEC-001 to 012, with decisions at `proposed` until the operator accepts them. `d-v01-scope` is
-  folded into DEC-011, `h-shared-world` into DEC-012.
+- DEC-001 to 012, accepted by the operator 2026-11-06. `d-v01-scope` is
+  folded into DEC-011.
 - CON-001 to 005. EVD-008 to 013 (`e-zmx-logs` folded into EVD-012). HYP-001 from
-  `h-status-label`. Memory `mem.pattern.zmux.zmx-cli-traps` from `brief-v0`'s traps.
+  `h-status-label`, HYP-002 from `h-shared-world`. Memory `mem.pattern.zmux.zmx-cli-traps` from `brief-v0`'s traps.
 - Evidence skipped as covered or historical: `e-zmx-lifecycle` (EVD-001), `e-zmx-surface`,
   `e-elisp`, `e-za`, `e-umbriel`, `e-prior-art`, `r-herdr`, `e-multiclient`,
   `e-flakes-systemd`, `e-zp-upstream`, `e-pi-zmx-upstream`.
 - Records are tagged `smut:<id>`, as backlog items are.
+- Repointed source comments, `VOCABULARY.md`, `AGENTS.md`, `README.md`, open backlog items and
+  EVD-004. Resolved items IMP-001, 002 and 004 keep their smut mentions as history, as do
+  "Migrated from smut" lines and `smut:` tags.
+- ADR-001 to 003 replace DEC-012, DEC-004, and DEC-005 with DEC-008, as rules to hold in mind
+  during design. Doctrine refuses cross-family supersede, and `related` or `supports` to an ADR:
+  the DECs are `superseded` with a pointer line and `governed_by` edges, and evidence edges stay
+  on the DECs.

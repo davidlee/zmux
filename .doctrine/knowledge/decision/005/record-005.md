@@ -15,3 +15,7 @@ The limits are CON-002. Observed behaviour behind the rewrites: EVD-010, EVD-013
   (EVD-010), and `do_run` labels with `zmx set`.
 - It said pi-zmx needs no fork. It needs none to conform, but one is pinned for a bug
   (DEC-011).
+
+
+Superseded by ADR-003, since this rule must be in mind during design. Doctrine refuses a supersede
+edge across families, so the record is this line and a `governed_by` edge.

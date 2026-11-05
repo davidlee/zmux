@@ -13,4 +13,4 @@ Capture, Unsupported (255).
   in 0.8.1.
 
 Speaking this from another language would be a second implementation of someone else's
-unstable ABI, which is why zmux stays on the CLI (DEC-012).
+unstable ABI, which is why zmux stays on the CLI (ADR-001).

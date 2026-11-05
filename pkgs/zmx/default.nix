@@ -1,4 +1,4 @@
-# The wrapped zmx (d-wrapper): the package *is* the wrapper, so installing it by
+# The wrapped zmx (ADR-003): the package *is* the wrapper, so installing it by
 # overlay changes behaviour declaratively and reverts in one line. It is the
 # package it shadows with one file replaced, so completions, version and meta
 # carry over. The real binary is addressed by absolute path, substituted into

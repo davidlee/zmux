@@ -1,4 +1,4 @@
-# zp, the picker (d-v01-scope): upstream's script, unforked. Its `zmx` is whatever
+# zp, the picker (DEC-011): upstream's script, unforked. Its `zmx` is whatever
 # this package set calls zmx, which under the overlay is the wrapper, so sessions
 # created from zp get labels and a scope. jj stays optional, found on the
 # caller's PATH if it is there.

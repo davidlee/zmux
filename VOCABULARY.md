@@ -1,8 +1,8 @@
 # Vocabulary
 
 What a zmx session name and its labels mean. The wrapper writes the labels, so
-this page is the contract it implements. Sources: `d-name-form`, `d-vocab`,
-`d-state-writer`, `d-naming` in `.smut/`.
+this page is the contract it implements. Reasoning: DEC-001 to DEC-003 and
+ADR-002, in `.doctrine/`.
 
 ## Name
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# argv assertions for the zmx wrapper (tk-tests).
+# argv assertions for the zmx wrapper.
 #
 # A stub `zmx` and a stub `systemd-run` record their argv, and the wrapper is
 # built with the stub's path substituted for the real binary, exactly as the
 # derivation does. Nothing here runs a real zmx or a real systemd, and nothing
-# outlives a case (c-devjail): what is asserted is the argv a caller builds.
+# outlives a case (CON-004): what is asserted is the argv a caller builds.
 set -uo pipefail
 
 here=$(cd -- "$(dirname -- "$0")" && pwd)

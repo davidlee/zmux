@@ -6,7 +6,7 @@
 
 Recorded for completeness; probably won't do.
 
-`d-picker-jobs` says that if a project list is ever maintained, it must be one list for
+DEC-010 says that if a project list is ever maintained, it must be one list for
 the system. Today there are two sources: zsh's `active-projects` (zoxide, used by `zx`) and
 Emacs' own project list. Emacs keeps its list for now, by that decision.
 

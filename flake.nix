@@ -8,7 +8,7 @@
   };
 
   outputs = inputs @ {flake-parts, ...}: let
-    # The delivery mechanism (d-install): the wrapper *is* the package, so an
+    # The delivery mechanism (DEC-006): the wrapper *is* the package, so an
     # overlay makes every caller conform without knowing it. The binary it
     # shadows keeps its own name, unforked and upgradeable — that is the escape
     # hatch that makes shadowing a convention rather than a trap.
@@ -65,12 +65,12 @@
         # -- The package --
         #
         # The wrapper, not a build: this repo ships a shell script installed as
-        # `zmx` (d-wrapper). It arrives through the overlay above, so
+        # `zmx` (ADR-003). It arrives through the overlay above, so
         # `pkgs.zmx` is the wrapper and `pkgs.zmx-unwrapped` the binary.
 
         # The argv tests and the lint, as `nix flake check` sees them. The
         # wrapper under test is substituted by the harness itself, so these run
-        # with no real zmx and no systemd (c-devjail).
+        # with no real zmx and no systemd (CON-004).
         wrapperSrc = lib.fileset.toSource {
           root = ./.;
           fileset = lib.fileset.unions [

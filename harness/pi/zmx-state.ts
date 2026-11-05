@@ -1,5 +1,5 @@
 // Advertises an interactive pi waiting at its prompt as `state=blocked` on the zmx
-// session around it, and `state=working` once it resumes (d-harness-state).
+// session around it, and `state=working` once it resumes (DEC-009).
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 const WRITE_TIMEOUT_MS = 5000;

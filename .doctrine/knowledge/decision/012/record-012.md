@@ -22,5 +22,9 @@ IDE-001.
 - `brief-v0` refused any picker. zp is now packaged and `zx` exists: the refusal that survives
   is a reader of our own.
 - "No forks of pi-zmx" no longer holds as written: a fork is pinned for a bug (DEC-011).
-- Smut `h-shared-world`, the legibility argument, is folded in as the rationale. It said to test
-  this against the first real agent workflow; no such test is recorded.
+- `.smut` called herdr the inspiration. It wasn't: the operator has never used it. The
+  inspiration is zmx and tmux.
+
+
+Superseded by ADR-001, since this rule must be in mind during design. Doctrine refuses a supersede
+edge across families, so the record is this line and a `governed_by` edge.
