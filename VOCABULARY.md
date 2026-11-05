@@ -69,7 +69,8 @@ neither alone.
   holds if the caller is terminated mid-run, unless the whole process group is.
 - `blocked` — written by the program inside the session, or by the harness that
   is asking a human to attach. Never inferred; nothing can know a human is
-  wanted. No harness writes it yet.
+  wanted. For pi, `harness/pi/zmx-state.ts` writes it at the prompt, and `working`
+  when pi resumes.
 - absent — unknown. Displayed as unknown, never as idle.
 
 Ordering, where a reader needs one: `blocked`, `working`, `done`/`failed`,

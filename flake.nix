@@ -53,6 +53,8 @@
           findutils
           diffutils
           gnused
+          # The pi extension's tests run on node's own runner.
+          nodejs
         ];
 
         devTools = pkgs.buildEnv {
@@ -89,6 +91,16 @@
           } ''
             cp -r ${wrapperSrc} source
             bash source/tests/run-tests.sh > "$out"
+          '';
+
+        harnessTests =
+          pkgs.runCommand "zmx-harness-tests" {
+            nativeBuildInputs = [pkgs.nodejs];
+          } ''
+            cp -r ${./harness} harness
+            mkdir tests
+            cp ${./tests/zmx-state.test.ts} tests/zmx-state.test.ts
+            node --test tests/zmx-state.test.ts > "$out"
           '';
 
         wrapperLint =
@@ -143,6 +155,7 @@
         checks = {
           inherit (pkgs) zmx;
           wrapper-tests = wrapperTests;
+          harness-tests = harnessTests;
           wrapper-lint = wrapperLint;
           wrapper-parity = wrapperParity;
           zp-uses-wrapper = zpUsesWrapper;

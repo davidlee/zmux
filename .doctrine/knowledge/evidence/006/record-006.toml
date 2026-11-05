@@ -1,0 +1,25 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 6
+slug = "pi-settled-marks-the-prompt"
+title = "pi's agent_settled marks the prompt, and only a TUI pi has a human behind it"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-05"
+updated = "2026-11-05"
+tags = []
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum = "In TUI pi 1.4.0, agent_start and agent_settled bracket each prompt, so an extension on them advertises working and blocked correctly. agent_settled also fires in JSON and RPC modes, where ctx.mode excludes them; ctx.hasUI would not exclude RPC."
+provenance = "experiment"
+confidence = "high"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

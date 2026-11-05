@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Added
+
+- `harness/pi/zmx-state.ts`: an interactive pi in a session advertises `state=blocked`
+  at its prompt and `state=working` when it resumes. `package.json` makes this repo a
+  pi package, so a home can pin it by commit.
+
 ### Changed
 
 - The vocabulary adds `role`, a display label for a purpose that emerges after the name

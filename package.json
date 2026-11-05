@@ -1,0 +1,9 @@
+{
+  "name": "zmux",
+  "private": true,
+  "keywords": ["pi-package"],
+  "license": "MIT",
+  "pi": {
+    "extensions": ["./harness/pi/zmx-state.ts"]
+  }
+}

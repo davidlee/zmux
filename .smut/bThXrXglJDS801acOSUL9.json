@@ -10,6 +10,8 @@
     "pkgs/",
     "README.md"
   ],
+  "name": "zx",
+  "notes": "2026-11-06: operator named it zx.",
   "part-of": [
     {
       "smut_id": "plan-v0-1"

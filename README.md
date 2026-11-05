@@ -161,7 +161,12 @@ and behaviour tests need no host, so `nix flake check` runs them. There is no CI
 - **Jails** built by `~/flakes` all carry the wrapper, whatever the project's
   `dev-tools` holds. A jail's sessions die with the jail and have no scope. They are
   expected to be invisible to the host's zp, since a jail has its own socket directory.
-- **`blocked`** has no writer yet: see `state` in the vocabulary.
+- **`blocked`** is written for pi by `harness/pi/zmx-state.ts`, a pi extension that
+  does not need pi-zmx. An interactive pi in a session advertises `blocked` at its
+  prompt and `working` when it resumes. Print, JSON and RPC pis leave the session
+  alone, since they inherit `ZMX_SESSION` with nobody behind them. Pin this repo by
+  commit in pi's `settings.json`. A dialog raised mid-run is not seen, and `blocked`
+  stays after pi quits. Claude's plugin comes later.
 
 Window and notification integrations live in the config repo, not here.
 
@@ -175,7 +180,7 @@ provides.
 ## tests
 
 ```sh
-just test    # argv assertions against stub zmx and systemd-run binaries
+just test    # argv assertions against stub binaries, and the pi extension
 just lint    # shellcheck over the wrapper and its fixtures
 nix flake check
 ```
@@ -190,7 +195,8 @@ No real zmx runs, and no systemd is used.
 - `pkgs/zmx/default.nix` — the derivation, with the real binary's absolute path
   substituted so the wrapper can never exec itself.
 - `pkgs/zp/default.nix` — the zp derivation.
-- `tests/` — the argv tests and their two stub binaries.
+- `harness/` — state plugins, one per harness.
+- `tests/` — the argv tests, their two stub binaries, and the pi extension's tests.
 - `VOCABULARY.md` — the contract.
 
 ## licence

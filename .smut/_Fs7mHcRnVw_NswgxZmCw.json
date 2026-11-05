@@ -9,6 +9,7 @@
   "files": [
     "harness/pi/"
   ],
+  "notes": "2026-11-06: moved to doctrine IMP-004, which holds the sketch and the evidence.",
   "part-of": [
     {
       "smut_id": "plan-v0-1"

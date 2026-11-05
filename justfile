@@ -1,6 +1,8 @@
-# argv assertions against stub binaries: no real zmx, no real systemd.
+# argv assertions against stub binaries, and the pi extension against a fake pi:
+# no real zmx, no real systemd, no real pi.
 test:
     ./tests/run-tests.sh
+    node --test tests/zmx-state.test.ts
 
 # Shell hygiene for the wrapper and its fixtures.
 lint:
