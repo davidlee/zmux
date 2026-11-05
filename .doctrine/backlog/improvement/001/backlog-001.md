@@ -64,8 +64,12 @@ its sessions separate.
 
 ## Remaining
 
-1. Push and tag zmux `v0.1.1`; bump `~/flakes`; operator switches.
-2. Push the fork branch and open the PR; repoint the pin from npm 0.1.1 to the fork.
-3. `~/flakes/agents`: add a `zmux` input, apply its overlay to `pkgs`, add `zmx` to
-   `commonPkgs`, with a check that it is the wrapper. Relink forms, `quotient allow`.
-4. Install in `~/agent_home/.pi/agent/settings.json`, then close this item.
+Done on 2026-11-06: `v0.1.1` tagged and pushed; PR davidlee/pi-zmx#1 open against the
+fork's `main`; host home pinned to fork commit `d6bae44`; `~/flakes` carries the wrapper
+in `commonPkgs` and the `v0.1.1` bump (`flakes:IMP-068`), with gate and coverage green.
+
+1. Operator: `just system-switch`, `just home-switch`, then relink forms and
+   `quotient allow`.
+2. Confirm `zmx` is the wrapper inside a jail.
+3. Install `git:github.com/davidlee/pi-zmx@d6bae44153199131062f18069196a7596b30a677` in
+   `~/agent_home/.pi/agent/settings.json`, then close this item and `flakes:IMP-068`.
