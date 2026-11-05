@@ -68,30 +68,21 @@ with `ZMX_RAW=1`, can still be reached, and stays unlabelled.
 
 ### who names sessions
 
-Task ids such as `tk-elisp-cutover` are tasks in `.smut/`; see [design](#design).
+Task ids such as `tk-project-launcher` are tasks in `.smut/`; see [design](#design).
 
 | caller | name today | labels today | intended |
 | ------ | ---------- | ------------ | -------- |
 | zp, a repo row | `<repo>.<n>`: dots folded to `_`, `n` one above the highest in use | wrapper | no change. Repo rows need `ZP_ROOT` or path arguments, and the intended setup has neither, so this path is normally unused |
 | zp, a typed name | the query as typed | wrapper, if dotted | no change. Type `zmux.tests`, not `tests` |
 | project launcher | not built | | `<project>.<n>` for a project picked from zoxide, dots folded to `_` (`tk-project-launcher`, `tk-active-projects`). This becomes the normal way to start a session |
-| Emacs, `emacs/dl-zmx.el` | `<project>.<id>`, no fold, so a dotted project is refused | wrapper | folds dots to `_`, and moves to `~/.config/emacs` (`tk-elisp-cutover`) |
-| Emacs, the copy in `~/.config/emacs` | `<project>-<id>` | its own `--labels` | replaced by the plugin above. Old `P-ID` sessions stay reachable through `my/zmx-switch` |
+| Emacs, `my/zmx-project` | `<project>.<id>`: leading dots dropped, dots folded to `_`, unsafe characters to `-` | wrapper | no change. Older `<project>-<id>` sessions stay reachable through `my/zmx-switch` |
 | pi-zmx, default | the pi session name: lowercased, whitespace to `-`, anything else outside `[\w-]` stripped | none: it can't hold a dot | nothing planned |
 | pi-zmx, `session` parameter | as given, such as `zmux.tests` | wrapper | nothing planned. Agents should pass one |
-| `za` in `~/.config/zsh` | as given | wrapper, if dotted | deleted, because it nests a second scope (`tk-elisp-cutover`) |
 | `zmx attach` by hand | as given | wrapper, if dotted | no change |
-
-### known gaps
-
-- **Dotted projects in Emacs.** Until IMP-002 (`tk-elisp-cutover`), `emacs/dl-zmx.el`
-  does not fold, so a project such as `my.repo` is refused and the wrapper's message
-  lands in the buffer.
 
 ## status
 
-v0.1.2: the wrapper, its argv tests, the overlay, the zp package and the Emacs
-plugin. See the [changelog](CHANGELOG.md). On an x86_64-linux host, a session has survived the death
+v0.1.2: the wrapper, its argv tests, the overlay and the zp package. See the [changelog](CHANGELOG.md). On an x86_64-linux host, a session has survived the death
 of its client in its own scope. Not yet checked: a real WM restart, an
 `emacs.service` restart, and aarch64-darwin.
 
@@ -163,7 +154,8 @@ and behaviour tests need no host, so `nix flake check` runs them. There is no CI
   never holds a dot, so to get a labelled session an agent passes one in the tool's
   `session` parameter. After a timeout the task runs on, and the wrapper records its
   `state` when it ends.
-- **Emacs** (`emacs/dl-zmx.el`) needs ghostel and a host Emacs.
+- **Emacs**: the plugin lives in the config repo, as `apps/dl-zmx.el`. It composes
+  the name and nothing else.
 - **Jails** built by `~/flakes` all carry the wrapper, whatever the project's
   `dev-tools` holds. A jail's sessions die with the jail and have no scope. They are
   expected to be invisible to the host's zp, since a jail has its own socket directory.
@@ -190,12 +182,6 @@ The argv tests build the wrapper with a stub's path substituted for the real
 binary, exactly as the derivation does, so the wrapper has no test-only branch.
 No real zmx runs, and no systemd is used.
 
-The Emacs plugin's tests need Emacs:
-
-```sh
-emacs -Q --batch -L emacs -l ert -l dl-zmx-test.el -f ert-run-tests-batch-and-exit
-```
-
 ## files
 
 - `pkgs/zmx/wrapper.sh` — the wrapper: three rewrites, then the real binary.
@@ -203,9 +189,6 @@ emacs -Q --batch -L emacs -l ert -l dl-zmx-test.el -f ert-run-tests-batch-and-ex
   substituted so the wrapper can never exec itself.
 - `pkgs/zp/default.nix` — the zp derivation.
 - `tests/` — the argv tests and their two stub binaries.
-- `emacs/dl-zmx.el`, `emacs/dl-zmx-test.el` — one ghostel buffer per session,
-  completion over running sessions, attach-or-create. It composes the name and
-  nothing else; labels, scopes and state are the wrapper's.
 - `VOCABULARY.md` — the contract.
 
 ## licence

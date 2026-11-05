@@ -18,3 +18,10 @@ The wrapper now refuses a name with more than one dot. Until this lands,
 `emacs/dl-zmx.el` does not fold, so a project such as `my.repo` gets the wrapper's
 refusal in its buffer rather than a session. The copy on the host composes
 `<project>-<id>`, so it is not affected.
+
+## Done
+
+`apps/dl-zmx.el` in the Emacs config was edited in place, not replaced by this repo's
+copy, which had dropped the `my/zmx-switch` annotations and the filtering of ended
+sessions. Tests pass there. Not yet exercised from a live Emacs: that, and the
+`emacs.service` restart, belong to `tk-host-checks`.

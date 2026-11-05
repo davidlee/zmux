@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Removed
+
+- The Emacs plugin and `DL_ZMX_ELISP`. The only copy is now `apps/dl-zmx.el` in the
+  Emacs config repo, which composes `<project>.<id>` and folds dots in the project.
+
 ## 0.1.2 - 2026-11-06
 
 ### Changed

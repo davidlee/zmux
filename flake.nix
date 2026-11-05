@@ -1,5 +1,5 @@
 {
-  description = "zmux: a zmx with opinions — the wrapper, its argv tests and the Emacs plugin";
+  description = "zmux: a zmx with opinions — the wrapper and its argv tests";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -149,19 +149,7 @@
           dev-tools-ship-wrapper = devToolsShipWrapper;
         };
 
-        devshells.default = {
-          packages = devToolPkgs;
-
-          # The plugin, for an Emacs on the host: (add-to-list 'load-path
-          # (getenv "DL_ZMX_ELISP")). It is not vendored into any package here —
-          # integrations live in the config repo (d-surfaces).
-          env = [
-            {
-              name = "DL_ZMX_ELISP";
-              value = "${./emacs}";
-            }
-          ];
-        };
+        devshells.default.packages = devToolPkgs;
       };
     };
 }
