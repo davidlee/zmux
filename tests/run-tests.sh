@@ -37,7 +37,7 @@ setup() {
     ZMX_STUB_LOG=$work/zmx-argv \
     SD_STUB_SEQ=$work/sd-seq \
     SD_STUB_LOG=$work/sd-argv
-  unset ZMX_RAW ZMX_LAUNCHER ZMX_SESSION ZMX_STUB_RUN_EXIT
+  unset ZMX_RAW ZMX_LAUNCHER ZMX_SESSION ZMX_STUB_RUN_EXIT ZMX_STUB_SET_FAIL SD_STUB_FAIL
   install -m 0755 "$here/stubs/zmx" "$work/bin/zmx-stub" || return 1
   install -m 0755 "$here/stubs/systemd-run" "$work/bin/systemd-run" || return 1
   sed "s|@zmx@|$work/bin/zmx-stub|" "$wrapper_src" > "$work/bin/zmx" || return 1
@@ -96,6 +96,33 @@ assert_status() {
   fi
 }
 
+assert_stderr() {
+  if ! grep -q -- "$1" "$tmp/err"; then
+    printf '  stderr: wanted "%s", got "%s"\n' "$1" "$(cat "$tmp/err")"
+    return 1
+  fi
+}
+
+assert_no_session() {
+  if grep -qx -- "$1" "$work/sessions"; then
+    printf '  session "%s" exists\n' "$1"
+    return 1
+  fi
+}
+
+# assert_no_dispatch NAME COMMAND — `run NAME COMMAND` was never called.
+assert_no_dispatch() {
+  local want calls
+  want=$(printf 'run|%s|%s|' "$1" "$2")
+  calls=$(dump "$ZMX_STUB_LOG")
+  case $calls in
+    *"$want"*)
+      printf '  dispatched: %s\n' "$want"
+      return 1
+      ;;
+  esac
+}
+
 # --- attach ----------------------------------------------------------------
 
 attach_names_and_labels_at_creation() {
@@ -133,8 +160,9 @@ attach_passes_a_callers_labels_through_on_an_undotted_name() {
 
 attach_births_the_session_in_its_own_scope() {
   zmx_on_path attach p.i nu
-  assert_calls "$SD_STUB_LOG" 1
-  assert_argv "$SD_STUB_LOG" 1 --user --scope --collect --quiet \
+  assert_calls "$SD_STUB_LOG" 2
+  assert_argv "$SD_STUB_LOG" 1 --user --scope --collect --quiet /bin/sh -c :
+  assert_argv "$SD_STUB_LOG" 2 --user --scope --collect --quiet \
     "$work/bin/zmx-stub" attach --labels 'project=p id=i' p.i nu
 }
 
@@ -142,6 +170,39 @@ attach_settles_for_bare_zmx_when_no_launcher_is_usable() {
   zmx_bare attach p.i nu
   assert_calls "$SD_STUB_LOG" 0
   assert_argv "$ZMX_STUB_LOG" 2 attach --labels 'project=p id=i' p.i nu
+}
+
+attach_settles_for_bare_zmx_when_the_user_manager_is_unreachable() {
+  SD_STUB_FAIL=1 zmx_on_path attach p.i nu
+  assert_status $? 0
+  assert_calls "$ZMX_STUB_LOG" 2
+  assert_argv "$ZMX_STUB_LOG" 2 attach --labels 'project=p id=i' p.i nu
+}
+
+attach_shows_a_failing_explicit_launcher() {
+  local status=0
+  SD_STUB_FAIL=1 ZMX_LAUNCHER=systemd-run zmx_on_path attach p.i nu 2> "$tmp/err" || status=$?
+  assert_status "$status" 1
+  assert_stderr 'Failed to connect'
+  assert_no_session p.i
+}
+
+attach_with_no_name_is_zmxs_to_refuse() {
+  local status=0
+  zmx_bare attach 2> "$tmp/err" || status=$?
+  assert_status "$status" 1
+  assert_calls "$ZMX_STUB_LOG" 1
+  assert_argv "$ZMX_STUB_LOG" 1 attach
+  [ ! -s "$tmp/err" ]
+}
+
+attach_with_a_bare_labels_flag_is_zmxs_to_refuse() {
+  local status=0
+  zmx_bare attach --labels 2> "$tmp/err" || status=$?
+  assert_status "$status" 1
+  assert_calls "$ZMX_STUB_LOG" 1
+  assert_argv "$ZMX_STUB_LOG" 1 attach --labels
+  [ ! -s "$tmp/err" ]
 }
 
 attach_launcher_can_be_switched_off_explicitly() {
@@ -233,6 +294,68 @@ run_creates_an_undotted_session_without_labels() {
   assert_argv "$ZMX_STUB_LOG" 5 set dev state=done
 }
 
+run_sees_detach_anywhere_in_the_command() {
+  have_session p.i
+  zmx_bare run p.i make -d > /dev/null
+  assert_calls "$ZMX_STUB_LOG" 3
+  assert_argv "$ZMX_STUB_LOG" 2 set p.i state=working
+  assert_argv "$ZMX_STUB_LOG" 3 run p.i make -d
+}
+
+run_writes_no_state_on_a_usage_error() {
+  local status=0
+  have_session p.i
+  zmx_bare run p.i 2> "$tmp/err" || status=$?
+  assert_status "$status" 1
+  assert_stderr 'requires a command'
+  assert_calls "$ZMX_STUB_LOG" 2
+  assert_argv "$ZMX_STUB_LOG" 2 run p.i
+}
+
+run_labels_a_session_even_on_a_usage_error() {
+  local status=0
+  zmx_bare run p.i 2> /dev/null || status=$?
+  assert_status "$status" 1
+  assert_argv "$ZMX_STUB_LOG" 3 set p.i 'project=p id=i'
+}
+
+run_brackets_a_command_piped_on_stdin() {
+  have_session p.i
+  printf 'make\n' | zmx_bare run p.i > /dev/null
+  assert_calls "$ZMX_STUB_LOG" 4
+  assert_argv "$ZMX_STUB_LOG" 2 set p.i state=working
+  assert_argv "$ZMX_STUB_LOG" 4 set p.i state=done
+}
+
+run_with_no_name_is_zmxs_to_refuse() {
+  zmx_bare run > /dev/null 2>&1 || true
+  assert_calls "$ZMX_STUB_LOG" 1
+  assert_argv "$ZMX_STUB_LOG" 1 run
+}
+
+run_creates_a_labelled_session_when_the_user_manager_is_unreachable() {
+  SD_STUB_FAIL=1 zmx_on_path run p.i make > /dev/null
+  assert_status $? 0
+  assert_argv "$ZMX_STUB_LOG" 2 run p.i true
+  assert_argv "$ZMX_STUB_LOG" 3 set p.i 'project=p id=i'
+}
+
+run_refuses_to_dispatch_when_creation_fails() {
+  local status=0
+  SD_STUB_FAIL=1 ZMX_LAUNCHER=systemd-run zmx_on_path run p.i make 2> "$tmp/err" || status=$?
+  assert_status "$status" 1
+  assert_stderr 'Failed to connect'
+  assert_no_session p.i
+}
+
+run_refuses_to_dispatch_when_labelling_fails() {
+  local status=0
+  ZMX_STUB_SET_FAIL=1 zmx_bare run p.i make 2> "$tmp/err" || status=$?
+  assert_status "$status" 1
+  assert_stderr 'p.i'
+  assert_no_dispatch p.i make
+}
+
 run_resolves_a_dot_to_the_current_session() {
   have_session p.i
   export ZMX_SESSION=p.i
@@ -294,7 +417,11 @@ run_case() {
     failed=$((failed + 1))
     return
   fi
-  if (set -e; "$case") >> "$tmp/log" 2>&1; then
+  # A plain statement: inside `if` or beside `||`, bash ignores set -e, and only
+  # a case's last assertion would count.
+  (set -e; "$case") < /dev/null >> "$tmp/log" 2>&1
+  local status=$?
+  if [ "$status" -eq 0 ]; then
     printf 'ok   %s\n' "$name"
     passed=$((passed + 1))
   else
@@ -314,6 +441,10 @@ run_case attach-caller-labels attach_keeps_a_callers_labels_and_adds_its_own
 run_case attach-caller-labels-undotted attach_passes_a_callers_labels_through_on_an_undotted_name
 run_case attach-scope attach_births_the_session_in_its_own_scope
 run_case attach-bare-fallback attach_settles_for_bare_zmx_when_no_launcher_is_usable
+run_case attach-no-user-manager attach_settles_for_bare_zmx_when_the_user_manager_is_unreachable
+run_case attach-launcher-fails attach_shows_a_failing_explicit_launcher
+run_case attach-no-name attach_with_no_name_is_zmxs_to_refuse
+run_case attach-bare-labels attach_with_a_bare_labels_flag_is_zmxs_to_refuse
 run_case attach-launcher-empty attach_launcher_can_be_switched_off_explicitly
 run_case attach-launcher-data attach_launcher_is_data
 run_case attach-sanitise-char attach_folds_an_unsafe_character_into_the_label
@@ -324,6 +455,14 @@ run_case run-failure run_exits_with_the_task_code_and_records_failure
 run_case run-detached run_leaves_working_in_place_when_it_detaches
 run_case run-creates run_creates_a_labelled_session_and_keeps_the_output_clean
 run_case run-creates-undotted run_creates_an_undotted_session_without_labels
+run_case run-detach-anywhere run_sees_detach_anywhere_in_the_command
+run_case run-usage-error run_writes_no_state_on_a_usage_error
+run_case run-usage-error-labels run_labels_a_session_even_on_a_usage_error
+run_case run-piped run_brackets_a_command_piped_on_stdin
+run_case run-no-name run_with_no_name_is_zmxs_to_refuse
+run_case run-no-user-manager run_creates_a_labelled_session_when_the_user_manager_is_unreachable
+run_case run-creation-fails run_refuses_to_dispatch_when_creation_fails
+run_case run-labelling-fails run_refuses_to_dispatch_when_labelling_fails
 run_case run-dot run_resolves_a_dot_to_the_current_session
 run_case run-dot-refused run_refuses_a_dot_outside_a_session
 run_case raw raw_disables_every_rewrite

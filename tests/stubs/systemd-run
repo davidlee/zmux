@@ -13,6 +13,12 @@ log=$(printf '%s/%03d' "${SD_STUB_LOG:?}" "$seq")
 : > "$log"
 for arg in "$@"; do printf '%s\0' "$arg" >> "$log"; done
 
+# A host with the binary but no reachable user manager: refuses every command.
+if [ -n "${SD_STUB_FAIL:-}" ]; then
+  printf 'Failed to connect to user scope bus via local transport\n' >&2
+  exit 1
+fi
+
 # Options first, command second: systemd-run [OPTION...] COMMAND [ARG...]
 while [ $# -gt 0 ]; do
   case $1 in

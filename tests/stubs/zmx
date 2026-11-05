@@ -45,19 +45,25 @@ case ${1-} in
       printf 'error: session "%s" not found\n' "$target" >&2
       exit 1
     }
+    [ -z "${ZMX_STUB_SET_FAIL:-}" ] || exit 1
     ;;
   run)
     shift
     target=${1-}
     shift
+    # As zmx does: -d counts anywhere, and a command may arrive on stdin.
     detached=
-    if [ "${1-}" = -d ]; then
-      detached=1
-      shift
-    fi
+    command=
+    for arg; do
+      if [ "$arg" = -d ]; then detached=1; else command=1; fi
+    done
     if ! exists "$target"; then
       add "$target"
       printf 'session "%s" created\n' "$target"
+    fi
+    if [ -z "$command" ] && [ ! -p /dev/stdin ] && [ ! -f /dev/stdin ]; then
+      printf 'error: run requires a command (or pipe input via stdin)\n' >&2
+      exit 1
     fi
     if [ -n "$detached" ]; then
       printf 'command sent!\n'
@@ -68,8 +74,10 @@ case ${1-} in
     ;;
   attach | a)
     shift
-    if [ "${1-}" = --labels ]; then shift 2; fi
+    if [ "${1-}" = --labels ] && [ $# -ge 2 ]; then shift 2; fi
+    if [ "${1-}" = --labels ]; then shift; fi
     target=${1-}
+    [ -n "$target" ] || exit 1
     if ! exists "$target"; then
       add "$target"
       printf 'session "%s" created\n' "$target"

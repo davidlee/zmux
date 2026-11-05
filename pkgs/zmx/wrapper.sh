@@ -9,15 +9,25 @@
 # contract this implements.
 #
 # The real binary is addressed by absolute path, substituted at build time, so
-# this script can never re-enter itself. It uses no external command but
-# `command -v systemd-run`: the user's PATH stays the user's.
+# this script can never re-enter itself. Its only external command is
+# systemd-run: the user's PATH stays the user's.
 set -u
 
 REAL_ZMX='@zmx@'
+SCOPE='systemd-run --user --scope --collect --quiet'
 
+say() { printf 'zmx: %s\n' "$*" >&2; }
+
+# Refused: the caller's input is at fault.
 die() {
-  printf 'zmx: %s\n' "$*" >&2
+  say "$*"
   exit 2
+}
+
+# Failed: the input was fine and the environment was not.
+fail() {
+  say "$*"
+  exit 1
 }
 
 # Every character outside [a-zA-Z0-9_-] becomes '-'. By the time this runs a dot
@@ -83,24 +93,35 @@ $1
   return 1
 }
 
-# The launcher is data: an argv prefix, word-split on purpose, defaulting to a
-# transient user scope where systemd-run exists and to nothing where it does
-# not. Failing to attach is worse than failing to be durable.
-#
+# The binary can exist with no user manager behind it (root, cron, a container),
+# so ask the launcher rather than the PATH. /bin/sh is this script's own
+# interpreter, so the probe assumes nothing about the user's PATH.
+# shellcheck disable=SC2086 # the prefix is argv in a variable; the split is the point
+scope_is_usable() {
+  command -v systemd-run >/dev/null 2>&1 &&
+    $SCOPE /bin/sh -c : >/dev/null 2>&1
+}
+
+# The launcher is data: an argv prefix, word-split on purpose. A caller's
+# ZMX_LAUNCHER is taken at its word and its failures are the caller's to see.
+# The default is a transient user scope where one works, and nothing where it
+# does not: failing to attach is worse than failing to be durable.
+launcher() {
+  if [ -n "${ZMX_LAUNCHER+set}" ]; then
+    printf '%s' "$ZMX_LAUNCHER"
+  elif scope_is_usable; then
+    printf '%s' "$SCOPE"
+  fi
+}
+
 #   launch exec CMD...  replace this process (the interactive verb)
 #   launch wait CMD...  run it and return (a creation dispatch)
 launch() {
   mode=$1
   shift
-  if [ -n "${ZMX_LAUNCHER+set}" ]; then
-    prefix=$ZMX_LAUNCHER
-  elif command -v systemd-run >/dev/null 2>&1; then
-    prefix='systemd-run --user --scope --collect --quiet'
-  else
-    prefix=
-  fi
+  prefix=$(launcher)
   # shellcheck disable=SC2086 # the prefix is argv in a variable; the split is the point
-  set -- ${prefix:-} "$@"
+  set -- $prefix "$@"
   if [ "$mode" = exec ]; then
     exec "$@"
   fi
@@ -109,17 +130,16 @@ launch() {
 
 do_attach() {
   # attach [--labels KV] NAME [command...]
+  # Without a name there is nothing to name: the refusal is zmx's to make.
+  caller_labels=
   if [ "${1-}" = --labels ]; then
+    [ $# -ge 3 ] || exec "$REAL_ZMX" attach "$@"
     caller_labels=$2
     shift 2
-    name=${1-}
-    shift
-  else
-    caller_labels=
-    name=${1-}
-    shift
   fi
-  [ -n "$name" ] || launch exec "$REAL_ZMX" attach
+  [ $# -ge 1 ] || exec "$REAL_ZMX" attach
+  name=$1
+  shift
   derive "$name"
   if [ -n "$project" ] && ! session_exists "$name"; then
     launch exec "$REAL_ZMX" attach \
@@ -132,9 +152,9 @@ do_attach() {
 }
 
 do_run() {
-  # run NAME [-d] [command...]
-  name=${1-}
-  [ -n "$name" ] || launch exec "$REAL_ZMX" run
+  # run NAME [command...], with -d anywhere after the name.
+  [ -n "${1-}" ] || exec "$REAL_ZMX" run "$@"
+  name=$1
   shift
   if [ "$name" = . ]; then
     [ -n "${ZMX_SESSION:-}" ] ||
@@ -143,16 +163,29 @@ do_run() {
   fi
   derive "$name"
 
+  # zmx takes -d wherever it appears, so it is never part of the command.
   detached=
-  if [ "${1-}" = -d ]; then detached=1; fi
+  has_command=
+  for arg; do
+    if [ "$arg" = -d ]; then detached=1; else has_command=1; fi
+  done
 
   if ! session_exists "$name"; then
     # `zmx run` creates the session when it is absent, and takes no labels, so
     # creation is a dispatch of its own. Its chatter is not the caller's output.
-    launch wait "$REAL_ZMX" run "$name" true >/dev/null 2>&1
+    # Anything short of a labelled session stops here: the plain `zmx run` below
+    # would otherwise create one of its own, unlabelled and outside any scope.
+    err=$(launch wait "$REAL_ZMX" run "$name" true 2>&1 >/dev/null) ||
+      fail "cannot create session '$name': $err"
     if [ -n "$project" ]; then
-      "$REAL_ZMX" set "$name" "project=$project id=$id" >/dev/null 2>&1
+      "$REAL_ZMX" set "$name" "project=$project id=$id" >/dev/null 2>&1 ||
+        fail "cannot label session '$name'"
     fi
+  fi
+
+  # No command and nothing on stdin is a usage error, not a task to bracket.
+  if [ -z "$has_command" ] && [ ! -p /dev/stdin ] && [ ! -f /dev/stdin ]; then
+    exec "$REAL_ZMX" run "$name" "$@"
   fi
 
   "$REAL_ZMX" set "$name" state=working >/dev/null 2>&1
