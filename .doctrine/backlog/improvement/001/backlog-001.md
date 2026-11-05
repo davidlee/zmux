@@ -62,14 +62,15 @@ its sessions separate.
   `fix/exec-failures`, then PR. Verified on host pi: with no `zmx`, stubs register and
   `/zmx` does not; a timed-out `zmx_run` reports an error.
 
-## Remaining
+## Outcome, 2026-11-06
 
-Done on 2026-11-06: `v0.1.1` tagged and pushed; PR davidlee/pi-zmx#1 open against the
-fork's `main`; host home pinned to fork commit `d6bae44`; `~/flakes` carries the wrapper
-in `commonPkgs` and the `v0.1.1` bump (`flakes:IMP-068`), with gate and coverage green.
+Both homes pin `git:github.com/davidlee/pi-zmx@d6bae44`. `zmx` is the wrapper in every
+jail: the `dev-envs` stub project's jail, which has no `zmx` of its own, carries it.
+Jailed pi made `jailsmoke.two`, labelled `project=jailsmoke id=two state=done`.
 
-1. Operator: `just system-switch`, `just home-switch`, then relink forms and
-   `quotient allow`.
-2. Confirm `zmx` is the wrapper inside a jail.
-3. Install `git:github.com/davidlee/pi-zmx@d6bae44153199131062f18069196a7596b30a677` in
-   `~/agent_home/.pi/agent/settings.json`, then close this item and `flakes:IMP-068`.
+An earlier jailed run listed no sessions after a successful `zmx_run`. Sequential
+`pi.exec` calls and separate model turns both list the session, so it was probably two
+tool calls batched in one turn. Inferred: that run's call order was not observed.
+
+Left for the operator: `just home-switch` (the host's `zmx` predates the TERM fix),
+relinking forms, and repointing the pin once the fork's PR merges.

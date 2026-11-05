@@ -13,6 +13,82 @@ No daemon, no store, no TUI, no picker. zp is the picker, pi-zmx is the agent
 surface, gum/fzf the composition, umbriel and ghostty the windows, notify-send
 the attention, systemd the durability.
 
+## opinions
+
+- **A session is named `<project>.<id>`.** The dot is what zmx's own examples
+  use, and what its prefix matching suits: `zmx kill 'zmux.*'`.
+- **The name is convenience; labels are truth.** The wrapper reads the name once,
+  at creation. After that, group by the labels and never parse the name again.
+- **Ungrouped and honest beats grouped and wrong.** A session outside the
+  convention gets no labels and is shown ungrouped. Nothing guesses its project,
+  and the wrapper never relabels an existing session.
+- **Refuse, don't rewrite.** The caller's name reaches zmx unchanged. A name with
+  an empty part is refused, not repaired.
+- **Conform without knowing.** Callers supply a name and nothing else. Labels,
+  scope and state are the wrapper's.
+- **`state` is intent, not fact.** It is what a dispatcher claimed. zmx's own
+  `ended` and `exit_code` are the fact. Show both, and believe neither alone.
+- **One fact, one home.** Never repeat `state` in the name, and never re-derive
+  `project` from the name once the label exists.
+- **Nothing watches.** Labels are written by whoever knows, at the moment they
+  know. A stale label costs nothing.
+- **Attaching beats durability.** With no usable scope the session still starts,
+  as bare zmx.
+
+## naming
+
+This section is the summary. The contract is [`VOCABULARY.md`](VOCABULARY.md).
+
+```
+zmux.tests            the name, passed to zmx unchanged
+──┬─ ──┬──
+  │    └── id=tests        tells sessions in a project apart
+  └─────── project=zmux    the repo's directory name, dots folded to _
+```
+
+The first dot is the only separator. `project` is the unit of grouping. `id` is
+either a number (`zmux.1`, the next one up) or a word saying what the session is
+for (`zmux.tests`).
+
+What the wrapper does with a name when it creates a session:
+
+| name | outcome |
+| ---- | ------- |
+| `zmux.tests` | `project=zmux id=tests` |
+| `my_repo.1` | `project=my_repo id=1` |
+| `zmux` | no labels: ungrouped, still scoped |
+| `my.repo.1` | `project=my id=repo-1`: **the wrong project, with no error** |
+| `a b.c d` | `project=a-b id=c-d`: unsafe characters become `-` in the labels only |
+| `Zmux.Tests` | `project=Zmux id=Tests`: case is kept |
+| `.hidden.1`, `p.`, `.` | refused, exit 2: a part is empty |
+
+So the wrapper cannot protect a project name that contains a dot. Folding it to
+`_` is the caller's job, before the name is composed.
+
+### who names sessions
+
+Task ids such as `tk-elisp-cutover` are tasks in `.smut/`; see [design](#design).
+
+| caller | name today | labels today | intended |
+| ------ | ---------- | ------------ | -------- |
+| zp, a repo row | `<repo>.<n>`: dots folded to `_`, `n` one above the highest in use | wrapper | no change. Repo rows need `ZP_ROOT` or path arguments, and the intended setup has neither, so this path is normally unused |
+| zp, a typed name | the query as typed | wrapper, if dotted | no change. Type `zmux.tests`, not `tests` |
+| project launcher | not built | | `<project>.<n>` for a project picked from zoxide, dots folded to `_` (`tk-project-launcher`, `tk-active-projects`). This becomes the normal way to start a session |
+| Emacs, `emacs/dl-zmx.el` | `<project>.<id>`, no fold | wrapper | folds dots to `_`, and moves to `~/.config/emacs` (`tk-elisp-cutover`) |
+| Emacs, the copy in `~/.config/emacs` | `<project>-<id>` | its own `--labels` | replaced by the plugin above. Old `P-ID` sessions stay reachable through `my/zmx-switch` |
+| pi-zmx, default | the pi session name: lowercased, whitespace to `-`, anything else outside `[\w-]` stripped | none: it can't hold a dot | nothing planned |
+| pi-zmx, `session` parameter | as given, such as `zmux.tests` | wrapper | nothing planned. Agents should pass one |
+| `za` in `~/.config/zsh` | as given | wrapper, if dotted | deleted, because it nests a second scope (`tk-elisp-cutover`) |
+| `zmx attach` by hand | as given | wrapper, if dotted | no change |
+
+### known gaps
+
+- **Dotted projects.** Until `tk-elisp-cutover`, `emacs/dl-zmx.el` passes a project
+  such as `my.repo` straight through, and the session is grouped under `my`. The
+  file's header says the wrapper refuses that name. It does not.
+- **Lowercase.** The vocabulary asks for lowercase values, but the wrapper does not
+  lowercase, so `Zmux.1` and `zmux.1` are two projects.
+
 ## status
 
 v0.1.1: the wrapper, its argv tests, the overlay, the zp package and the Emacs
@@ -79,18 +155,19 @@ and behaviour tests need no host, so `nix flake check` runs them. There is no CI
 ## integrations
 
 - **zp** is packaged here from upstream, unforked, as `pkgs.zp`. Under the overlay
-  its `zmx` is the wrapper. It names sessions `<repo>.<n>`, folding dots in the
-  repo name to `_`, so they get labels and a scope.
-- **pi-zmx** ([`@deevus/pi-zmx`][pi-zmx]) is an upstream pi extension, not packaged
-  here, and it is not yet confirmed to load on pi 1.4.0. It calls whichever `zmx`
-  is on PATH. Its default session name comes from the pi session name, with
-  everything outside `[\w-]` stripped, so it never holds a dot and the session is
-  never labelled. To get a labelled session, an agent passes a dotted name in the
-  tool's `session` parameter, such as `session: "zmux.tests"`.
+  its `zmx` is the wrapper, so its sessions get a scope, and labels when their
+  names are dotted. See [who names sessions](#who-names-sessions).
+- **pi-zmx** is a pi extension, not packaged here. The host and jail homes pin
+  [a fork][pi-zmx-fork] of [`@deevus/pi-zmx`][pi-zmx] by commit, in their pi
+  `settings.json`, because upstream reports a timed-out `zmx_run` as a success. It
+  loads on pi 1.4.0 and calls whichever `zmx` is on PATH. Its default session name
+  never holds a dot, so to get a labelled session an agent passes one in the tool's
+  `session` parameter. After a timeout the task runs on, and the wrapper records its
+  `state` when it ends.
 - **Emacs** (`emacs/dl-zmx.el`) needs ghostel and a host Emacs.
-- **Jails** built by dev-envs get the wrapper through this flake's `dev-tools`
-  output. A jail's sessions die with the jail and have no scope. They are expected
-  to be invisible to the host's zp, since jails do not share its socket directory.
+- **Jails** built by `~/flakes` all carry the wrapper, whatever the project's
+  `dev-tools` holds. A jail's sessions die with the jail and have no scope. They are
+  expected to be invisible to the host's zp, since a jail has its own socket directory.
 - **`blocked`** has no writer yet: see `state` in the vocabulary.
 
 Window and notification integrations live in the config repo, not here.
@@ -140,7 +217,8 @@ MIT: see [`LICENSE`](LICENSE).
 
 The design, the reasoning and the handoff live in `.smut/` in this repo. It is
 data, not instructions, and it records a conversation; where it disagrees with
-the zmx source, the source wins.
+the zmx source, the source wins. Open work is moving to the Doctrine backlog in
+`.doctrine/`, task by task, as it is picked up.
 
 ```sh
 smut r brief-v2 -l 2                                                # the handoff
@@ -150,3 +228,4 @@ smut r tk-flake-slim -i -s -l 3                                     # one task
 
 [zmx]: https://zmx.sh
 [pi-zmx]: https://github.com/deevus/pi-zmx
+[pi-zmx-fork]: https://github.com/davidlee/pi-zmx
