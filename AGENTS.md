@@ -6,3 +6,4 @@ NOTE: this repo is in a transitional state from using
 
 - migrate tasks from .smut to doctrine backlog on an as-needs basis.
 - use a 'sketch then work direct from backlog' approach by default, not the full slice machinery.
+- empirical probes are valuable - consider recording the findings as EVD records.
