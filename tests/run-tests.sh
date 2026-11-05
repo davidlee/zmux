@@ -236,9 +236,9 @@ attach_folds_an_unsafe_character_into_the_label() {
   assert_argv "$ZMX_STUB_LOG" 2 attach --labels 'project=p id=a-b' 'p.a b'
 }
 
-attach_folds_inner_dots_into_the_id() {
-  zmx_bare attach p.a.b
-  assert_argv "$ZMX_STUB_LOG" 2 attach --labels 'project=p id=a-b' p.a.b
+attach_keeps_the_case_of_the_name() {
+  zmx_bare attach Zmux.Tests
+  assert_argv "$ZMX_STUB_LOG" 2 attach --labels 'project=Zmux id=Tests' Zmux.Tests
 }
 
 attach_refuses_a_name_with_an_empty_part() {
@@ -247,7 +247,22 @@ attach_refuses_a_name_with_an_empty_part() {
   assert_status "$status" 2
   zmx_bare attach .hidden 2>/dev/null || status=$?
   assert_status "$status" 2
-  assert_calls "$ZMX_STUB_LOG" 0
+  assert_no_session p.
+  assert_no_session .hidden
+}
+
+attach_refuses_a_name_with_two_dots() {
+  local status=0
+  zmx_bare attach my.repo.1 2>"$tmp/err" || status=$?
+  assert_status "$status" 2
+  assert_stderr 'my.repo.1'
+  assert_no_session my.repo.1
+}
+
+attach_reaches_an_existing_session_it_would_not_create() {
+  have_session my.repo.1
+  zmx_bare attach my.repo.1 nu
+  assert_argv "$ZMX_STUB_LOG" 2 attach my.repo.1 nu
 }
 
 # --- run -------------------------------------------------------------------
@@ -408,6 +423,21 @@ run_resolves_a_dot_to_the_current_session() {
   assert_argv "$ZMX_STUB_LOG" 3 run p.i make
 }
 
+run_refuses_a_name_with_two_dots() {
+  local status=0
+  zmx_bare run my.repo.1 make 2>/dev/null || status=$?
+  assert_status "$status" 2
+  assert_no_session my.repo.1
+  assert_no_dispatch my.repo.1 make
+}
+
+run_reaches_an_existing_session_it_would_not_create() {
+  have_session my.repo.1
+  zmx_bare run my.repo.1 make
+  assert_argv "$ZMX_STUB_LOG" 3 set my.repo.1 state=working
+  assert_argv "$ZMX_STUB_LOG" 4 run my.repo.1 make
+}
+
 run_refuses_a_dot_outside_a_session() {
   local status=0
   zmx_bare run . make 2>/dev/null || status=$?
@@ -491,8 +521,10 @@ run_case attach-bare-labels attach_with_a_bare_labels_flag_is_zmxs_to_refuse
 run_case attach-launcher-empty attach_launcher_can_be_switched_off_explicitly
 run_case attach-launcher-data attach_launcher_is_data
 run_case attach-sanitise-char attach_folds_an_unsafe_character_into_the_label
-run_case attach-sanitise-dots attach_folds_inner_dots_into_the_id
+run_case attach-keeps-case attach_keeps_the_case_of_the_name
 run_case attach-empty-part attach_refuses_a_name_with_an_empty_part
+run_case attach-two-dots attach_refuses_a_name_with_two_dots
+run_case attach-two-dots-existing attach_reaches_an_existing_session_it_would_not_create
 run_case run-brackets run_brackets_the_dispatch_with_state
 run_case run-failure run_exits_with_the_task_code_and_records_failure
 run_case run-terminated run_records_the_task_result_after_the_caller_is_terminated
@@ -509,6 +541,8 @@ run_case run-no-user-manager run_creates_a_labelled_session_when_the_user_manage
 run_case run-creation-fails run_refuses_to_dispatch_when_creation_fails
 run_case run-labelling-fails run_refuses_to_dispatch_when_labelling_fails
 run_case run-dot run_resolves_a_dot_to_the_current_session
+run_case run-two-dots run_refuses_a_name_with_two_dots
+run_case run-two-dots-existing run_reaches_an_existing_session_it_would_not_create
 run_case run-dot-refused run_refuses_a_dot_outside_a_session
 run_case raw raw_disables_every_rewrite
 run_case alias-attach the_alias_attaches_with_labels

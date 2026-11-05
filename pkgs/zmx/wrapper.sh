@@ -30,8 +30,7 @@ fail() {
   exit 1
 }
 
-# Every character outside [a-zA-Z0-9_-] becomes '-'. By the time this runs a dot
-# is inside a part: the separator was consumed by the first-dot split.
+# Every character outside [a-zA-Z0-9_-] becomes '-'.
 sanitise() {
   out=
   rest=$1
@@ -46,23 +45,23 @@ sanitise() {
   printf '%s' "$out"
 }
 
-# project and id, both empty for an undotted name. A part that sanitises away is
-# refused: `project=` would delete a label rather than write one, and naming a
-# session is the caller's job, so a name this wrapper would have to rewrite is
-# refused rather than retargeted.
+# project and id, both empty for an undotted name. A name that is not
+# <project>.<id>, with one dot and a part on each side, is refused: `project=`
+# would delete a label rather than write one, a second dot leaves the project
+# ambiguous, and naming a session is the caller's job, so a name this wrapper
+# would have to rewrite is refused rather than retargeted. The convention is
+# about creating a session, so an existing one stays reachable, unlabelled.
 derive() {
-  subject=$1
-  case $subject in
-    *.*)
-      project=$(sanitise "${subject%%.*}")
-      id=$(sanitise "${subject#*.}")
-      if [ -z "$project" ] || [ -z "$id" ]; then
-        die "cannot derive project and id from '$1'; name it <project>.<id>"
-      fi
+  project=
+  id=
+  case $1 in
+    *.*.* | .* | *.)
+      session_exists "$1" ||
+        die "cannot derive project and id from '$1'; name it <project>.<id>, with one dot"
       ;;
-    *)
-      project=
-      id=
+    *.*)
+      project=$(sanitise "${1%%.*}")
+      id=$(sanitise "${1#*.}")
       ;;
   esac
 }

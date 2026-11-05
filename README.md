@@ -46,7 +46,7 @@ zmux.tests            the name, passed to zmx unchanged
   └─────── project=zmux    the repo's directory name, dots folded to _
 ```
 
-The first dot is the only separator. `project` is the unit of grouping. `id` is
+A name holds one dot, and it is the separator. `project` is the unit of grouping. `id` is
 either a number (`zmux.1`, the next one up) or a word saying what the session is
 for (`zmux.tests`).
 
@@ -57,13 +57,14 @@ What the wrapper does with a name when it creates a session:
 | `zmux.tests` | `project=zmux id=tests` |
 | `my_repo.1` | `project=my_repo id=1` |
 | `zmux` | no labels: ungrouped, still scoped |
-| `my.repo.1` | `project=my id=repo-1`: **the wrong project, with no error** |
 | `a b.c d` | `project=a-b id=c-d`: unsafe characters become `-` in the labels only |
 | `Zmux.Tests` | `project=Zmux id=Tests`: case is kept |
-| `.hidden.1`, `p.`, `.` | refused, exit 2: a part is empty |
+| `my.repo.1` | refused, exit 2: more than one dot |
+| `.hidden`, `p.`, `.` | refused, exit 2: a part is empty |
 
-So the wrapper cannot protect a project name that contains a dot. Folding it to
-`_` is the caller's job, before the name is composed.
+A project name that contains a dot has to be folded to `_` by the caller, before
+the name is composed. An existing session with a refused name, such as one made
+with `ZMX_RAW=1`, can still be reached, and stays unlabelled.
 
 ### who names sessions
 
@@ -74,7 +75,7 @@ Task ids such as `tk-elisp-cutover` are tasks in `.smut/`; see [design](#design)
 | zp, a repo row | `<repo>.<n>`: dots folded to `_`, `n` one above the highest in use | wrapper | no change. Repo rows need `ZP_ROOT` or path arguments, and the intended setup has neither, so this path is normally unused |
 | zp, a typed name | the query as typed | wrapper, if dotted | no change. Type `zmux.tests`, not `tests` |
 | project launcher | not built | | `<project>.<n>` for a project picked from zoxide, dots folded to `_` (`tk-project-launcher`, `tk-active-projects`). This becomes the normal way to start a session |
-| Emacs, `emacs/dl-zmx.el` | `<project>.<id>`, no fold | wrapper | folds dots to `_`, and moves to `~/.config/emacs` (`tk-elisp-cutover`) |
+| Emacs, `emacs/dl-zmx.el` | `<project>.<id>`, no fold, so a dotted project is refused | wrapper | folds dots to `_`, and moves to `~/.config/emacs` (`tk-elisp-cutover`) |
 | Emacs, the copy in `~/.config/emacs` | `<project>-<id>` | its own `--labels` | replaced by the plugin above. Old `P-ID` sessions stay reachable through `my/zmx-switch` |
 | pi-zmx, default | the pi session name: lowercased, whitespace to `-`, anything else outside `[\w-]` stripped | none: it can't hold a dot | nothing planned |
 | pi-zmx, `session` parameter | as given, such as `zmux.tests` | wrapper | nothing planned. Agents should pass one |
@@ -83,11 +84,9 @@ Task ids such as `tk-elisp-cutover` are tasks in `.smut/`; see [design](#design)
 
 ### known gaps
 
-- **Dotted projects.** Until `tk-elisp-cutover`, `emacs/dl-zmx.el` passes a project
-  such as `my.repo` straight through, and the session is grouped under `my`. The
-  file's header says the wrapper refuses that name. It does not.
-- **Lowercase.** The vocabulary asks for lowercase values, but the wrapper does not
-  lowercase, so `Zmux.1` and `zmux.1` are two projects.
+- **Dotted projects in Emacs.** Until IMP-002 (`tk-elisp-cutover`), `emacs/dl-zmx.el`
+  does not fold, so a project such as `my.repo` is refused and the wrapper's message
+  lands in the buffer.
 
 ## status
 

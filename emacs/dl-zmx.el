@@ -13,8 +13,8 @@
 ;; `zmx list' records, and launches no scope of its own.
 ;;
 ;; Two names the wrapper refuses land its message in the buffer: a project that
-;; contains a dot (`p.i' splits once, at the first dot) and a leading dot, which
-;; leaves no project at all.
+;; contains a dot (a name holds exactly one) and a leading dot, which leaves no
+;; project at all.
 
 (require 'seq)
 (require 'subr-x)

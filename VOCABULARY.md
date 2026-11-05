@@ -8,21 +8,25 @@ this page is the contract it implements. Sources: `d-name-form`, `d-vocab`,
 
     <project>.<id>
 
-The first dot separates project from id, and nothing else does. The split is
+One dot separates project from id, and a name holds no other. The split is
 unambiguous, which is the only place a name has to be unambiguous: a human
 reading `zmx ls`.
 
 Deriving the labels from the name a caller gives:
 
-1. Split at the first dot. A name with no dot is **undotted**: it gets no
-   labels and returns no project. Ungrouped and honest beats grouped and wrong.
-2. In each part, replace every character outside `[a-zA-Z0-9_-]` with `-`.
-   A dot at this point is inside a part — the separator was consumed by step 1 —
-   so it becomes `-` as well.
-3. A part that sanitises to nothing is refused (exit 2). An empty `project=` or
-   `id=` would delete a label rather than write one, and a name that has to be
-   rewritten is refused rather than retargeted. A leading dot is therefore an
-   empty project, not a hidden one.
+1. A name with no dot is **undotted**: it gets no labels and returns no project.
+   Ungrouped and honest beats grouped and wrong.
+2. A name with more than one dot, or with nothing on one side of its dot, is
+   refused (exit 2). A second dot leaves the project ambiguous: `my.repo.1` could
+   only be grouped under `my`. An empty `project=` or `id=` would delete a label
+   rather than write one. A leading dot is therefore an empty project, not a
+   hidden one. A caller whose project holds a dot folds it to `_` first.
+3. Split at the dot. In each part, replace every character outside
+   `[a-zA-Z0-9_-]` with `-`. Case is kept: a project is spelled as its directory
+   is, so `Zmux.1` and `zmux.1` are two projects.
+
+Refusal is a rule of creation. An existing session with such a name stays
+reachable, and the wrapper leaves it unlabelled.
 
 The caller's name is passed to zmx unchanged. Labels are derived from it; where
 the two disagree, the labels are the truth.
@@ -85,8 +89,9 @@ characters outside that set, but a space inside a value is not an error: it ends
 the value and silently drops the rest, so `note=hello world` stores
 `note=hello`. Prose therefore belongs in session history, not in a label.
 
-Lowercase keys and values. zmx prints labels in ASCII order, so all-lowercase
-keeps `zmx get` and `zmx ls` predictable.
+Lowercase keys, and lowercase `state` values. zmx prints labels in ASCII order, so
+all-lowercase keys keep `zmx get` and `zmx ls` predictable. `project` and `id` keep
+the case of the name.
 
 One fact, one home: never repeat `state` in the name, and never re-derive
 `project` from the name once the label exists.

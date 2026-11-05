@@ -12,7 +12,7 @@
 (require 'dl-zmx)
 
 (ert-deftest dl-zmx/session-name-joins-project-and-identifier ()
-  "The one convention left in this file: the wrapper splits at the first dot."
+  "The one convention left in this file: the wrapper splits at the dot."
   (should (equal (dl-zmx-session-name "hris" "claude") "hris.claude")))
 
 (ert-deftest dl-zmx/buffer-name-is-term-prefixed ()

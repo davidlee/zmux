@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- A name with more than one dot is refused when it would create a session, rather
+  than grouped under whatever precedes the first dot. An existing session with such
+  a name, or an empty part, stays reachable and unlabelled.
+- `project` and `id` keep the case of the name. The vocabulary no longer asks for
+  them in lowercase.
+
 ## 0.1.1 - 2026-11-06
 
 ### Fixed
