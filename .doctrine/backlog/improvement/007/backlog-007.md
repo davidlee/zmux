@@ -32,12 +32,11 @@ first argument and `jcl mcp list` would land in a session.
 
 ## Remaining
 
-Done: this repo on `main` (f54164b), nix-config pinning it at the root and in agents, the
-shorthands, the zsh functions, and `zmx-new` in `features/terminal.nix`.
+Live on the host (2026-11-06): the operator's `claude` in `/tmp/checky` landed in
+`checky.1`, labelled `project=checky id=1`. Forms are accepted.
 
-1. `just home-switch`. Until then `claude` and `codex` find no `zmx-new` in a new shell.
-2. `just forms` here: `dev-tools` gained `util-linux`.
-3. Migrate the 10 flakes outside dev-envs that carry their own `jcl`, or leave them. Not
+1. Check that a session with a jail in it survives a real WM restart.
+2. Migrate the 10 flakes outside dev-envs that carry their own `jcl`, or leave them. Not
    a second sharing mechanism.
 
 `script -qefc` in the tests is util-linux's syntax, so `wrapper-tests` on aarch64-darwin
