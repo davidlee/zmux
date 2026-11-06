@@ -1,0 +1,8 @@
+#!/bin/sh
+# Stub harness: records its argv as one call, so a case can see that the launcher
+# ran it directly rather than inside a session.
+set -u
+
+: > "${HARNESS_STUB_LOG:?}/001"
+for arg in "$@"; do printf '%s\0' "$arg" >> "$HARNESS_STUB_LOG/001"; done
+exit "${HARNESS_STUB_EXIT:-0}"

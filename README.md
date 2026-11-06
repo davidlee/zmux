@@ -37,7 +37,9 @@ is the real zmx byte for byte.
 
 ### the launcher
 
-[`zx`](#integrations) is a thin wrapper, which resembles zp.
+`zmx-new` runs a command in a new `<project>.<n>` session, so `claude`, `codex` and
+the devshell shorthands land in one without being asked. [`zx`](#integrations) is a
+thin wrapper over it, which resembles zp.
 
 ### the notifications
 
@@ -120,7 +122,8 @@ with `ZMX_RAW=1`, can still be reached, and stays unlabelled.
 | ------ | ---------- | ------------ | -------- |
 | zp, a repo row | `<repo>.<n>`: dots folded to `_`, `n` one above the highest in use | wrapper | no change. Repo rows need `ZP_ROOT` or path arguments, and the intended setup has neither, so this path is normally unused |
 | zp, a typed name | the query as typed | wrapper, if dotted | no change. Type `zmux.tests`, not `tests` |
-| `zx` | `<project>.<n>` for a project picked from zoxide, dots folded to `_`, `n` as zp's | wrapper | no change. This is the normal way to start a session |
+| `zmx-new` | `<project>.<n>` for the nearest project above the working directory, or the directory itself, dots folded to `_`, `n` as zp's | wrapper | no change |
+| `zx` | as `zmx-new`, for a project picked from zoxide | wrapper | no change. This is the normal way to start a session |
 | Emacs, a new terminal | `<project>.<n>`, as zp's. Outside a project, the directory's name stands in for `project` | wrapper | no change |
 | Emacs, `my/zmx-project` | `<project>.<id>`, with an id you type | wrapper | no change |
 | pi-zmx, default | the pi session name: lowercased, whitespace to `-`, anything else outside `[\w-]` stripped | none: it can't hold a dot | nothing planned |
@@ -192,7 +195,7 @@ and behaviour tests need no host, so `nix flake check` runs them. There is no CI
 
 ## integrations
 
-zmux holds the wrapper, the zp package and the pi state extension. Everything else that
+zmux holds the wrapper, the launcher, the zp package and the pi state extension. Everything else that
 touches it lives with the tool it belongs to, in the operator's config repos:
 [nix-config] (`~/flakes` is its `flakes/` directory) and [emacs-config].
 
@@ -201,7 +204,8 @@ touches it lives with the tool it belongs to, in the operator's config repos:
 | the zmux input | [`flakes/flake.nix`][nix-flake] |
 | the overlay, applied | [`flakes/hosts.nix`][nix-hosts] |
 | zp, installed | [`flakes/features/terminal.nix`][nix-terminal] |
-| `zx`, `active-projects` | [`.config/zsh/functions.zsh`][zsh-functions] |
+| `zx`, `active-projects`, `claude`, `codex` | [`.config/zsh/functions.zsh`][zsh-functions] |
+| `jcl`, `jcx`, `jpi`, `jsh` | `shorthand` in `flakes/dev-envs/flake.nix` |
 | Emacs | [`apps/dl-zmx.el`][emacs-zmx] |
 | the wrapper in jails | `commonPkgs` in [`flakes/agents/jailed-agents.nix`][nix-jails] |
 | pi-zmx | [a fork][pi-zmx-fork] of [`@deevus/pi-zmx`][pi-zmx], pinned in pi's [host][pi-host] and [jail][pi-jail] `settings.json` |
@@ -219,6 +223,12 @@ touches it lives with the tool it belongs to, in the operator's config repos:
   a dot, so to get a labelled session an agent passes one in the tool's `session`
   parameter. After a timeout the task runs on, and the wrapper records its `state`
   when it ends.
+- **`zmx-new`** is packaged here because zsh and dev-envs both need it. It runs the
+  command directly inside a session, without a terminal, for a subcommand or a prompt
+  as the first argument, and for `-p`, `--print`, `-v`, `--version`, `-h` or `--help`
+  anywhere. A session loses the exit status, and the output of a command that exits at
+  once, so it errs towards running directly. That leaves
+  `claude "a prompt"` and `codex resume` outside a session. `command claude` skips it.
 - **Emacs** composes the name and nothing else. Its terminals are numbered sessions.
 - **Jails** built by `~/flakes` all carry the wrapper, whatever the project's
   `dev-tools` holds. A jail's sessions die with the jail and have no scope. They are
@@ -257,10 +267,11 @@ No real zmx runs, and no systemd is used.
 - `pkgs/zmx/wrapper.sh` — the wrapper: three rewrites, then the real binary.
 - `pkgs/zmx/default.nix` — the derivation, with the real binary's absolute path
   substituted so the wrapper can never exec itself.
+- `pkgs/zmx-new/` — the launcher and its derivation.
 - `pkgs/zp/default.nix` — the zp derivation.
 - `harness/` — state plugins, one per harness.
 - `package.json` — makes this repo a pi package, so a home can pin it.
-- `tests/` — the argv tests, their two stub binaries, and the pi extension's tests.
+- `tests/` — the argv tests, their stub binaries, and the pi extension's tests.
 - `VOCABULARY.md` — the contract.
 
 ## licence

@@ -10,6 +10,7 @@ set -uo pipefail
 here=$(cd -- "$(dirname -- "$0")" && pwd)
 root=$(cd -- "$here/.." && pwd)
 wrapper_src=$root/pkgs/zmx/wrapper.sh
+launcher_src=$root/pkgs/zmx-new/zmx-new.sh
 
 if [ ! -f "$wrapper_src" ]; then
   printf 'FAIL no wrapper to test: %s\n' "$wrapper_src" >&2
@@ -28,7 +29,7 @@ work=$tmp/work
 # empty PATH is enough to run them.
 setup() {
   rm -rf -- "$work"
-  mkdir -p "$work/bin" "$work/bare" "$work/zmx-argv" "$work/sd-argv"
+  mkdir -p "$work/bin" "$work/bare" "$work/zmx-argv" "$work/sd-argv" "$work/harness-argv"
   : > "$work/sessions"
   printf '0\n' > "$work/zmx-seq"
   printf '0\n' > "$work/sd-seq"
@@ -36,17 +37,40 @@ setup() {
     ZMX_STUB_SEQ=$work/zmx-seq \
     ZMX_STUB_LOG=$work/zmx-argv \
     SD_STUB_SEQ=$work/sd-seq \
-    SD_STUB_LOG=$work/sd-argv
-  unset ZMX_RAW ZMX_LAUNCHER ZMX_SESSION ZMX_STUB_RUN_EXIT ZMX_STUB_RUN_HOLD ZMX_STUB_WAIT_EXIT ZMX_STUB_SET_FAIL SD_STUB_FAIL
+    SD_STUB_LOG=$work/sd-argv \
+    HARNESS_STUB_LOG=$work/harness-argv
+  unset ZMX_RAW ZMX_LAUNCHER ZMX_SESSION ZMX_STUB_RUN_EXIT ZMX_STUB_RUN_HOLD ZMX_STUB_WAIT_EXIT ZMX_STUB_SET_FAIL SD_STUB_FAIL HARNESS_STUB_EXIT
   install -m 0755 "$here/stubs/zmx" "$work/bin/zmx-stub" || return 1
   install -m 0755 "$here/stubs/systemd-run" "$work/bin/systemd-run" || return 1
   sed "s|@zmx@|$work/bin/zmx-stub|" "$wrapper_src" > "$work/bin/zmx" || return 1
   chmod 0755 "$work/bin/zmx"
+  install -m 0755 "$here/stubs/harness" "$work/bin/harness" || return 1
+  sed "s|@zmx@|$work/bin/zmx|" "$launcher_src" > "$work/bin/zmx-new" || return 1
+  chmod 0755 "$work/bin/zmx-new"
 }
 
 # The wrapper, with the systemd-run stub on PATH and without it.
 zmx_on_path() { PATH=$work/bin "$work/bin/zmx" "$@"; }
 zmx_bare() { PATH=$work/bare "$work/bin/zmx" "$@"; }
+
+# The launcher, from a directory, with and without a terminal. `script` gives it a
+# pty and is resolved before PATH narrows; -e carries the launcher's status out.
+launcher_argv() {
+  printf 'cd %q && PATH=%q HOME=%q' "$1" "$work/bare" "$work/home"
+  shift
+  printf ' %q' "$work/bin/zmx-new" "$@"
+}
+new_on_a_tty() { script -qefc "$(launcher_argv "$@")" /dev/null > /dev/null; }
+new_off_a_tty() { (cd "$1" && shift && PATH=$work/bare HOME=$work/home "$work/bin/zmx-new" "$@"); }
+
+# A directory under the fixture's $HOME, holding the given project markers.
+project_dir() {
+  local dir=$work/home/$1 marker
+  shift
+  mkdir -p "$dir"
+  for marker; do mkdir -p "$dir/$marker"; done
+  printf '%s' "$dir"
+}
 
 # Seed an existing session, as another zmx already created it.
 have_session() { printf '%s\n' "$1" >> "$work/sessions"; }
@@ -445,6 +469,113 @@ run_refuses_a_dot_outside_a_session() {
   assert_calls "$ZMX_STUB_LOG" 0
 }
 
+# --- zmx-new ---------------------------------------------------------------
+
+# The launcher's own listing, then the wrapper's, then the attach: reaching
+# `attach --labels` proves it went through the wrapper.
+assert_attached() {
+  assert_calls "$ZMX_STUB_LOG" 3
+  assert_argv "$ZMX_STUB_LOG" 1 ls --short
+  assert_argv "$ZMX_STUB_LOG" 3 "$@"
+  assert_calls "$HARNESS_STUB_LOG" 0
+}
+
+assert_ran_directly() {
+  assert_calls "$ZMX_STUB_LOG" 0
+  assert_argv "$HARNESS_STUB_LOG" 1 "$@"
+}
+
+new_starts_the_first_session_of_a_project() {
+  new_on_a_tty "$(project_dir zmux .git)" "$work/bin/harness"
+  assert_attached attach --labels 'project=zmux id=1' zmux.1 "$work/bin/harness"
+}
+
+new_numbers_one_above_the_highest() {
+  have_session zmux.1
+  have_session zmux.4
+  have_session zmux.2
+  new_on_a_tty "$(project_dir zmux .git)" "$work/bin/harness"
+  assert_attached attach --labels 'project=zmux id=5' zmux.5 "$work/bin/harness"
+}
+
+new_counts_only_this_projects_numbers() {
+  have_session zmux.tests
+  have_session zmux2.9
+  have_session other.7
+  new_on_a_tty "$(project_dir zmux .git)" "$work/bin/harness"
+  assert_attached attach --labels 'project=zmux id=1' zmux.1 "$work/bin/harness"
+}
+
+new_folds_dots_in_the_project() {
+  have_session www_example.2
+  new_on_a_tty "$(project_dir www.example .git)" "$work/bin/harness"
+  assert_attached attach --labels 'project=www_example id=3' www_example.3 "$work/bin/harness"
+}
+
+new_names_the_project_from_a_subdirectory() {
+  local dir
+  dir=$(project_dir zmux .git)
+  mkdir -p "$dir/pkgs/zmx"
+  new_on_a_tty "$dir/pkgs/zmx" "$work/bin/harness"
+  assert_attached attach --labels 'project=zmux id=1' zmux.1 "$work/bin/harness"
+}
+
+new_takes_every_marker_of_a_project() {
+  local dir
+  dir=$(project_dir flakes .project)
+  mkdir -p "$dir/agents"
+  new_on_a_tty "$dir/agents" "$work/bin/harness"
+  assert_argv "$ZMX_STUB_LOG" 3 attach --labels 'project=flakes id=1' flakes.1 "$work/bin/harness"
+}
+
+new_treats_a_home_repository_as_no_project() {
+  local dir
+  dir=$(project_dir notes/daily)
+  mkdir -p "$work/home/.git"
+  new_on_a_tty "$dir" "$work/bin/harness"
+  assert_attached attach --labels 'project=daily id=1' daily.1 "$work/bin/harness"
+}
+
+new_with_no_command_starts_a_shell_session() {
+  new_off_a_tty "$(project_dir zmux .git)"
+  assert_attached attach --labels 'project=zmux id=1' zmux.1
+}
+
+new_keeps_flags_for_the_harness() {
+  new_on_a_tty "$(project_dir zmux .git)" "$work/bin/harness" --resume 'two words'
+  assert_attached attach --labels 'project=zmux id=1' zmux.1 "$work/bin/harness" --resume 'two words'
+}
+
+new_runs_directly_inside_a_session() {
+  ZMX_SESSION=zmux.1 new_on_a_tty "$(project_dir zmux .git)" "$work/bin/harness"
+  assert_ran_directly
+}
+
+new_runs_directly_without_a_terminal() {
+  new_off_a_tty "$(project_dir zmux .git)" "$work/bin/harness" --resume
+  assert_ran_directly --resume
+}
+
+new_runs_a_subcommand_directly() {
+  new_on_a_tty "$(project_dir zmux .git)" "$work/bin/harness" mcp list
+  assert_ran_directly mcp list
+}
+
+new_runs_a_one_shot_flag_directly() {
+  local flag dir
+  dir=$(project_dir zmux .git)
+  for flag in -p --print -v --version -h --help; do
+    new_on_a_tty "$dir" "$work/bin/harness" --model opus "$flag"
+    assert_ran_directly --model opus "$flag"
+  done
+}
+
+new_keeps_the_status_of_a_direct_run() {
+  local status=0
+  HARNESS_STUB_EXIT=7 new_off_a_tty "$(project_dir zmux .git)" "$work/bin/harness" || status=$?
+  assert_status "$status" 7
+}
+
 # --- escape hatches, aliases, pass-through ---------------------------------
 
 raw_disables_every_rewrite() {
@@ -544,6 +675,20 @@ run_case run-dot run_resolves_a_dot_to_the_current_session
 run_case run-two-dots run_refuses_a_name_with_two_dots
 run_case run-two-dots-existing run_reaches_an_existing_session_it_would_not_create
 run_case run-dot-refused run_refuses_a_dot_outside_a_session
+run_case new-first new_starts_the_first_session_of_a_project
+run_case new-highest new_numbers_one_above_the_highest
+run_case new-this-project new_counts_only_this_projects_numbers
+run_case new-folds-dots new_folds_dots_in_the_project
+run_case new-subdirectory new_names_the_project_from_a_subdirectory
+run_case new-markers new_takes_every_marker_of_a_project
+run_case new-home-repo new_treats_a_home_repository_as_no_project
+run_case new-no-command new_with_no_command_starts_a_shell_session
+run_case new-flags new_keeps_flags_for_the_harness
+run_case new-in-session new_runs_directly_inside_a_session
+run_case new-no-terminal new_runs_directly_without_a_terminal
+run_case new-subcommand new_runs_a_subcommand_directly
+run_case new-one-shot new_runs_a_one_shot_flag_directly
+run_case new-direct-status new_keeps_the_status_of_a_direct_run
 run_case raw raw_disables_every_rewrite
 run_case alias-attach the_alias_attaches_with_labels
 run_case alias-run the_alias_dispatches_with_state

@@ -15,6 +15,7 @@
     overlay = final: prev: {
       zmx-unwrapped = prev.zmx;
       zmx = final.callPackage ./pkgs/zmx {zmx = final.zmx-unwrapped;};
+      zmx-new = final.callPackage ./pkgs/zmx-new {};
       zp = final.callPackage ./pkgs/zp {};
     };
   in
@@ -53,6 +54,8 @@
           findutils
           diffutils
           gnused
+          # Gives the launcher's tests a terminal.
+          util-linux
           # The pi extension's tests run on node's own runner.
           nodejs
         ];
@@ -75,6 +78,7 @@
           root = ./.;
           fileset = lib.fileset.unions [
             ./pkgs/zmx
+            ./pkgs/zmx-new
             ./tests
           ];
         };
@@ -87,6 +91,7 @@
               findutils
               diffutils
               gnused
+              util-linux
             ];
           } ''
             cp -r ${wrapperSrc} source
@@ -107,8 +112,9 @@
           pkgs.runCommand "zmx-wrapper-lint" {
             nativeBuildInputs = [pkgs.shellcheck];
           } ''
-            shellcheck ${./pkgs/zmx/wrapper.sh} ${./tests/run-tests.sh} \
-              ${./tests/stubs/zmx} ${./tests/stubs/systemd-run}
+            shellcheck ${./pkgs/zmx/wrapper.sh} ${./pkgs/zmx-new/zmx-new.sh} \
+              ${./tests/run-tests.sh} ${./tests/stubs/zmx} \
+              ${./tests/stubs/systemd-run} ${./tests/stubs/harness}
             touch "$out"
           '';
 
@@ -135,6 +141,12 @@
           touch "$out"
         '';
 
+        # The launcher's sessions only conform through the wrapper.
+        zmxNewUsesWrapper = pkgs.runCommand "zmx-new-uses-wrapper" {} ''
+          grep -q '^ZMX=.${pkgs.zmx}/bin/zmx.$' ${pkgs.zmx-new}/bin/zmx-new
+          touch "$out"
+        '';
+
         # A jail's tools are dev-tools, so pi-zmx only finds `zmx` in a jail if
         # dev-tools carries it, and only conforms if that `zmx` is the wrapper.
         devToolsShipWrapper = pkgs.runCommand "dev-tools-ship-wrapper" {} ''
@@ -145,7 +157,7 @@
         _module.args.pkgs = pkgs;
 
         packages = {
-          inherit (pkgs) zmx zp;
+          inherit (pkgs) zmx zmx-new zp;
           default = pkgs.zmx;
           dev-tools = devTools;
         };
@@ -159,6 +171,7 @@
           wrapper-lint = wrapperLint;
           wrapper-parity = wrapperParity;
           zp-uses-wrapper = zpUsesWrapper;
+          zmx-new-uses-wrapper = zmxNewUsesWrapper;
           dev-tools-ship-wrapper = devToolsShipWrapper;
         };
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `zmx-new` runs a command in a new `<project>.<n>` session, or runs it directly where
+  a session would lose its output or status. `pkgs.zmx-new`, through the overlay.
+
 ## 0.1.3 - 2026-11-06
 
 ### Added

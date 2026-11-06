@@ -7,7 +7,7 @@ title = "Each piece lives where it is used"
 record_kind = "decision"
 status = "accepted"
 created = "2026-11-05"
-updated = "2026-11-05"
+updated = "2026-11-06"
 tags = ["smut:d-homes", "smut:d-v01-scope"]
 
 [facet]                         # every field typed; seeded empty (captured later)
