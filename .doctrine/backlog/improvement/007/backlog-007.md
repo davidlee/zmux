@@ -39,5 +39,12 @@ Live on the host (2026-11-06): the operator's `claude` in `/tmp/checky` landed i
 2. Migrate the 10 flakes outside dev-envs that carry their own `jcl`, or leave them. Not
    a second sharing mechanism.
 
+   retrograde is the pilot: edited, uncommitted, `jcl` goes through `zmx-new` and `just
+   check` behaves the same in the new shell and a jail as before (2 vitest failures in
+   `srd_threshold_parity`, also on the old shell). `devEnv` has no way to bind a path, so
+   the boilerplate docker socket bind, `exposePostgres` and their env went with the jails.
+   retrograde references none of them; check each project that carries the same lines.
+   The operator doesn't want `d` or `sdr` aliases, so no project needs step 4 for those.
+
 `script -qefc` in the tests is util-linux's syntax, so `wrapper-tests` on aarch64-darwin
 is unchecked (CHR-001).
