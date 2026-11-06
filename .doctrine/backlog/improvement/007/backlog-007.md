@@ -32,13 +32,12 @@ first argument and `jcl mcp list` would land in a session.
 
 ## Remaining
 
-1. Land this repo on `main`, then `nix flake update zmux` in `~/flakes/agents`. The
-   nix-config edits must follow that: `use_dev_envs` reads the in-tree agents library, so
-   an earlier edit breaks evaluation in every project on reload.
-2. Apply the nix-config edits and rebuild. The zsh functions must follow the rebuild, or
-   `claude` finds no `zmx-new`.
-3. `just forms` here: `dev-tools` gained `util-linux`.
-4. Migrate the 10 flakes outside dev-envs that carry their own `jcl`, or leave them. Not
+Done: this repo on `main` (f54164b), nix-config pinning it at the root and in agents, the
+shorthands, the zsh functions, and `zmx-new` in `features/terminal.nix`.
+
+1. `just home-switch`. Until then `claude` and `codex` find no `zmx-new` in a new shell.
+2. `just forms` here: `dev-tools` gained `util-linux`.
+3. Migrate the 10 flakes outside dev-envs that carry their own `jcl`, or leave them. Not
    a second sharing mechanism.
 
 `script -qefc` in the tests is util-linux's syntax, so `wrapper-tests` on aarch64-darwin
