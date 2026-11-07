@@ -36,8 +36,8 @@ Live on the host (2026-11-06): the operator's `claude` in `/tmp/checky` landed i
 `checky.1`, labelled `project=checky id=1`. Forms are accepted.
 
 1. Check that a session with a jail in it survives a real WM restart.
-2. Migrate the 10 flakes outside dev-envs that carry their own `jcl`, or leave them. Not
-   a second sharing mechanism.
+2. Migrate the flakes outside dev-envs that carry their own `jcl`. retrograde is done
+   (`70b44f2`); the other nine are CHR-030 in `~/flakes`, which owns that work.
 
    retrograde is the pilot: edited, uncommitted, `jcl` goes through `zmx-new` and `just
    check` behaves the same in the new shell and a jail as before (2 vitest failures in
