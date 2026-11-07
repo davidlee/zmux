@@ -64,4 +64,8 @@ Choices:
 Released as v0.1.4. `flakes:IMP-070` took the pins, the host's install and both jail hook sets,
 Codex included (operator, 2026-11-07), and delivers `harness/` as `${zmux}/harness` from its flake
 input, so nothing more was needed here. A real `jailed-claude` turn wrote `blocked` to a scratch
-host session. Not observed: a jailed Codex or pi turn. Close once a `jcx` turn has run.
+host session.
+
+Closed 2026-11-07: the operator reported "ok, it works" after trusting the hooks in `jcx` (the
+jail's `config.toml` holds the trust from 20:59). Not separately observed: `Interrupt` on the jail's
+Codex 0.163.0, and a jailed pi turn. The host's `zmx-state` arrives with the next home switch.
