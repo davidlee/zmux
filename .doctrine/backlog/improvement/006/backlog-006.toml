@@ -20,3 +20,7 @@ tags = ["area:codex", "area:harness", "smut:d-harness-state"]
 needs    = []                   # item→item hard prerequisite
 after    = []                   # item→item soft sequence: { to, rank? }
 triggers = []                   # watched source globs: { globs, note? }
+
+[[relation]]
+label = "related"
+target = "IMP-005"
