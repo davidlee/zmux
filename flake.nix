@@ -100,13 +100,15 @@
 
         harnessTests =
           pkgs.runCommand "zmx-harness-tests" {
-            nativeBuildInputs = [pkgs.nodejs];
+            nativeBuildInputs = [pkgs.nodejs pkgs.util-linux];
           } ''
             cp -r ${./harness} harness
             mkdir tests
             cp ${./tests/zmx-state.test.ts} tests/zmx-state.test.ts
+            cp ${./tests/hook-fixture.ts} tests/hook-fixture.ts
             cp ${./tests/claude-state.test.ts} tests/claude-state.test.ts
-            node --test tests/zmx-state.test.ts tests/claude-state.test.ts > "$out"
+            cp ${./tests/codex-state.test.ts} tests/codex-state.test.ts
+            node --test tests/zmx-state.test.ts tests/claude-state.test.ts tests/codex-state.test.ts > "$out"
           '';
 
         wrapperLint =
@@ -116,7 +118,8 @@
             shellcheck ${./pkgs/zmx/wrapper.sh} ${./pkgs/zmx-new/zmx-new.sh} \
               ${./tests/run-tests.sh} ${./tests/stubs/zmx} \
               ${./tests/stubs/systemd-run} ${./tests/stubs/harness} \
-              ${./harness/claude/zmx-state.sh}
+              ${./harness/claude/zmx-state.sh} ${./harness/codex/zmx-state.sh} \
+              ${./harness/advertise.sh}
             touch "$out"
           '';
 

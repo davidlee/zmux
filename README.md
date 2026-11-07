@@ -3,7 +3,7 @@
 A [zmx] with opinions:
 - sessions survive a window manager restart
 - conventions & automation for naming, creation
-- coding harness integration (pi, Claude Code)
+- coding harness integration (pi, Claude Code, Codex)
 - picker, shell & emacs integration
 - Nix-first
 - systemd scopes for persistence without a daemon
@@ -195,7 +195,7 @@ and behaviour tests need no host, so `nix flake check` runs them. There is no CI
 
 ## integrations
 
-zmux holds the wrapper, the launcher, the zp package and the pi and Claude Code state hooks. Everything else that
+zmux holds the wrapper, the launcher, the zp package and the pi, Claude Code and Codex state hooks. Everything else that
 touches it lives with the tool it belongs to, in the operator's config repos:
 [nix-config] (`~/flakes` is its `flakes/` directory) and [emacs-config].
 
@@ -211,6 +211,7 @@ touches it lives with the tool it belongs to, in the operator's config repos:
 | pi-zmx | [a fork][pi-zmx-fork] of [`@deevus/pi-zmx`][pi-zmx], pinned in pi's [host][pi-host] and [jail][pi-jail] `settings.json` |
 | `blocked` for pi | [`harness/pi/zmx-state.ts`](harness/pi/zmx-state.ts), here, pinned the same way |
 | `blocked` for Claude Code | [`harness/claude/`](harness/claude), here, linked and merged into `~/.claude` by hand |
+| `blocked` for Codex | [`harness/codex/`](harness/codex), here, linked into `~/.codex` by hand |
 
 - **zp** is packaged here from upstream, unforked, as `pkgs.zp`. Under the overlay
   its `zmx` is the wrapper, so its sessions get a scope, and labels when their
@@ -249,14 +250,23 @@ touches it lives with the tool it belongs to, in the operator's config repos:
   `~/.claude/settings.json`. Its `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` stops Claude
   overwriting the title, which also ends generated session titles and Claude's status
   reports to the terminal.
+- **`blocked`** for Codex comes from hooks in `harness/codex/`, and reads as for Claude,
+  with three differences. Esc fires a hook, so an interrupted turn reads `blocked`. A
+  permission dialog reads `working`, since under `auto_review` no human is asked. And
+  `codex exec` on a real terminal writes too; a delegate on a pipe doesn't. To install
+  it, link `zmx-state.sh` into `~/.codex/hooks/`, copy `hooks.json` to `~/.codex/`, set
+  `tui.terminal_title = []` in `config.toml`, and trust the hooks through `/hooks`. That
+  setting ends Codex's own titles. Run it as `codex --no-daemon`, as the zsh function
+  does: on the shared daemon, hooks run with no session around them, so a plain
+  `command codex` advertises nothing.
 
 What each harness has so far:
 
 | | pi | Claude Code | Codex |
 | - | -- | ----------- | ----- |
-| `state` in a host session | yes | yes | not yet, IMP-006 |
-| a mid-run dialog reads `blocked` | no | yes | not yet, IMP-006 |
-| sets the terminal title | no | yes | not yet, IMP-006 |
+| `state` in a host session | yes | yes | yes |
+| a mid-run dialog reads `blocked` | no | yes | no |
+| sets the terminal title | no | yes | yes |
 | `state` from inside a jail | no, IMP-009 | no, IMP-009 | no, IMP-009 |
 | tools to run commands in a session | pi-zmx | no | no |
 
@@ -277,7 +287,7 @@ provides.
 
 ```sh
 just test    # argv assertions against stub binaries, and the harness hooks
-just lint    # shellcheck over the wrapper, its fixtures and the Claude hook
+just lint    # shellcheck over the wrapper, its fixtures and the harness hooks
 nix flake check
 ```
 

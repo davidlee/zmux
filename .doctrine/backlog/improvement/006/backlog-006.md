@@ -18,43 +18,53 @@ Scope (operator, 2026-11-07): what Claude got under IMP-005, so `state`, the ter
 tested hook script under `harness/codex/`, and a README entry. Parity with `harness/claude/` is
 the bar, except where Codex differs below.
 
-## What the docs say
+## Findings
 
-From the cached Codex docs at `~/dev/doctrine/docs/codex`, fetched 2026-10-26, mainly `hooks.md`.
-The installed Codex is 0.163.0. None of this has been probed yet, so it needs an EVD record of
-its own, as EVD-014 is for Claude.
-
-Codex hooks see both transitions, with the same event names as Claude, plus one Claude lacks:
+EVD-015 holds the probes, on 0.166.0 (npm), the target (operator, 2026-11-07).
 
 | event | state |
 |---|---|
 | `UserPromptSubmit` | `working` |
-| `Stop` | `blocked` |
-| `PermissionRequest` | `blocked` |
+| `Stop`, `Interrupt` | `blocked` |
 | `PostToolUse` | `working` |
-| `Interrupt` | `blocked` |
+| `PermissionRequest` | to decide, below |
 
-- `Interrupt` fires when a human stops an active turn, so Codex may avoid Claude's Esc limit. Its
-  timeout is one to three seconds. A `zmx set` took about 2.6 ms (EVD-014), so that should do.
-- Hooks live in `~/.codex/hooks.json`, which suits a fragment like Claude's.
-- `Stop` treats plain text on stdout as invalid. Exiting 0 with no output is fine.
-- A hook runs only once trusted through `/hooks`, by hash, so changing the fragment means
-  trusting it again. This is an install step Claude doesn't have.
+- `Interrupt` removes Claude's Esc limit: Esc fires it, and no `Stop`. Its timeout is limited to
+  three seconds, so the fragment can't reuse Claude's 5. `Stop` wants no plain text on stdout.
+- Subagents: Claude's check on `agent_id` carries over.
+- Install: `~/.codex/hooks.json`, then trust through `/hooks`, again after each change to it.
+- Launch: the TUI must run as `codex --no-daemon`. On the shared daemon, hooks have no session
+  and no terminal, and nothing in their input names the TUI (EVD-015). The `codex` function in
+  `~/.config/zsh/functions.zsh` adds the flag, only for the TUI, since a leading flag would hide a
+  subcommand from `zmx-new`.
+- Title: `/dev/tty` fails, but a hook can write to `/proc/$PPID/fd/1`, which replays to a later
+  client. It needs `tui.terminal_title = []`, which ends Codex's own titles in every session. If
+  it proves awkward, ship `state` alone (operator, 2026-11-07).
 
-## Differs from Claude, to settle first
+## Decided (operator, 2026-11-07)
 
-1. **Title.** The docs give hooks no equivalent of `terminalSequence`. Codex has
-   `tui.terminal_title`, a list of items, and `null` turns title updates off, but nothing in it
-   reads a zmx label. Check whether a hook can reach the terminal itself, such as through
-   `/dev/tty`. If not, say so here, and consider shipping `state` alone.
-2. **Interactive guard.** The docs give no equivalent of `CLAUDE_CODE_ENTRYPOINT`, and the hook
-   input carries no mode. Check whether hooks run under `codex exec`, and what tells a TUI from
-   a delegate. Delegates inherit `ZMX_SESSION`, so this guard is required (EVD-006).
-3. **Subagents.** The docs list `agent_id` only on `SubagentStart` and `SubagentStop`, and say
-   subagent hooks carry the parent's `session_id`. So Claude's check on `agent_id` may not carry
-   over. Check what a subagent's `PostToolUse` looks like.
+1. **`PermissionRequest` is left out.** It fires under `auto_review` too, before the reviewer, so
+   `blocked` would be false on the host's own setting. A human's dialog reads `working`.
+2. **The guard is the parent's stdout being a terminal.** That rules out piped delegates, and the
+   title needs it anyway. `codex exec` on a real terminal passes it, at worst leaving a stale
+   `blocked`. That was accepted over parsing argv.
+3. **The title ships.** `harness/advertise.sh` now holds the title and icons for both harnesses.
 
-The script may share little with Claude's beyond the title format. If it shares more, extract
-that rather than copy it; the icon table already has three homes.
+## Handback from IMP-009
+
+Jailed state will go through a relay and a `zmx-state VALUE` command, which writes `working` or
+`blocked` on the surrounding session, prints its labels, and exits 0 outside a session. So
+`write_state` in `harness/advertise.sh` is the one place to change, and labels already come from
+its output. When it lands, the `ZMX_SESSION` gates in the hooks move into `zmx-state`, and the
+interactive gates stay.
+
+## Known limits
+
+- The hooks replace Codex's and Claude's own generated titles rather than wrapping them. The
+  operator would prefer to keep them, but a hook can't see them, so that would take something
+  between the program and the terminal.
+- `/proc` makes this Linux only. Elsewhere the hook writes nothing.
+- `command codex` uses the daemon and advertises nothing, silently.
+- `--no-daemon` sessions don't share the background server.
 
 A jailed Codex writes nothing, as for the others: IMP-009.

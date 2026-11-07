@@ -1,0 +1,126 @@
+id    = 1
+slug  = "code-review-review-of-imp-006"
+title = "code-review review of IMP-006"
+# no status — a review's status is DERIVED from its findings, so
+# it is never stored (the storage rule forbids derived data in authored files).
+
+[review]
+facet     = "code-review"     # scope|design|plan|phase-plan|implementation|code-review|reconciliation
+raiser    = "codex"
+responder = "responder"
+rounds_base = 0
+contests_base = 0
+concluded = true
+
+[[review.turn]]
+act = "conclude"
+role = "raiser"
+note = "Completed the adversarial code-review pass over the uncommitted IMP-006 code and documentation diff (excluding other-work IMP-009), all specified new hook/helper/test files, Claude refactor, and flake/Just wiring. Read IMP-006 and EVD-015 and treated Decided entries as settled. Raised F-1/F-2 major and F-3 minor with file/line evidence, isolated PTY/fake-zmx reproductions and explicit inference boundaries. All 39 existing Node harness tests and focused shellcheck passed; direct bash/dash, retained-shell/exec, symlink sourcing, title-control, label-read failure, large-input and non-terminal-fd probes informed the pass. Cross-checked unread stdin and timeout against the targeted upstream 0.166.0 command runner: BrokenPipe is ignored and input is inside the concurrent deadline, so those conjectured failures were not raised. No real Codex, real/live zmx, user configuration, Nix build or Darwin execution. Only RV-001 authored artifacts changed; findings remain open for the responder. This concludes the raiser's pass, not remediation or the ledger's resolution."
+
+[target]                   # the outbound `reviews` edge: RV-NNN ──reviews──▶ <ref>
+ref   = "IMP-006"
+
+[[finding]]
+id = "F-1"
+status = "verified"
+severity = "major"
+title = "A retained hook shell makes an interactive Codex silently stop advertising"
+detail = """
+Expected: the settled parent-stdout terminal gate checks the Codex process that owns the terminal. Observed: harness/codex/zmx-state.sh:11-12 checks the immediate PPID, but harness/codex/hooks.json:8,19,30,41 does not exec the script. If the command shell stays alive, PPID is that shell and fd 1 is Codex's captured hook-output pipe; both state and title are skipped with exit 0.
+
+VERIFIED isolated reproduction (no Codex or real zmx): a Python surrogate holds a scratch PTY as stdout and subprocess.run captures the command shell's stdout/stderr. Run /bin/sh -c 'trap : EXIT; "$1" blocked' sh /absolute/path/harness/codex/zmx-state.sh, with ZMX_SESSION=scratch and a fake zmx on PATH. It exits 0, records no zmx calls, and emits no title. Change the command to 'trap : EXIT; exec "$1" blocked': the surrogate remains the hook's parent, and the title/state work. Reproduced with bash and zsh wrappers. A trailing ':', which also prevents exec optimization, reproduces the same failure.
+
+Upstream 0.166.0 command_runner.rs:417-443,469-490 launches a shell and uses SHELL when no shell override exists; the default Unix flag is -lc. Source: https://github.com/openai/codex/blob/rust-v0.166.0/codex-rs/hooks/src/engine/command_runner.rs . A login shell with an EXIT trap therefore has the reproduced failure shape. INFERENCE: occurrence in the operator's particular Codex startup environment; no real Codex was run and EVD-015 does not establish every shell configuration.
+
+The test surrogate explicitly adds 'exec ' at tests/codex-state.test.ts:20, which is absent from the shipped commands and masks this condition. Repair: put exec in every registered hook command and exercise that actual fragment through a retained shell with captured stdout. This preserves IMP-006's settled terminal gate rather than replacing it."""
+disposition = "fix-now"
+response = "exec is in every command and the test now runs the shipped fragment through a retained shell, so the finding is fixed as raised. Correction: it was not the live symptom. A trace showed the hook ran in the shared app-server daemon, with no ZMX_SESSION and stdout on /dev/null; zsh -lc reached the gate without exec. That cause is fixed by codex --no-daemon, confirmed live: state=blocked and the title (EVD-015)."
+
+[[finding.turn]]
+act = "raise"
+role = "raiser"
+
+[[finding.turn]]
+act = "dispose"
+role = "responder"
+disposition = "fix-now"
+response = "Fixed: every command in harness/codex/hooks.json now execs the script, and the test parent no longer adds exec: it runs the registered command through a shell held open by an EXIT trap. Matches the live symptom: david.1 got no state on the first real run. Live confirmation pending."
+
+[[finding.turn]]
+act = "amend"
+role = "responder"
+note = "The first response claimed this matched the live symptom. A trace disproved that."
+disposition = "fix-now"
+response = "exec is in every command and the test now runs the shipped fragment through a retained shell, so the finding is fixed as raised. Correction: it was not the live symptom. A trace showed the hook ran in the shared app-server daemon, with no ZMX_SESSION and stdout on /dev/null; zsh -lc reached the gate without exec. That cause is fixed by codex --no-daemon, confirmed live: state=blocked and the title (EVD-015)."
+
+[[finding.turn]]
+act = "verify"
+role = "raiser"
+note = """
+VERIFIED against the current tree, including the amended response. All four commands in harness/codex/hooks.json:8,19,30,41 explicitly exec the script. tests/codex-state.test.ts:20-21 now prefixes only 'trap : EXIT; ' and executes the actual registered command; it no longer supplies the missing exec. Re-ran all 42 Node harness tests successfully. In a disposable copy, removing exec from those commands causes six tests to fail, including all four state events, establishing sensitivity to the original bug. Independently ran every shipped command via bash and dash wrappers with an EXIT trap, captured hook stdout, a scratch-PTY-owning surrogate, a symlink installation and fake zmx: all four events advertise and exit 0 with empty hook stdout/stderr.
+
+Correction accounted for: the response's former attribution to the observed live failure is superseded. EVD-015 now reports the shared app-server daemon had no ZMX_SESSION and stdout /dev/null, and reports --no-daemon fixed the live case; the observed zsh -lc path worked without exec. The retained-shell defect and its repair remain independently reproduced, but are not the diagnosed cause of that live incident. I inspected the amended evidence/card, did not rerun Codex or inspect user configuration, and do not claim independent live confirmation of the daemon diagnosis."""
+
+[[finding]]
+id = "F-2"
+status = "verified"
+severity = "major"
+title = "Codex titles emit control characters from cwd as terminal commands"
+detail = '''
+Expected: session fields and cwd are title text. Observed: harness/advertise.sh:25-36,43 interpolates labels, fallback ZMX_SESSION and PWD unchanged; harness/codex/zmx-state.sh:20 emits those bytes between OSC 0 and BEL. Embedded BEL or ESC-backslash can terminate the title, allowing subsequent bytes to execute as terminal controls.
+
+VERIFIED isolated reproduction: create a scratch directory whose basename is Python 'bell\x07\x1b]2;injected\x07', use it as cwd, and run the real Codex hook with argument blocked, ZMX_SESSION=scratch, a fake zmx returning 'id=1 project=docs', and a Python parent holding a scratch PTY while capturing hook stdout. The PTY receives b'\x1b]0;docs.1 | /tmp/.../bell\x07\x1b]2;injected\x07 | ...\x07'. The extra OSC 2 is outside the intended title. No real terminal application, Codex or zmx session was used. Injection bytes on the PTY are verified; effects of other control sequences depend on the terminal and are inference. Label values containing BEL/ESC reach the same unsanitized path.
+
+Repair: remove or visibly encode terminal control characters from every title field before building the OSC sequence, with byte-level tests for BEL, ESC/ST, C0 controls and cwd/label inputs. Quoting printf's argument prevents shell expansion but does not make terminal data safe. Claude's sed at harness/claude/zmx-state.sh:17 only escapes JSON quotes/backslashes; newline/BEL cwd also yields invalid JSON there, but that latter behavior predates this diff and is not asserted as a newly introduced Claude regression. The new Codex raw-terminal path is the finding.'''
+disposition = "fix-now"
+response = "Fixed in harness/advertise.sh: the title drops C0 controls and DEL, for both harnesses, which also keeps the Claude JSON valid. Tests cover BEL and ESC in a directory name, for Codex at byte level, and newline for Claude."
+
+[[finding.turn]]
+act = "raise"
+role = "raiser"
+
+[[finding.turn]]
+act = "dispose"
+role = "responder"
+disposition = "fix-now"
+response = "Fixed in harness/advertise.sh: the title drops C0 controls and DEL, for both harnesses, which also keeps the Claude JSON valid. Tests cover BEL and ESC in a directory name, for Codex at byte level, and newline for Claude."
+
+[[finding.turn]]
+act = "verify"
+role = "raiser"
+note = '''
+VERIFIED against harness/advertise.sh:44-45 and the current tests. The completed title is filtered through tr -d '\000-\037\177', covering label fields, fallback session name and cwd before either hook emits its sequence. Re-ran all 42 Node harness tests and focused shellcheck successfully. The Codex test at tests/codex-state.test.ts:115-121 verifies both the sanitized title and absence of injected ESC ]2; the Claude control-character test at tests/claude-state.test.ts:119-122 parses the JSON and checks its sanitized value. Removing only the sanitizer in a disposable copy makes those two tests fail.
+
+Independently repeated byte-level probes under bash and dash for both hooks: cwd containing every filesystem-representable C0 byte (1-31) and DEL, and project/id/role/fallback-session fields containing BEL, ESC, ST and DEL. No C0/DEL remains inside the emitted title, the intended OSC framing remains, and Claude output parses as JSON. Scratch PTYs and fake zmx only; no real terminal application, Codex or live session was used. This verifies the raised control-character injection repair, not arbitrary terminal-emulator behavior.'''
+
+[[finding]]
+id = "F-3"
+status = "verified"
+severity = "minor"
+title = "Claude loses its fallback title when label retrieval fails after a successful state write"
+detail = """
+Expected: preserve the pre-refactor Claude hook's fallback to ZMX_SESSION when labels cannot be obtained. Observed: harness/advertise.sh:7 returns zmx get's status, and :20 aborts advertise on that failure. harness/claude/zmx-state.sh:13 then exits silently. A successful state write can therefore leave the previous terminal title (including the wrong state icon) in place instead of emitting the fallback title.
+
+VERIFIED differential probe under both /bin/sh (bash) and dash: use a fake zmx whose set exits 0 and whose get exits 1, set CLAUDE_CODE_ENTRYPOINT=cli and ZMX_SESSION=scratch, provide '{}' on stdin, and invoke blocked. The HEAD version of harness/claude/zmx-state.sh emits valid terminalSequence JSON beginning with 'scratch | ...' and the blocked bell icon. The uncommitted version exits 0 with empty stdout. The state write succeeds in both. The baseline was obtained via git show HEAD:harness/claude/zmx-state.sh into a disposable scratch script; neither source nor live sessions were changed. A transient get failure while the set succeeds is the triggering condition, not an assertion that such a failure was observed in a live session.
+
+Repair: keep state-write failure fatal to advertising, but allow label-read failure to produce an empty label set so the existing name fallback remains usable. Add a differential failure test separating set-fails from get-fails; tests/claude-state.test.ts:86-92 currently makes both fail together and does not cover the changed behavior."""
+disposition = "fix-now"
+response = "Fixed: write_state fails only when the write fails; a failed label read leaves empty labels, so the name fallback holds. Test separates set from get."
+
+[[finding.turn]]
+act = "raise"
+role = "raiser"
+
+[[finding.turn]]
+act = "dispose"
+role = "responder"
+disposition = "fix-now"
+response = "Fixed: write_state fails only when the write fails; a failed label read leaves empty labels, so the name fallback holds. Test separates set from get."
+
+[[finding.turn]]
+act = "verify"
+role = "raiser"
+note = "VERIFIED against harness/advertise.sh:6-8,21 and tests/claude-state.test.ts:94-97. write_state returns failure when set fails, while a get failure without label output now succeeds with empty labels and reaches the ZMX_SESSION fallback. The new test's fake zmx succeeds only for set, so it actually separates set success from get failure; it checks the fallback title and the state write. All 42 Node harness tests pass. Removing only '|| :' from the label read in a disposable copy makes precisely this new regression test fail (41 pass, 1 fail). Independent bash and dash probes confirm set-success/get-failure emits valid fallback-title JSON, and set failure remains silent with exit 0. No live zmx or Claude session was used."
+
+# Findings are append-only `[[finding]]` tables, added by `review raise`.
+# Empty here at creation — a fresh review is Active, awaiting the raiser.

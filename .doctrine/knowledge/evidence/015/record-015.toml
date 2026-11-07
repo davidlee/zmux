@@ -1,0 +1,25 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 15
+slug = "codex-hooks-see-every-transition-and-run-under-exec-too"
+title = "Codex hooks see every transition, and run under exec too"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-07"
+updated = "2026-11-07"
+tags = []
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum        = ""
+provenance   = ""               # inspection | experiment | reproduction | citation
+confidence   = ""               # low | medium | high
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)

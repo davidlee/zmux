@@ -72,7 +72,8 @@ neither alone.
   wanted. For pi, `harness/pi/zmx-state.ts` writes it at the prompt, and `working`
   when pi resumes. For Claude Code, the hooks in `harness/claude/` write it when a
   turn ends or a permission dialog opens, and `working` when a prompt is submitted or
-  a tool finishes.
+  a tool finishes. For Codex, the hooks in `harness/codex/` do the same, except that a
+  dialog is not `blocked`.
 - absent — unknown. Displayed as unknown, never as idle.
 
 Ordering, where a reader needs one: `blocked`, `working`, `done`/`failed`,

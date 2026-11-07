@@ -1,0 +1,48 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "exec ~/.codex/hooks/zmx-state.sh working",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "exec ~/.codex/hooks/zmx-state.sh working",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "exec ~/.codex/hooks/zmx-state.sh blocked",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "Interrupt": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "exec ~/.codex/hooks/zmx-state.sh blocked",
+            "timeout": 3
+          }
+        ]
+      }
+    ]
+  }
+}
