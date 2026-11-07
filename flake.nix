@@ -56,7 +56,7 @@
           gnused
           # Gives the launcher's tests a terminal.
           util-linux
-          # The pi extension's tests run on node's own runner.
+          # The harness hooks' tests run on node's own runner.
           nodejs
         ];
 
@@ -105,7 +105,8 @@
             cp -r ${./harness} harness
             mkdir tests
             cp ${./tests/zmx-state.test.ts} tests/zmx-state.test.ts
-            node --test tests/zmx-state.test.ts > "$out"
+            cp ${./tests/claude-state.test.ts} tests/claude-state.test.ts
+            node --test tests/zmx-state.test.ts tests/claude-state.test.ts > "$out"
           '';
 
         wrapperLint =
@@ -114,7 +115,8 @@
           } ''
             shellcheck ${./pkgs/zmx/wrapper.sh} ${./pkgs/zmx-new/zmx-new.sh} \
               ${./tests/run-tests.sh} ${./tests/stubs/zmx} \
-              ${./tests/stubs/systemd-run} ${./tests/stubs/harness}
+              ${./tests/stubs/systemd-run} ${./tests/stubs/harness} \
+              ${./harness/claude/zmx-state.sh}
             touch "$out"
           '';
 

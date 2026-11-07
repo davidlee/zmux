@@ -3,7 +3,7 @@
 A [zmx] with opinions:
 - sessions survive a window manager restart
 - conventions & automation for naming, creation
-- coding harness integration (pi, so far)
+- coding harness integration (pi, Claude Code)
 - picker, shell & emacs integration
 - Nix-first
 - systemd scopes for persistence without a daemon
@@ -195,7 +195,7 @@ and behaviour tests need no host, so `nix flake check` runs them. There is no CI
 
 ## integrations
 
-zmux holds the wrapper, the launcher, the zp package and the pi state extension. Everything else that
+zmux holds the wrapper, the launcher, the zp package and the pi and Claude Code state hooks. Everything else that
 touches it lives with the tool it belongs to, in the operator's config repos:
 [nix-config] (`~/flakes` is its `flakes/` directory) and [emacs-config].
 
@@ -210,6 +210,7 @@ touches it lives with the tool it belongs to, in the operator's config repos:
 | the wrapper in jails | `commonPkgs` in [`flakes/agents/jailed-agents.nix`][nix-jails] |
 | pi-zmx | [a fork][pi-zmx-fork] of [`@deevus/pi-zmx`][pi-zmx], pinned in pi's [host][pi-host] and [jail][pi-jail] `settings.json` |
 | `blocked` for pi | [`harness/pi/zmx-state.ts`](harness/pi/zmx-state.ts), here, pinned the same way |
+| `blocked` for Claude Code | [`harness/claude/`](harness/claude), here, linked and merged into `~/.claude` by hand |
 
 - **zp** is packaged here from upstream, unforked, as `pkgs.zp`. Under the overlay
   its `zmx` is the wrapper, so its sessions get a scope, and labels when their
@@ -237,8 +238,30 @@ touches it lives with the tool it belongs to, in the operator's config repos:
   `blocked` at its prompt and `working` when it resumes. Print, JSON and RPC pis leave
   the session alone, since they inherit `ZMX_SESSION` with nobody behind them. To
   install it, pin `git:github.com/davidlee/zmux@<commit>` in pi's `settings.json`. A
-  dialog raised mid-run is not seen, and `blocked` stays after pi quits. Claude's
-  plugin comes later.
+  dialog raised mid-run is not seen, and `blocked` stays after pi quits.
+- **`blocked`** for Claude Code comes from hooks in `harness/claude/`. An interactive
+  Claude in a session advertises `blocked` when its turn ends and `working` when a
+  prompt is submitted, and sets the terminal title to match; `-p` delegates leave the
+  session alone. A permission dialog is `blocked` too, until the approved tool finishes.
+  A turn ended with Esc fires no hook, so it reads `working` until the next prompt. A
+  jail can't reach the host's session, so a jailed Claude advertises nothing. To install
+  it, link `zmx-state.sh` into `~/.claude/hooks/` and merge `settings.json` into
+  `~/.claude/settings.json`. Its `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` stops Claude
+  overwriting the title, which also ends generated session titles and Claude's status
+  reports to the terminal.
+
+What each harness has so far:
+
+| | pi | Claude Code | Codex |
+| - | -- | ----------- | ----- |
+| `state` in a host session | yes | yes | not yet, IMP-006 |
+| a mid-run dialog reads `blocked` | no | yes | not yet, IMP-006 |
+| sets the terminal title | no | yes | not yet, IMP-006 |
+| `state` from inside a jail | no, IMP-009 | no, IMP-009 | no, IMP-009 |
+| tools to run commands in a session | pi-zmx | no | no |
+
+Claude can call `zmx` through its shell, but nothing gives it pi-zmx's tools. Whether
+that gap is worth closing is an open question: IDE-003.
 
 Windows and notifications have no integration yet. When they do, it belongs in
 nix-config, not here.
@@ -253,8 +276,8 @@ provides.
 ## tests
 
 ```sh
-just test    # argv assertions against stub binaries, and the pi extension
-just lint    # shellcheck over the wrapper and its fixtures
+just test    # argv assertions against stub binaries, and the harness hooks
+just lint    # shellcheck over the wrapper, its fixtures and the Claude hook
 nix flake check
 ```
 
@@ -271,7 +294,7 @@ No real zmx runs, and no systemd is used.
 - `pkgs/zp/default.nix` — the zp derivation.
 - `harness/` — state plugins, one per harness.
 - `package.json` — makes this repo a pi package, so a home can pin it.
-- `tests/` — the argv tests, their stub binaries, and the pi extension's tests.
+- `tests/` — the argv tests, their stub binaries, and the harness hooks' tests.
 - `VOCABULARY.md` — the contract.
 
 ## licence

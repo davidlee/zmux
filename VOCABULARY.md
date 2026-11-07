@@ -70,7 +70,9 @@ neither alone.
 - `blocked` — written by the program inside the session, or by the harness that
   is asking a human to attach. Never inferred; nothing can know a human is
   wanted. For pi, `harness/pi/zmx-state.ts` writes it at the prompt, and `working`
-  when pi resumes.
+  when pi resumes. For Claude Code, the hooks in `harness/claude/` write it when a
+  turn ends or a permission dialog opens, and `working` when a prompt is submitted or
+  a tool finishes.
 - absent — unknown. Displayed as unknown, never as idle.
 
 Ordering, where a reader needs one: `blocked`, `working`, `done`/`failed`,

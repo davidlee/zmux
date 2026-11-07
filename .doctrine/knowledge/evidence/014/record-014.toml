@@ -1,0 +1,29 @@
+schema = "doctrine.knowledge"
+version = 1
+
+id = 14
+slug = "claude-stop-marks-the-turn"
+title = "Claude Code's Stop marks a finished turn, and only the cli entrypoint has a human behind it"
+record_kind = "evidence"
+status = "captured"
+created = "2026-11-07"
+updated = "2026-11-07"
+tags = []
+
+[facet]                         # every field typed; seeded empty (captured later)
+datum = "In Claude Code 2.1.310, UserPromptSubmit and Stop bracket each turn, so hooks on them advertise working and blocked in a detached session. CLAUDE_CODE_ENTRYPOINT is cli in the TUI and sdk-cli under -p, nested or not. A turn ended with Esc fires no hook."
+provenance = "experiment"
+confidence = "high"
+
+[evidence]                      # free-text citations (supports / contradicts / notes)
+supports    = []
+contradicts = []
+notes       = []
+
+[relationships]                 # verb-written edges (set by doctrine supersede)
+supersedes    = []   # record ids this one replaces (set by doctrine supersede)
+superseded_by = []   # set on superseded predecessor (verb-written)
+
+[[relation]]
+label = "supports"
+target = "HYP-001"

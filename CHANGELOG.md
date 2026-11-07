@@ -6,6 +6,9 @@
 
 - `zmx-new` runs a command in a new `<project>.<n>` session, or runs it directly where
   a session would lose its output or status. `pkgs.zmx-new`, through the overlay.
+- `harness/claude/`: an interactive Claude Code in a session advertises `state=blocked`
+  when its turn ends or a permission dialog opens, and `state=working` when it resumes,
+  and sets the terminal title to match.
 
 ## 0.1.3 - 2026-11-06
 
