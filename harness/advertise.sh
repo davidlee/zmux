@@ -1,13 +1,6 @@
 # shellcheck shell=sh
 # Sourced by each harness's hook.
 
-# The one place that touches the session: writes state $1 and prints its labels.
-# zmux:IMP-009's `zmx-state` replaces this body, and works from a jail too.
-write_state() {
-  zmx set . "state=$1" >/dev/null 2>&1 || return 1
-  zmx get . 2>/dev/null || :
-}
-
 # Advertises state $1, and prints the title to match. Fails when there is nothing to
 # show.
 advertise() {
@@ -18,7 +11,9 @@ advertise() {
     esac
   fi
 
-  labels=$(write_state "$1") || return 1
+  # Host or jail, the session is zmx-state's to find. Nothing printed, nothing written.
+  labels=$(zmx-state "$1" 2>/dev/null)
+  [ -n "$labels" ] || return 1
 
   project=''
   id=''
@@ -31,7 +26,9 @@ advertise() {
     esac
   done
 
+  # A jail has no ZMX_SESSION, so no name to fall back on.
   name=${project:+$project.$id}
+  name=${name:-${ZMX_SESSION:-}}
   dir=$PWD
   case $dir in
     "$HOME" | "$HOME"/*) dir="~${dir#"$HOME"}" ;;
@@ -42,5 +39,5 @@ advertise() {
     blocked) icon=🔔 ;;
   esac
   # A title is terminal data: a control character in a path could end it early.
-  printf '%s' "${name:-$ZMX_SESSION}${role:+ | $role} | $dir | $icon" | tr -d '\000-\037\177'
+  printf '%s' "${name:+$name | }${role:+$role | }$dir | $icon" | tr -d '\000-\037\177'
 }

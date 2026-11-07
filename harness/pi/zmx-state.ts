@@ -5,20 +5,17 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 const WRITE_TIMEOUT_MS = 5000;
 
 export default function (pi: ExtensionAPI) {
-  const session = process.env.ZMX_SESSION;
-  if (!session) return;
-
   let current: string | undefined;
   let writes: Promise<unknown> = Promise.resolve();
 
-  // Not awaited, so a hung zmx can't stall a run; chained, so a slow write can't
+  // Not awaited, so a hung zmx-state can't stall a run; chained, so a slow write can't
   // land after a later one.
   const advertise = (state: string, ctx: ExtensionContext) => {
-    // Delegates inherit ZMX_SESSION, and only a terminal has a human behind it.
+    // Delegates can reach the session too, and only a terminal has a human behind it.
     if (ctx.mode !== "tui" || state === current) return;
     current = state;
     writes = writes
-      .then(() => pi.exec("zmx", ["set", session, `state=${state}`], { timeout: WRITE_TIMEOUT_MS }))
+      .then(() => pi.exec("zmx-state", [state], { timeout: WRITE_TIMEOUT_MS }))
       .catch(() => {});
   };
 

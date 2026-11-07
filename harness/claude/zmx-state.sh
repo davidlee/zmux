@@ -5,8 +5,8 @@
 # no prompt for zsh's zmx-title (IMP-008). Always exits 0, so a hook can't fail
 # Claude Code.
 
-# Delegates inherit ZMX_SESSION, and only a terminal has a human behind it.
-[ -n "${ZMX_SESSION:-}" ] && [ "${CLAUDE_CODE_ENTRYPOINT:-}" = cli ] || exit 0
+# Delegates can reach the session too, and only a terminal has a human behind it.
+[ "${CLAUDE_CODE_ENTRYPOINT:-}" = cli ] || exit 0
 
 # shellcheck disable=SC1091
 . "$(dirname "$(readlink -f "$0")")/../advertise.sh"

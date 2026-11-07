@@ -16,6 +16,7 @@
       zmx-unwrapped = prev.zmx;
       zmx = final.callPackage ./pkgs/zmx {zmx = final.zmx-unwrapped;};
       zmx-new = final.callPackage ./pkgs/zmx-new {};
+      zmx-state = final.callPackage ./pkgs/zmx-state {};
       zp = final.callPackage ./pkgs/zp {};
     };
   in
@@ -103,12 +104,14 @@
             nativeBuildInputs = [pkgs.nodejs pkgs.util-linux];
           } ''
             cp -r ${./harness} harness
-            mkdir tests
+            mkdir -p tests pkgs
+            cp -r ${./pkgs/zmx-state} pkgs/zmx-state
             cp ${./tests/zmx-state.test.ts} tests/zmx-state.test.ts
+            cp ${./tests/zmx-state-command.test.ts} tests/zmx-state-command.test.ts
             cp ${./tests/hook-fixture.ts} tests/hook-fixture.ts
             cp ${./tests/claude-state.test.ts} tests/claude-state.test.ts
             cp ${./tests/codex-state.test.ts} tests/codex-state.test.ts
-            node --test tests/zmx-state.test.ts tests/claude-state.test.ts tests/codex-state.test.ts > "$out"
+            node --test tests/zmx-state.test.ts tests/zmx-state-command.test.ts tests/claude-state.test.ts tests/codex-state.test.ts > "$out"
           '';
 
         wrapperLint =
@@ -116,6 +119,7 @@
             nativeBuildInputs = [pkgs.shellcheck];
           } ''
             shellcheck ${./pkgs/zmx/wrapper.sh} ${./pkgs/zmx-new/zmx-new.sh} \
+              ${./pkgs/zmx-state/zmx-state.sh} \
               ${./tests/run-tests.sh} ${./tests/stubs/zmx} \
               ${./tests/stubs/systemd-run} ${./tests/stubs/harness} \
               ${./harness/claude/zmx-state.sh} ${./harness/codex/zmx-state.sh} \
@@ -162,7 +166,7 @@
         _module.args.pkgs = pkgs;
 
         packages = {
-          inherit (pkgs) zmx zmx-new zp;
+          inherit (pkgs) zmx zmx-new zmx-state zp;
           default = pkgs.zmx;
           dev-tools = devTools;
         };

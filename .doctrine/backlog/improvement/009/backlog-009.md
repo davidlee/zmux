@@ -43,3 +43,27 @@ Values from a harness are `working` and `blocked` only.
 Packaging: the jail's `zmx-state` is on PATH beside `commonPkgs`, which carries the `zmx` package
 (`flakes:IMP-070`). Ship the host one so it can't shadow the jail's: a separate package, kept out of
 `commonPkgs`. The jail's prints `zmx get` output as is: space-separated, no trailing newline.
+
+## Progress, 2026-11-07
+
+Done here: `pkgs.zmx-state`, and the three harnesses write through it. `advertise.sh` stays: it
+owns the title and calls `zmx-state`, so it did not become it. `just test`, `just lint` and
+`nix flake check` pass (x86_64-linux). Checked against the real zmx in a scratch `ZMX_DIR`: labels
+print space-separated with no trailing newline, `done` is refused, and no session or a dead one
+prints nothing and exits 0.
+
+Choices:
+
+- Nothing printed means nothing written, and `advertise` shows no title then. So RV-001's F-3
+  (a failed label read keeps the title) moved into `zmx-state`, which prints `state=VALUE` when a
+  write stood and the read did not. The jail's prints nothing there, so a jailed title is skipped.
+- `zmx` comes from the caller's PATH, for the relay's reason: the session's daemon is the host's.
+- No `timeout` in the host's: each harness already limits its hook.
+- A jail has no `ZMX_SESSION`, so a session with no `project` label drops the name from its title.
+
+Not yet observed: any of this in a real jail. Remaining, in `flakes:IMP-070`:
+
+- A host needs `pkgs.zmx-state` on PATH. Until then the host's hooks, linked to this checkout,
+  write nothing. Pi is pinned, so it changes only when bumped.
+- The jail needs `harness/` whole, as the hook finds `advertise.sh` beside itself.
+- Codex's hooks are not in the jail's home, nor on `flakes:IMP-070`'s list.

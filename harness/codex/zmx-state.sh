@@ -4,11 +4,9 @@
 # also sets the terminal's title, as Claude's does. Always exits 0, so a hook can't
 # fail Codex.
 
-[ -n "${ZMX_SESSION:-}" ] || exit 0
-
-# Delegates inherit ZMX_SESSION, and nothing in a hook's input tells them from a TUI,
-# but a TUI's stdout is a terminal (EVD-015). hooks.json execs this, so that Codex is
-# our parent rather than its login shell.
+# Delegates can reach the session too, and nothing in a hook's input tells them from a
+# TUI, but a TUI's stdout is a terminal (EVD-015). hooks.json execs this, so that Codex
+# is our parent rather than its login shell.
 terminal=/proc/$PPID/fd/1
 [ -t 3 ] 2>/dev/null 3<>"$terminal" || exit 0
 

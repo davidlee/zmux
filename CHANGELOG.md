@@ -11,6 +11,13 @@
   and sets the terminal title to match.
 - `harness/codex/`: the same for an interactive Codex, except that a dialog reads
   `working`, since under `auto_review` no human is asked.
+- `zmx-state VALUE` writes `working` or `blocked` on the session around it and prints
+  its labels. `pkgs.zmx-state`, through the overlay.
+
+### Changed
+
+- The harnesses write through `zmx-state`, so a jail can advertise through its own
+  (`flakes:IMP-070`). A host needs `pkgs.zmx-state` on PATH, or they write nothing.
 
 ## 0.1.3 - 2026-11-06
 

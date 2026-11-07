@@ -212,6 +212,7 @@ touches it lives with the tool it belongs to, in the operator's config repos:
 | `blocked` for pi | [`harness/pi/zmx-state.ts`](harness/pi/zmx-state.ts), here, pinned the same way |
 | `blocked` for Claude Code | [`harness/claude/`](harness/claude), here, linked and merged into `~/.claude` by hand |
 | `blocked` for Codex | [`harness/codex/`](harness/codex), here, linked into `~/.codex` by hand |
+| `zmx-state` in jails | the relay in [`flakes/agents/zmx-state-relay.nix`][nix-relay]; the host's is `pkgs.zmx-state`, here |
 
 - **zp** is packaged here from upstream, unforked, as `pkgs.zp`. Under the overlay
   its `zmx` is the wrapper, so its sessions get a scope, and labels when their
@@ -237,16 +238,18 @@ touches it lives with the tool it belongs to, in the operator's config repos:
   expected to be invisible to the host's zp, since a jail has its own socket directory.
 - **`blocked`** for pi does not need pi-zmx. An interactive pi in a session advertises
   `blocked` at its prompt and `working` when it resumes. Print, JSON and RPC pis leave
-  the session alone, since they inherit `ZMX_SESSION` with nobody behind them. To
-  install it, pin `git:github.com/davidlee/zmux@<commit>` in pi's `settings.json`. A
+  the session alone, since they have nobody behind them. To install it, put
+  `pkgs.zmx-state` on PATH and pin `git:github.com/davidlee/zmux@<commit>` in pi's
+  `settings.json`. A
   dialog raised mid-run is not seen, and `blocked` stays after pi quits.
 - **`blocked`** for Claude Code comes from hooks in `harness/claude/`. An interactive
   Claude in a session advertises `blocked` when its turn ends and `working` when a
   prompt is submitted, and sets the terminal title to match; `-p` delegates leave the
   session alone. A permission dialog is `blocked` too, until the approved tool finishes.
-  A turn ended with Esc fires no hook, so it reads `working` until the next prompt. A
-  jail can't reach the host's session, so a jailed Claude advertises nothing. To install
-  it, link `zmx-state.sh` into `~/.claude/hooks/` and merge `settings.json` into
+  A turn ended with Esc fires no hook, so it reads `working` until the next prompt. The
+  hooks write through `zmx-state`, so they work from a jail too, where a relay carries
+  the value to the host's session. To install it, put `pkgs.zmx-state` on PATH, link
+  `zmx-state.sh` into `~/.claude/hooks/` and merge `settings.json` into
   `~/.claude/settings.json`. Its `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` stops Claude
   overwriting the title, which also ends generated session titles and Claude's status
   reports to the terminal.
@@ -254,7 +257,7 @@ touches it lives with the tool it belongs to, in the operator's config repos:
   with three differences. Esc fires a hook, so an interrupted turn reads `blocked`. A
   permission dialog reads `working`, since under `auto_review` no human is asked. And
   `codex exec` on a real terminal writes too; a delegate on a pipe doesn't. To install
-  it, link `zmx-state.sh` into `~/.codex/hooks/`, copy `hooks.json` to `~/.codex/`, set
+  it, put `pkgs.zmx-state` on PATH, link `zmx-state.sh` into `~/.codex/hooks/`, copy `hooks.json` to `~/.codex/`, set
   `tui.terminal_title = []` in `config.toml`, and trust the hooks through `/hooks`. That
   setting ends Codex's own titles. Run it as `codex --no-daemon`, as the zsh function
   does: on the shared daemon, hooks run with no session around them, so a plain
@@ -267,7 +270,7 @@ What each harness has so far:
 | `state` in a host session | yes | yes | yes |
 | a mid-run dialog reads `blocked` | no | yes | no |
 | sets the terminal title | no | yes | yes |
-| `state` from inside a jail | no, IMP-009 | no, IMP-009 | no, IMP-009 |
+| `state` from inside a jail | yes | yes | no hooks in the jail's home yet |
 | tools to run commands in a session | pi-zmx | no | no |
 
 Claude can call `zmx` through its shell, but nothing gives it pi-zmx's tools. Whether
@@ -301,6 +304,7 @@ No real zmx runs, and no systemd is used.
 - `pkgs/zmx/default.nix` — the derivation, with the real binary's absolute path
   substituted so the wrapper can never exec itself.
 - `pkgs/zmx-new/` — the launcher and its derivation.
+- `pkgs/zmx-state/` — `zmx-state`, what the harnesses write through, and its derivation.
 - `pkgs/zp/default.nix` — the zp derivation.
 - `harness/` — state plugins, one per harness.
 - `package.json` — makes this repo a pi package, so a home can pin it.
@@ -335,6 +339,7 @@ doctrine backlog list       # open work
 [pi-jail]: https://github.com/davidlee/nix-config/blob/main/.local/share/jail.nix/home/agent/.pi/agent/settings.json
 [nix-terminal]: https://github.com/davidlee/nix-config/blob/main/flakes/features/terminal.nix
 [nix-jails]: https://github.com/davidlee/nix-config/blob/main/flakes/agents/jailed-agents.nix
+[nix-relay]: https://github.com/davidlee/nix-config/blob/main/flakes/agents/zmx-state-relay.nix
 [zsh-functions]: https://github.com/davidlee/nix-config/blob/main/.config/zsh/functions.zsh
 [emacs-config]: https://github.com/davidlee/emacs-config
 [emacs-zmx]: https://github.com/davidlee/emacs-config/blob/main/apps/dl-zmx.el

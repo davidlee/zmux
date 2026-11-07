@@ -6,7 +6,7 @@ test:
 
 # Shell hygiene for the wrapper and its fixtures.
 lint:
-    shellcheck pkgs/zmx/wrapper.sh pkgs/zmx-new/zmx-new.sh tests/run-tests.sh tests/stubs/zmx tests/stubs/systemd-run tests/stubs/harness harness/claude/zmx-state.sh harness/codex/zmx-state.sh harness/advertise.sh
+    shellcheck pkgs/zmx/wrapper.sh pkgs/zmx-new/zmx-new.sh pkgs/zmx-state/zmx-state.sh tests/run-tests.sh tests/stubs/zmx tests/stubs/systemd-run tests/stubs/harness harness/claude/zmx-state.sh harness/codex/zmx-state.sh harness/advertise.sh
 
 # Approving is a separate, deliberate act: the report never writes.
 # Relink this checkout's quotient forms, then report what `quotient allow` needs.
