@@ -61,9 +61,7 @@ Choices:
 - No `timeout` in the host's: each harness already limits its hook.
 - A jail has no `ZMX_SESSION`, so a session with no `project` label drops the name from its title.
 
-Not yet observed: any of this in a real jail. Remaining, in `flakes:IMP-070`:
-
-- A host needs `pkgs.zmx-state` on PATH. Until then the host's hooks, linked to this checkout,
-  write nothing. Pi is pinned, so it changes only when bumped.
-- The jail needs `harness/` whole, as the hook finds `advertise.sh` beside itself.
-- Codex's hooks are not in the jail's home, nor on `flakes:IMP-070`'s list.
+Released as v0.1.4. `flakes:IMP-070` took the pins, the host's install and both jail hook sets,
+Codex included (operator, 2026-11-07), and delivers `harness/` as `${zmux}/harness` from its flake
+input, so nothing more was needed here. A real `jailed-claude` turn wrote `blocked` to a scratch
+host session. Not observed: a jailed Codex or pi turn. Close once a `jcx` turn has run.

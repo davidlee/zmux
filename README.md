@@ -270,7 +270,7 @@ What each harness has so far:
 | `state` in a host session | yes | yes | yes |
 | a mid-run dialog reads `blocked` | no | yes | no |
 | sets the terminal title | no | yes | yes |
-| `state` from inside a jail | yes | yes | no hooks in the jail's home yet |
+| `state` from inside a jail | yes | yes | yes, once trusted through `/hooks` there |
 | tools to run commands in a session | pi-zmx | no | no |
 
 Claude can call `zmx` through its shell, but nothing gives it pi-zmx's tools. Whether
