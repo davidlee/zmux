@@ -1,7 +1,7 @@
 // Behaviour of the pi state extension, driven through a fake of the two pi
-// surfaces it touches: events in, `zmx` calls out. Nothing here runs pi or zmx.
+// surfaces it touches: events in, `zmx-state` calls out. Nothing here runs pi or zmx.
 import assert from "node:assert/strict";
-import { beforeEach, test } from "node:test";
+import { test } from "node:test";
 import zmxState from "../harness/pi/zmx-state.ts";
 
 type Exec = (command: string, args: string[]) => Promise<unknown>;
@@ -23,23 +23,15 @@ function fakePi(exec: Exec = async () => ({ code: 0 })) {
 const flush = () => new Promise((resolve) => setImmediate(resolve));
 const states = (calls: string[][]) => calls.map((call) => call.at(-1));
 
-beforeEach(() => {
-  process.env.ZMX_SESSION = "docs.1";
-});
-
-test("does nothing when no zmx session is around it", async () => {
+test("a settled pi is blocked, with or without ZMX_SESSION, as a jail has none", async () => {
+  const session = process.env.ZMX_SESSION;
   delete process.env.ZMX_SESSION;
-  const { pi, handlers } = fakePi();
-  zmxState(pi as never);
-  assert.equal(handlers.size, 0);
-});
-
-test("a settled pi is blocked, in its own session", async () => {
   const { pi, calls, emit } = fakePi();
   zmxState(pi as never);
   emit("agent_settled");
   await flush();
-  assert.deepEqual(calls, [["zmx", "set", "docs.1", "state=blocked"]]);
+  if (session !== undefined) process.env.ZMX_SESSION = session;
+  assert.deepEqual(calls, [["zmx-state", "blocked"]]);
 });
 
 test("resuming replaces blocked with working", async () => {
@@ -48,7 +40,7 @@ test("resuming replaces blocked with working", async () => {
   emit("agent_settled");
   emit("agent_start");
   await flush();
-  assert.deepEqual(states(calls), ["state=blocked", "state=working"]);
+  assert.deepEqual(states(calls), ["blocked", "working"]);
 });
 
 test("a first run replaces a blocked left by an earlier pi", async () => {
@@ -56,7 +48,7 @@ test("a first run replaces a blocked left by an earlier pi", async () => {
   zmxState(pi as never);
   emit("agent_start");
   await flush();
-  assert.deepEqual(states(calls), ["state=working"]);
+  assert.deepEqual(states(calls), ["working"]);
 });
 
 test("a retry within one run writes once", async () => {
@@ -86,23 +78,23 @@ test("writes land in order, one at a time", async () => {
   emit("agent_settled");
   emit("agent_start");
   await flush();
-  assert.deepEqual(states(calls), ["state=blocked"]);
+  assert.deepEqual(states(calls), ["blocked"]);
   releases[0]();
   await flush();
-  assert.deepEqual(states(calls), ["state=blocked", "state=working"]);
+  assert.deepEqual(states(calls), ["blocked", "working"]);
 });
 
-test("a hung zmx does not hold the handler", async () => {
+test("a hung zmx-state does not hold the handler", async () => {
   const { pi, emit } = fakePi(() => new Promise(() => {}));
   zmxState(pi as never);
   assert.equal(emit("agent_settled"), undefined);
 });
 
-test("a failed zmx call stays silent and later writes still run", async () => {
-  const { pi, calls, emit } = fakePi(() => Promise.reject(new Error("no zmx")));
+test("a failed zmx-state stays silent and later writes still run", async () => {
+  const { pi, calls, emit } = fakePi(() => Promise.reject(new Error("no zmx-state")));
   zmxState(pi as never);
   emit("agent_settled");
   emit("agent_start");
   await flush();
-  assert.deepEqual(states(calls), ["state=blocked", "state=working"]);
+  assert.deepEqual(states(calls), ["blocked", "working"]);
 });

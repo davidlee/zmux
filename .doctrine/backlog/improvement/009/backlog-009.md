@@ -20,3 +20,26 @@ there too. The title reads labels with `zmx get`, so the relay must answer that 
 script must build the title without them.
 
 Related: IMP-005, IMP-004, IMP-006, ISS-001.
+
+## Scope, 2026-11-07
+
+The relay is `flakes:IMP-070`: ADR-001 rules out a server here, so the listener, the socket bind,
+the jail's `zmx-state`, the jail's Claude hooks and pi's pin all live there. The relay is one more
+caller writing a label, as zsh's title hook and the harness hooks are, so ADR-001 is not at odds
+with it (operator, 2026-11-07).
+
+This item keeps:
+
+- A host `zmx-state VALUE` that writes `state` on the session around it and prints its labels. It
+  exits 0 outside a session. The jail's has the same name and contract, so harnesses don't know
+  they are jailed.
+- Claude's hook and pi's extension move onto it, and their `ZMX_SESSION` gates move with it. Pi
+  passes the session name itself in `zmx set`, so its write path changes, not just the command.
+- A release first: `flakes:IMP-070` bumps its zmux input and pi's pin to it.
+- The README's jail row, and a line in its Claude paragraph.
+
+Values from a harness are `working` and `blocked` only.
+
+Packaging: the jail's `zmx-state` is on PATH beside `commonPkgs`, which carries the `zmx` package
+(`flakes:IMP-070`). Ship the host one so it can't shadow the jail's: a separate package, kept out of
+`commonPkgs`. The jail's prints `zmx get` output as is: space-separated, no trailing newline.

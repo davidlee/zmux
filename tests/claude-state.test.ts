@@ -83,6 +83,23 @@ test("outside a session it does nothing, and succeeds", () => {
   assert.deepEqual(scratch.writes(), []);
 });
 
+test("in a jail, with no ZMX_SESSION, it writes through zmx-state", () => {
+  scratch.relayed("id=1 project=docs state=blocked");
+  assert.equal(title(fire("Stop", { env: { ZMX_SESSION: "" } })), "docs.1 | ~ | 🔔");
+  assert.deepEqual(scratch.calls(), ["zmx-state blocked"]);
+});
+
+test("in a jail, a session with no project leaves its name out of the title", () => {
+  scratch.relayed("state=blocked");
+  assert.equal(title(fire("Stop", { env: { ZMX_SESSION: "" } })), "~ | 🔔");
+});
+
+test("a -p delegate never writes from a jail either", () => {
+  scratch.relayed("id=1 project=docs");
+  fire("Stop", { env: { ZMX_SESSION: "", CLAUDE_CODE_ENTRYPOINT: "sdk-cli" } });
+  assert.deepEqual(scratch.calls(), []);
+});
+
 test("a failing zmx never fails Claude Code", () => {
   scratch.fakeZmx("echo refused >&2\nexit 1");
   const { status, stdout, stderr } = fire("Stop");

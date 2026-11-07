@@ -2,7 +2,7 @@
 # no real zmx, no real systemd, no real pi, no real Claude Code.
 test:
     ./tests/run-tests.sh
-    node --test tests/zmx-state.test.ts tests/claude-state.test.ts tests/codex-state.test.ts
+    node --test tests/zmx-state.test.ts tests/zmx-state-command.test.ts tests/claude-state.test.ts tests/codex-state.test.ts
 
 # Shell hygiene for the wrapper and its fixtures.
 lint:

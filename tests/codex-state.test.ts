@@ -100,6 +100,18 @@ test("outside a session it does nothing, and succeeds", () => {
   assert.deepEqual(scratch.writes(), []);
 });
 
+test("in a jail, with no ZMX_SESSION, it writes through zmx-state", () => {
+  scratch.relayed("id=1 project=docs state=blocked");
+  assert.equal(title(fire("Stop", { env: { ZMX_SESSION: "" } })), "docs.1 | ~ | 🔔");
+  assert.deepEqual(scratch.calls(), ["zmx-state blocked"]);
+});
+
+test("a delegate on a pipe never writes from a jail either", () => {
+  scratch.relayed("id=1 project=docs");
+  fire("Stop", { terminal: false, env: { ZMX_SESSION: "" } });
+  assert.deepEqual(scratch.calls(), []);
+});
+
 test("a failing zmx never fails Codex, and sets no title", () => {
   scratch.fakeZmx("exit 1");
   const result = fire("Stop");
