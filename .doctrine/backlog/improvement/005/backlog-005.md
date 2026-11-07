@@ -17,4 +17,8 @@ blocked (EVD-006 records this for pi).
 The operator expects this one to break regularly, so it stays tiny and carries no weight
 in the design. Which Claude Code hooks mark "waiting on a human" is not yet established.
 
-Related: IMP-006 (Codex).
+Claude sets the terminal title itself, and a session running it has no shell for IMP-008's
+prompt hook. So the same hooks should set the title along with `state` when waiting and done
+(operator, 2026-11-07).
+
+Related: IMP-006 (Codex), IMP-008 (tab bar).
