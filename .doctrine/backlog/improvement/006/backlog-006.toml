@@ -5,10 +5,10 @@ id = 6
 slug = "write-the-codex-state-plugin"
 title = "Write the Codex state plugin"
 kind = "improvement"
-status = "open"
-resolution = ""                 # seeded empty so `backlog edit` sets it in place
+status = "resolved"
+resolution = "done"
 created = "2026-11-05"
-updated = "2026-11-05"
+updated = "2026-11-07"
 tags = ["area:codex", "area:harness", "smut:d-harness-state"]
 
 # outbound-only. Cross-kind structural edges (e.g. references with a role
