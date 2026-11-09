@@ -1,0 +1,19 @@
+/*
+ * $ env GTK_DEBUG=interactive ghostty
+ */
+tabbar, tabbar tabbox, tabbar tabbox tab {
+  margin: -1px;
+  padding: 0;
+  min-height:0;
+  font-family: 'MonoLisa Nerdfont';
+}
+
+tabbar tabbox tab {
+  color: lightgrey;
+}
+
+tabbar tabbox tab button {
+  color: #000;
+  font-size: 4px;
+}
+
