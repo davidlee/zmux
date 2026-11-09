@@ -15,17 +15,19 @@
   gawk,
   git,
   gnused,
+  lsof,
+  procps,
   zmx,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "zmx-picker";
-  version = "0.4.0";
+  version = "0.5.0";
 
   src = fetchFromGitHub {
     owner = "EarthmanMuons";
     repo = "zmx-picker";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-YVWiyQNMLXwT+VycTjq3DehIFLOUllewBfgkfSSeokQ=";
+    hash = "sha256-2g78CIFURY/fMIHqwXr/p6lc3KoKaXiAgmDmzsXCAko=";
   };
 
   nativeBuildInputs = [makeWrapper];
@@ -37,7 +39,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook preCheck
     patchShebangs zp tests
     substituteInPlace tests/run.sh --replace-fail /bin/bash ${lib.getExe bash}
-    bash tests/run.sh
+    # The builder exports $out, and zp's `local out` in daemon_pid inherits the
+    # export, so the large-lsof test hands awk a >128 KiB environment (E2BIG).
+    # Upstream bug; run the suite without it.
+    env -u out bash tests/run.sh
     runHook postCheck
   '';
 
@@ -51,6 +56,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       gawk
       git
       gnused
+      lsof
+      procps
       zmx
     ]}
     runHook postInstall

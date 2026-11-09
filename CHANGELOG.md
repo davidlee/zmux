@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- `pkgs.zp`: zmx-picker 0.5.0. It lists sessions zmx cannot reach as stale, with the
+  reason, and Ctrl-X stops their daemon. It now carries `lsof` and `procps` for that.
+
 ## 0.1.4 - 2026-11-07
 
 ### Added
