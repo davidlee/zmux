@@ -12,7 +12,7 @@ not learn our vocabulary.
 
 Fork `davidlee/zmx-picker`, clone `~/dev/zmx-picker` (remote `upstream` is
 EarthmanMuons). PR bodies are drafted in `~/dev/zmx-picker/PR-*.md`, excluded from git.
-Nothing is pushed.
+Both branches are pushed to the fork; no PR is opened.
 
 | branch | worktree | commit | what |
 |---|---|---|---|
