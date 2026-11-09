@@ -218,7 +218,7 @@ touches it lives with the tool it belongs to, in the operator's config repos:
   until its two changes land upstream. Under the overlay its `zmx` is the wrapper,
   so its sessions get a scope, and labels when their names are dotted. See
   [who names sessions](#who-names-sessions). It marks each session's `state`:
-  `▶` working, `◆` blocked, `✓` done, `✗` failed. Set `ZP_LABEL_MARKS` to change
+  `◐` working, `🔔` blocked, `●` done, `⊘` failed. Set `ZP_LABEL_MARKS` to change
   the marks (`key=value=mark` entries), or to empty to turn them off.
 - **`zx`** starts a session in an active project: pick one with fzf, and it attaches
   `<project>.<n>` from that directory. `active-projects` lists zoxide's project

@@ -21,8 +21,9 @@
   procps,
   zmx,
 }: let
-  # A mark per `state` value (VOCABULARY.md); the caller's own setting wins.
-  labelMarks = "state=working=▶ state=blocked=◆ state=done=✓ state=failed=✗";
+  # A mark per `state` value (VOCABULARY.md), the icons zsh, Emacs and the harness
+  # titles use (harness/advertise.sh); the caller's own setting wins.
+  labelMarks = "state=working=◐ state=blocked=🔔 state=done=● state=failed=⊘";
 in
   stdenvNoCC.mkDerivation (finalAttrs: {
     pname = "zmx-picker";
@@ -32,8 +33,8 @@ in
     src = fetchFromGitHub {
       owner = "davidlee";
       repo = "zmx-picker";
-      rev = "80f879c301a311f34ab66616a275ccd7618081b6";
-      hash = "sha256-UO1u1SMZMfYJyS3W3IQtfeczKS2DqQMfZ9Y+LfZU3fc=";
+      rev = "366e3a72c2b8749af5483f22ab105c6d529c4796";
+      hash = "sha256-r1fTBu8LjVW8/DFzB+nzJCPo7fdVvSC0Bs2jMn5NP+s=";
     };
 
     nativeBuildInputs = [makeWrapper];

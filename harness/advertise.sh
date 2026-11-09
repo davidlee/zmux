@@ -33,7 +33,8 @@ advertise() {
   case $dir in
     "$HOME" | "$HOME"/*) dir="~${dir#"$HOME"}" ;;
   esac
-  # The same fields and icons as zmx-title in zsh, and dl-zmx--state-icons in Emacs.
+  # The same fields and icons as zmx-title in zsh, and dl-zmx--state-icons in Emacs;
+  # the same icons as ZP_LABEL_MARKS in pkgs/zp.
   case $1 in
     working) icon=◐ ;;
     blocked) icon=🔔 ;;
