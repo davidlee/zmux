@@ -8,32 +8,37 @@ zp shows labels as trailing `key=value` text, so `state=blocked` is searchable b
 scan. zp is upstream, unforked (DEC-011), so the change goes upstream, and generic: zp should
 not learn our vocabulary.
 
-## Drafted upstream (not yet opened)
+## Upstream (2026-11-10)
 
 Fork `davidlee/zmx-picker`, clone `~/dev/zmx-picker` (remote `upstream` is
-EarthmanMuons). PR bodies are drafted in `~/dev/zmx-picker/PR-*.md`, excluded from git.
-Both branches are pushed to the fork; no PR is opened.
+EarthmanMuons).
 
-| branch | worktree | commit | what |
-|---|---|---|---|
-| `fix-exported-out` | `~/dev/zmx-picker` | `5cf37d9` | `local +x out` in `daemon_pid`: the bug CHR-003 worked around |
-| `label-marks` | `~/dev/zmx-picker-marks` | `52253ae` | `ZP_LABEL_MARKS='state=working=● state=blocked=◐'`, a mark column ahead of the name |
+| change | where | state |
+|---|---|---|
+| `local +x out` in `daemon_pid`: the bug CHR-003 worked around | upstream `1041dd1` | merged to main, unreleased |
+| `ZP_LABEL_MARKS`, a mark column ahead of the name | PR #17, branch `label-marks` (`~/dev/zmx-picker-marks`), `edacb77` | in review |
 
 `ZP_LABEL_MARKS`: space-separated `key=value=mark` entries, split at the last `=`. Marks are
-concatenated in the map's order and padded by terminal columns (a rough wcwidth: emoji and
-CJK count two, since the blocked icon is 🔔). Labels still show and match. Unset,
-the rows are byte-identical to today.
+concatenated in the map's order. Labels still show and match. Unset, or matching nothing, the
+rows are byte-identical to before.
+
+Alignment: a tab ends the mark column, and fzf aligns the names at its first tab stop with
+the widths it renders with, so zp never measures a mark exactly. zp sizes the tab stop from
+the map: one value per label key, so the widest mark under each key, summed, at two columns
+a character (an overestimate: a wrong guess costs blank space, never alignment). For our
+`state` map it is 5. This replaced a rough wcwidth after review found it wrong for ❌, ✅,
+⌚ and emoji sequences, and Bash 3.2's `printf "'c"` gives a byte, not a code point. The
+trade-off (a column a little wider than tight) is put to the maintainer on the PR.
 
 To run the suite on NixOS, replace `/bin/bash` in `tests/run.sh` (as `pkgs/zp` does) and put
-`expect fzf gawk` on PATH.
+`expect fzf gawk` on PATH. `ssh Draupnir` runs it under macOS's `/bin/bash` 3.2.
 
-## In use meanwhile (2026-11-09)
+## In use meanwhile (2026-11-10)
 
-Fork branch `zmux` (`366e3a7`) is `fix-exported-out` plus `label-marks`. `pkgs/zp` pins it
-by commit; its suite runs without the `env -u out` workaround. The wrapper sets a default
-`ZP_LABEL_MARKS` for the four `state` values, with the icons zsh, Emacs and the harness
-titles use (`--set-default`, so a caller's own value,
-even empty, wins). DEC-011 and the README say so.
+Fork branch `zmux` (`edacb77`) is upstream main plus PR #17's two commits. `pkgs/zp` pins it
+by commit. The wrapper sets a default `ZP_LABEL_MARKS` for the four `state` values, with the
+icons zsh, Emacs and the harness titles use (`--set-default`, so a caller's own value, even
+empty, wins). DEC-011 and the README say so; DEC-011 still says two changes wait upstream.
 
 ## When upstream releases
 

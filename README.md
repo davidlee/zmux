@@ -215,7 +215,7 @@ touches it lives with the tool it belongs to, in the operator's config repos:
 | `zmx-state` in jails | the relay in [`flakes/agents/zmx-state-relay.nix`][nix-relay]; the host's is `pkgs.zmx-state`, here |
 
 - **zp** is packaged here as `pkgs.zp`, from [a fork][zp-fork] pinned by commit
-  until its two changes land upstream. Under the overlay its `zmx` is the wrapper,
+  until its `ZP_LABEL_MARKS` change lands upstream. Under the overlay its `zmx` is the wrapper,
   so its sessions get a scope, and labels when their names are dotted. See
   [who names sessions](#who-names-sessions). It marks each session's `state`:
   `◐` working, `🔔` blocked, `●` done, `⊘` failed. Set `ZP_LABEL_MARKS` to change

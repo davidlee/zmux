@@ -1,6 +1,7 @@
-# zp, the picker (DEC-011): upstream's script, from our fork while two changes
-# wait upstream (IMP-010): `ZP_LABEL_MARKS`, and the `local +x out` fix in
-# daemon_pid. Return to an upstream tag once they ship. Its `zmx` is whatever
+# zp, the picker (DEC-011): upstream's script, from our fork while
+# `ZP_LABEL_MARKS` waits upstream (IMP-010, EarthmanMuons/zmx-picker#17). The
+# `local +x out` fix in daemon_pid is on upstream main, unreleased. Return to an
+# upstream tag once both ship. Its `zmx` is whatever
 # this package set calls zmx, which under the overlay is the wrapper, so sessions
 # created from zp get labels and a scope. jj stays optional, found on the
 # caller's PATH if it is there.
@@ -27,14 +28,14 @@
 in
   stdenvNoCC.mkDerivation (finalAttrs: {
     pname = "zmx-picker";
-    version = "0.5.0-unstable-2026-11-09";
+    version = "0.5.0-unstable-2026-11-10";
 
-    # Branch `zmux`: v0.5.0 plus the two commits drafted for upstream.
+    # Branch `zmux`: upstream main plus the PR's two commits.
     src = fetchFromGitHub {
       owner = "davidlee";
       repo = "zmx-picker";
-      rev = "366e3a72c2b8749af5483f22ab105c6d529c4796";
-      hash = "sha256-r1fTBu8LjVW8/DFzB+nzJCPo7fdVvSC0Bs2jMn5NP+s=";
+      rev = "edacb774394824aaa9510f4555e6558eb9bbab04";
+      hash = "sha256-eIKI8TEyB20cNVsGOmmYLnsMXUXxHu5qHn7hFhpLBEU=";
     };
 
     nativeBuildInputs = [makeWrapper];

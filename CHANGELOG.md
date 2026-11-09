@@ -6,7 +6,7 @@
 
 - `pkgs.zp`: zmx-picker 0.5.0. It lists sessions zmx cannot reach as stale, with the
   reason, and Ctrl-X stops their daemon. It now carries `lsof` and `procps` for that.
-- `pkgs.zp` builds from a fork, pinned by commit, until two changes land upstream. zp
+- `pkgs.zp` builds from a fork, pinned by commit, until `ZP_LABEL_MARKS` lands upstream. zp
   marks each session's `state` ahead of its name, with the icons zsh and Emacs use:
   `◐` working, `🔔` blocked, `●` done, `⊘` failed. `ZP_LABEL_MARKS` overrides the marks; empty turns them off.
 

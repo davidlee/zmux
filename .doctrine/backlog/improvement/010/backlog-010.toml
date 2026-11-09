@@ -8,7 +8,7 @@ kind = "improvement"
 status = "started"
 resolution = ""
 created = "2026-11-09"
-updated = "2026-11-09"
+updated = "2026-11-10"
 tags = ["area:picker", "area:upstream"]
 
 # outbound-only. Cross-kind structural edges (e.g. references with a role
