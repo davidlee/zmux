@@ -3,7 +3,8 @@
 - zp is a derivation in `pkgs/zp`, of the upstream release by default. Since 2026-11-09 it
   pins a fork by commit, as pi-zmx does, while two changes wait upstream (IMP-010): a
   label-mark column, and a fix for an exported `$out`. It returns to an upstream tag once
-  they ship.
+  they ship. [edit 2026-11-10: the `$out` fix is on upstream main, unreleased; only the
+  label marks wait, in EarthmanMuons/zmx-picker#17.]
 - pi-zmx is a pi package pinned in pi's host and jail `settings.json`.
   Both homes pin a fork, by commit, because upstream reports a timed-out `zmx_run` as a
   success. The fork fixes that bug; the convention needs no fork, since pi-zmx calls whichever

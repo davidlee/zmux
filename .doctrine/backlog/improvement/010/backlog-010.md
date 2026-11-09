@@ -38,7 +38,7 @@ To run the suite on NixOS, replace `/bin/bash` in `tests/run.sh` (as `pkgs/zp` d
 Fork branch `zmux` (`edacb77`) is upstream main plus PR #17's two commits. `pkgs/zp` pins it
 by commit. The wrapper sets a default `ZP_LABEL_MARKS` for the four `state` values, with the
 icons zsh, Emacs and the harness titles use (`--set-default`, so a caller's own value, even
-empty, wins). DEC-011 and the README say so; DEC-011 still says two changes wait upstream.
+empty, wins). DEC-011 and the README say so.
 
 ## When upstream releases
 
