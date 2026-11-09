@@ -1,0 +1,30 @@
+schema = "doctrine.backlog"
+version = 1
+
+id = 10
+slug = "show-session-state-as-an-icon-in-zp"
+title = "Show session state as an icon in zp"
+kind = "improvement"
+status = "started"
+resolution = ""
+created = "2026-11-09"
+updated = "2026-11-09"
+tags = ["area:picker", "area:upstream"]
+
+# outbound-only. Cross-kind structural edges (e.g. references with a role
+# — `originates_from` for backlog→slice provenance — governed_by, related, drift) are
+# uniform `[[relation]]` rows — author them with
+# `doctrine link ITEM-NNN <label> <target>`; `doctrine inspect ITEM-NNN` renders
+# them. The dep/seq axes below stay typed (they carry per-edge payloads).
+[relationships]
+needs    = []                   # item→item hard prerequisite
+after    = []                   # item→item soft sequence: { to, rank? }
+triggers = []                   # watched source globs: { globs, note? }
+
+[[relation]]
+label = "related"
+target = "CHR-003"
+
+[[relation]]
+label = "related"
+target = "DEC-011"
