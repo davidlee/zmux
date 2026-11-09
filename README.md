@@ -214,9 +214,12 @@ touches it lives with the tool it belongs to, in the operator's config repos:
 | `blocked` for Codex | [`harness/codex/`](harness/codex), here, linked into `~/.codex` by hand |
 | `zmx-state` in jails | the relay in [`flakes/agents/zmx-state-relay.nix`][nix-relay]; the host's is `pkgs.zmx-state`, here |
 
-- **zp** is packaged here from upstream, unforked, as `pkgs.zp`. Under the overlay
-  its `zmx` is the wrapper, so its sessions get a scope, and labels when their
-  names are dotted. See [who names sessions](#who-names-sessions).
+- **zp** is packaged here as `pkgs.zp`, from [a fork][zp-fork] pinned by commit
+  until its two changes land upstream. Under the overlay its `zmx` is the wrapper,
+  so its sessions get a scope, and labels when their names are dotted. See
+  [who names sessions](#who-names-sessions). It marks each session's `state`:
+  `▶` working, `◆` blocked, `✓` done, `✗` failed. Set `ZP_LABEL_MARKS` to change
+  the marks (`key=value=mark` entries), or to empty to turn them off.
 - **`zx`** starts a session in an active project: pick one with fzf, and it attaches
   `<project>.<n>` from that directory. `active-projects` lists zoxide's project
   directories in frecency order. Both are zsh functions, so only zsh can call them.
@@ -339,6 +342,7 @@ doctrine backlog list       # open work
 [pi-jail]: https://github.com/davidlee/nix-config/blob/main/.local/share/jail.nix/home/agent/.pi/agent/settings.json
 [nix-terminal]: https://github.com/davidlee/nix-config/blob/main/flakes/features/terminal.nix
 [nix-jails]: https://github.com/davidlee/nix-config/blob/main/flakes/agents/jailed-agents.nix
+[zp-fork]: https://github.com/davidlee/zmx-picker/tree/zmux
 [nix-relay]: https://github.com/davidlee/nix-config/blob/main/flakes/agents/zmx-state-relay.nix
 [zsh-functions]: https://github.com/davidlee/nix-config/blob/main/.config/zsh/functions.zsh
 [emacs-config]: https://github.com/davidlee/emacs-config

@@ -26,10 +26,17 @@ the rows are byte-identical to today.
 To run the suite on NixOS, replace `/bin/bash` in `tests/run.sh` (as `pkgs/zp` does) and put
 `expect fzf gawk` on PATH.
 
+## In use meanwhile (2026-11-09)
+
+Fork branch `zmux` (`80f879c`) is `fix-exported-out` plus `label-marks`. `pkgs/zp` pins it
+by commit; its suite runs without the `env -u out` workaround. The wrapper sets a default
+`ZP_LABEL_MARKS` for the four `state` values (`--set-default`, so a caller's own value,
+even empty, wins). DEC-011 and the README say so.
+
 ## When upstream releases
 
-- Bump `pkgs/zp`, and drop the `env -u out` in its `checkPhase` if the fix shipped.
-- Set `ZP_LABEL_MARKS` where zp is configured, in the zsh config (nix-config).
+- Point `pkgs/zp` back at the upstream tag, and update DEC-011 and the README.
+- If upstream rejects or reshapes either change, decide whether to keep the fork.
 
 ## Open
 
