@@ -13,3 +13,26 @@ lint:
 forms:
     ~/flakes/bin/dev-envs-forms
     quotient allow
+
+# Pin the homes to this checkout's HEAD: push it, re-lock ~/flakes/agents onto it,
+# commit and push that lock, then re-lock agents in ~/flakes. The root lock is left
+# for you to rebuild from and commit, as `just upgrade` does after verifying.
+# Refuses a dirty or unpushable lock, which would ride along.
+flakes := env("FLAKES", home_directory() / "flakes")
+
+[script("bash")]
+ship:
+    set -euo pipefail
+    agents='{{ flakes }}/agents'
+    for dir in '{{ flakes }}' "$agents"; do
+      git -C "$dir" diff --quiet HEAD -- flake.lock ||
+        { echo "ship: $dir/flake.lock has uncommitted changes" >&2; exit 1; }
+    done
+    git push -q
+    (cd "$agents" && nix flake update zmux)
+    if ! git -C "$agents" diff --quiet HEAD -- flake.lock; then
+      git -C "$agents" commit -q -m "chore(agents): bump zmux to $(git rev-parse --short HEAD)" -- flake.lock
+    fi
+    git -C "$agents" push -q
+    (cd '{{ flakes }}' && nix flake update agents)
+    echo "ship: rebuild home (just home-switch in {{ flakes }}), then commit its flake.lock" >&2
