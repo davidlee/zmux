@@ -235,6 +235,7 @@ touches it lives with the tool it belongs to, in the operator's config repos:
   anywhere. A session loses the exit status, and the output of a command that exits at
   once, so it errs towards running directly. That leaves
   `claude "a prompt"` and `codex resume` outside a session. `command claude` skips it.
+  With no command inside a session it refuses: zmx can't nest a shell session.
 - **Emacs** composes the name and nothing else. Its terminals are numbered sessions.
 - **Jails** built by `~/flakes` all carry the wrapper, whatever the project's
   `dev-tools` holds. A jail's sessions die with the jail and have no scope. They are

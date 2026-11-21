@@ -551,6 +551,14 @@ new_runs_directly_inside_a_session() {
   assert_ran_directly
 }
 
+new_refuses_a_shell_session_inside_a_session() {
+  local status=0
+  ZMX_SESSION=zmux.1 new_off_a_tty "$(project_dir zmux .git)" 2> "$tmp/err" || status=$?
+  assert_status "$status" 1
+  assert_stderr 'already in session zmux.1'
+  assert_calls "$ZMX_STUB_LOG" 0
+}
+
 new_runs_directly_without_a_terminal() {
   new_off_a_tty "$(project_dir zmux .git)" "$work/bin/harness" --resume
   assert_ran_directly --resume
@@ -685,6 +693,7 @@ run_case new-home-repo new_treats_a_home_repository_as_no_project
 run_case new-no-command new_with_no_command_starts_a_shell_session
 run_case new-flags new_keeps_flags_for_the_harness
 run_case new-in-session new_runs_directly_inside_a_session
+run_case new-shell-in-session new_refuses_a_shell_session_inside_a_session
 run_case new-no-terminal new_runs_directly_without_a_terminal
 run_case new-subcommand new_runs_a_subcommand_directly
 run_case new-one-shot new_runs_a_one_shot_flag_directly

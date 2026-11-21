@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Fixed
+
+- `zmx-new` with no command refuses inside a session, on stderr with status 1. It used
+  to attempt a nested attach, which fails and leaves you in the outer session (ISS-004).
+
 ### Changed
 
 - `pkgs.zp`: zmx-picker 0.5.0. It lists sessions zmx cannot reach as stale, with the

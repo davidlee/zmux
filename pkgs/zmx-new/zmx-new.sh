@@ -75,6 +75,13 @@ next_number() {
   }
 }
 
+# A shell session can't nest, and a failed attach leaves the caller in the outer
+# session, where an `exit` meant for the new one ends it.
+if [ $# -eq 0 ] && [ -n "${ZMX_SESSION:-}" ]; then
+  printf 'zmx-new: already in session %s\n' "$ZMX_SESSION" >&2
+  exit 1
+fi
+
 if [ $# -gt 0 ] && runs_directly "$@"; then
   exec "$@"
 fi
